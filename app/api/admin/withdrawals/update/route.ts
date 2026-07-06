@@ -23,8 +23,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "This withdrawal is already paid." }, { status: 400 });
     }
 
-    if (withdrawal.status === "failed") {
-      return NextResponse.json({ error: "This withdrawal already failed and has already been handled." }, { status: 400 });
+    if (withdrawal.status === "failed" || withdrawal.refunded_at) {
+      return NextResponse.json({ error: "This withdrawal has already failed and was already refunded." }, { status: 400 });
     }
 
     if (status === "sending") {
@@ -32,27 +32,56 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Payment is already pending." }, { status: 400 });
       }
 
-      await supabaseAdmin.from("withdrawals").update({
-        status: "sending",
-        admin_note: "Payment being processed manually",
-      }).eq("id", id);
+      const { error } = await supabaseAdmin
+        .from("withdrawals")
+        .update({
+          status: "sending",
+          admin_note: "Payment being processed manually",
+        })
+        .eq("id", id);
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
       return NextResponse.json({ success: true, message: "Payment moved to pending." });
     }
 
     if (status === "paid") {
-      await supabaseAdmin.from("withdrawals").update({
-        status: "paid",
-        processed_at: new Date().toISOString(),
-        admin_note: "Payment marked paid manually",
-      }).eq("id", id);
+      const { error } = await supabaseAdmin
+        .from("withdrawals")
+        .update({
+          status: "paid",
+          processed_at: new Date().toISOString(),
+          admin_note: "Payment marked paid manually",
+        })
+        .eq("id", id);
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
       return NextResponse.json({ success: true, message: "Withdrawal marked as paid." });
     }
 
     if (status === "failed") {
-      if (withdrawal.refunded_at) {
-        return NextResponse.json({ error: "This withdrawal has already been refunded." }, { status: 400 });
+      const now = new Date().toISOString();
+
+      const { data: updatedRows, error: lockError } = await supabaseAdmin
+        .from("withdrawals")
+        .update({
+          status: "failed",
+          processed_at: now,
+          refunded_at: now,
+          failure_reason: "Payment failed. Wallet refunded.",
+          admin_note: "Payment failed and wallet refunded",
+        })
+        .eq("id", id)
+        .is("refunded_at", null)
+        .neq("status", "paid")
+        .neq("status", "failed")
+        .select();
+
+      if (lockError) return NextResponse.json({ error: lockError.message }, { status: 500 });
+
+      if (!updatedRows || updatedRows.length === 0) {
+        return NextResponse.json({ error: "This withdrawal was already handled. No second refund allowed." }, { status: 400 });
       }
 
       const { data: wallet } = await supabaseAdmin
@@ -61,9 +90,14 @@ export async function POST(req: Request) {
         .eq("user_id", withdrawal.user_id)
         .maybeSingle();
 
-      await supabaseAdmin.from("wallets").update({
-        balance: Number(wallet?.balance || 0) + Number(withdrawal.amount),
-      }).eq("user_id", withdrawal.user_id);
+      const { error: refundError } = await supabaseAdmin
+        .from("wallets")
+        .update({
+          balance: Number(wallet?.balance || 0) + Number(withdrawal.amount),
+        })
+        .eq("user_id", withdrawal.user_id);
+
+      if (refundError) return NextResponse.json({ error: refundError.message }, { status: 500 });
 
       await supabaseAdmin.from("wallet_transactions").insert({
         user_id: withdrawal.user_id,
@@ -74,15 +108,10 @@ export async function POST(req: Request) {
         description: "Withdrawal failed and refunded",
       });
 
-      await supabaseAdmin.from("withdrawals").update({
-        status: "failed",
-        processed_at: new Date().toISOString(),
-        refunded_at: new Date().toISOString(),
-        failure_reason: "Payment failed. Wallet refunded.",
-        admin_note: "Payment failed and wallet refunded",
-      }).eq("id", id);
-
-      return NextResponse.json({ success: true, message: "Withdrawal failed and wallet refunded." });
+      return NextResponse.json({
+        success: true,
+        message: "Withdrawal failed and wallet refunded once.",
+      });
     }
 
     return NextResponse.json({ error: "No action taken." }, { status: 400 });
