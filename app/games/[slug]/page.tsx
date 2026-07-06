@@ -52,6 +52,7 @@ export default function GamePage({ params }: GamePageProps) {
   const [wheelResult, setWheelResult] = useState("");
   const [wheelDone, setWheelDone] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
+  const [freeSpin, setFreeSpin] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -145,32 +146,34 @@ export default function GamePage({ params }: GamePageProps) {
       return;
     }
 
-    const { data: wallet } = await supabase
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    if (!freeSpin) {
+      const { data: wallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
 
-    const balance = Number(wallet?.balance || 0);
+      const balance = Number(wallet?.balance || 0);
 
-    if (balance < Number(game.entry_fee)) {
-      setMessage("Insufficient balance. Please deposit funds.");
-      setSpinningWheel(false);
-      return;
+      if (balance < Number(game.entry_fee)) {
+        setMessage("Insufficient balance. Please deposit funds.");
+        setSpinningWheel(false);
+        return;
+      }
+
+      await supabase
+        .from("wallets")
+        .update({ balance: balance - Number(game.entry_fee) })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_entry",
+        amount: Number(game.entry_fee),
+        status: "completed",
+        reference: game.slug,
+      });
     }
-
-    await supabase
-      .from("wallets")
-      .update({ balance: balance - Number(game.entry_fee) })
-      .eq("user_id", user.id);
-
-    await supabase.from("wallet_transactions").insert({
-      user_id: user.id,
-      type: "game_entry",
-      amount: Number(game.entry_fee),
-      status: "completed",
-      reference: game.slug,
-    });
 
     let wheelAudioContext: AudioContext | null = null;
     let wheelSoundTimer: ReturnType<typeof setInterval> | null = null;
@@ -196,9 +199,9 @@ export default function GamePage({ params }: GamePageProps) {
       }, 90);
     } catch {}
 
-    setWheelRotation((current) => current + 3600 + Math.floor(Math.random() * 360));
+    setWheelRotation((current) => current + 9000 + Math.floor(Math.random() * 720));
 
-    await new Promise((resolve) => setTimeout(resolve, 6000));
+    await new Promise((resolve) => setTimeout(resolve, 15000));
 
     if (wheelSoundTimer) clearInterval(wheelSoundTimer);
 
@@ -206,11 +209,13 @@ export default function GamePage({ params }: GamePageProps) {
       await wheelAudioContext.close();
     }
 
-    const outcomes = ["WIN", "LOSE", "LOSE", "LOSE", "WIN", "LOSE"];
+    const outcomes = ["GH₵200", "TRY AGAIN", "GH₵2 Airtime", "FREE SPIN", "LOST", "TRY AGAIN"];
     const result = outcomes[Math.floor(Math.random() * outcomes.length)];
-    const won = result === "WIN";
+    const won = result === "GH₵200" || result === "GH₵2 Airtime";
+    const prizeValue = result === "GH₵200" ? 200 : result === "GH₵2 Airtime" ? 2 : 0;
 
     setWheelResult(result);
+    setFreeSpin(result === "FREE SPIN");
 
     if (won) {
       const { data: latestWallet } = await supabase
@@ -222,14 +227,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+          balance: Number(latestWallet?.balance || 0) + prizeValue,
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: Number(game.prize_amount),
+        amount: prizeValue,
         status: "completed",
         reference: game.slug,
       });
@@ -239,18 +244,20 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: won ? 1 : 0,
-      prize_amount: won ? Number(game.prize_amount) : 0,
+      prize_amount: won ? prizeValue : 0,
       won,
     });
 
     setMessage(
       won
-        ? `The wheel landed on WIN. You won ₵${Number(game.prize_amount).toFixed(2)}!`
-        : "The wheel landed on LOSE. Try again."
+        ? `🏆 Congratulations! You won ${result}.`
+        : result === "FREE SPIN"
+        ? "🎡 You won a Free Spin! Spin again without wallet deduction."
+        : `The wheel landed on ${result}. Try again.`
     );
 
     setSpinningWheel(false);
-    setWheelDone(true);
+    setWheelDone(result !== "FREE SPIN");
   }
 
   async function startScratchGame() {
@@ -433,7 +440,7 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: Number(game.prize_amount),
+        amount: prizeValue,
         status: "completed",
         reference: game.slug,
       });
@@ -443,7 +450,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: result,
-      prize_amount: won ? Number(game.prize_amount) : 0,
+      prize_amount: won ? prizeValue : 0,
       won,
     });
 
@@ -553,14 +560,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+          balance: Number(latestWallet?.balance || 0) + prizeValue,
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: Number(game.prize_amount),
+        amount: prizeValue,
         status: "completed",
         reference: game.slug,
       });
@@ -570,7 +577,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: result,
-      prize_amount: won ? Number(game.prize_amount) : 0,
+      prize_amount: won ? prizeValue : 0,
       won,
     });
 
@@ -677,14 +684,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+          balance: Number(latestWallet?.balance || 0) + prizeValue,
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: Number(game.prize_amount),
+        amount: prizeValue,
         status: "completed",
         reference: game.slug,
       });
@@ -694,7 +701,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: dice,
-      prize_amount: won ? Number(game.prize_amount) : 0,
+      prize_amount: won ? prizeValue : 0,
       won,
     });
 
@@ -748,7 +755,7 @@ export default function GamePage({ params }: GamePageProps) {
         await supabase.from("wallet_transactions").insert({
           user_id: user.id,
           type: "game_win",
-          amount: Number(game.prize_amount),
+          amount: prizeValue,
           status: "completed",
           reference: game.slug,
         });
@@ -758,7 +765,7 @@ export default function GamePage({ params }: GamePageProps) {
         user_id: user.id,
         game_slug: game.slug,
         score: finalScore,
-        prize_amount: won ? Number(game.prize_amount) : 0,
+        prize_amount: won ? prizeValue : 0,
         won,
       });
     }
@@ -812,7 +819,7 @@ export default function GamePage({ params }: GamePageProps) {
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
               <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className="mt-2 text-4xl font-black text-yellow-400">
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-4xl font-black text-green-400" : "mt-2 text-4xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
@@ -827,7 +834,7 @@ export default function GamePage({ params }: GamePageProps) {
           </button>
 
           {message && (
-            <p className="mt-6 rounded-xl bg-white/10 p-4">
+            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
           )}
@@ -839,6 +846,7 @@ export default function GamePage({ params }: GamePageProps) {
                   setWheelDone(false);
                   setWheelResult("");
                   setMessage("");
+                  setFreeSpin(false);
                 }}
                 className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
               >
@@ -1046,7 +1054,7 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           {message && (
-            <p className="mt-6 rounded-xl bg-white/10 p-4">
+            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
           )}
@@ -1094,7 +1102,7 @@ export default function GamePage({ params }: GamePageProps) {
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
               <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className="mt-2 text-4xl font-black text-yellow-400">
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-4xl font-black text-green-400" : "mt-2 text-4xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
@@ -1109,7 +1117,7 @@ export default function GamePage({ params }: GamePageProps) {
           </button>
 
           {message && (
-            <p className="mt-6 rounded-xl bg-white/10 p-4">
+            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
           )}
@@ -1121,6 +1129,7 @@ export default function GamePage({ params }: GamePageProps) {
                   setWheelDone(false);
                   setWheelResult("");
                   setMessage("");
+                  setFreeSpin(false);
                 }}
                 className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
               >
@@ -1328,7 +1337,7 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           {message && (
-            <p className="mt-6 rounded-xl bg-white/10 p-4">
+            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
           )}
