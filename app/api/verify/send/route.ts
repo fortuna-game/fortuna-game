@@ -17,7 +17,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing SMS credentials" }, { status: 500 });
     }
 
-    const cleanPhone = phone.replace(/\D/g, "");
+    let cleanPhone = phone.replace(/\D/g, "");
+
+    if (cleanPhone.startsWith("0")) {
+      cleanPhone = "233" + cleanPhone.substring(1);
+    }
     const code = Math.floor(100000 + Math.random() * 900000).toString();
 
     const text = `Your Fortuna Play verification code is ${code}. It expires in 10 minutes.`;
