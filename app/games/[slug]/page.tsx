@@ -40,6 +40,9 @@ export default function GamePage({ params }: GamePageProps) {
   const [luckyPick, setLuckyPick] = useState<number | null>(null);
   const [luckyResult, setLuckyResult] = useState<number | null>(null);
   const [drawingLucky, setDrawingLucky] = useState(false);
+  const [numberPick, setNumberPick] = useState<number | null>(null);
+  const [numberResult, setNumberResult] = useState<number | null>(null);
+  const [drawingNumber, setDrawingNumber] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -114,6 +117,99 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
 
+
+
+  async function playNumberDraw() {
+    if (!game || drawingNumber || !numberPick) return;
+
+    setDrawingNumber(true);
+    setNumberResult(null);
+    setMessage("");
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      setDrawingNumber(false);
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance.");
+      setDrawingNumber(false);
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const result = Math.floor(Math.random() * 20) + 1;
+    const won = result === numberPick;
+
+    setNumberResult(result);
+
+    if (won) {
+      const { data: latestWallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance:
+            Number(latestWallet?.balance || 0) +
+            Number(game.prize_amount),
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: Number(game.prize_amount),
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: result,
+      prize_amount: won ? Number(game.prize_amount) : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `Winning number ${result}! You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : `Winning number was ${result}. You selected ${numberPick}.`
+    );
+
+    setDrawingNumber(false);
+    setNumberPick(null);
+  }
 
   async function playLuckyDraw() {
     if (!game || drawingLucky) return;
@@ -434,6 +530,91 @@ export default function GamePage({ params }: GamePageProps) {
 
   if (!game) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
+  }
+
+  if (slug === "number-draw") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+
+          <h1 className="text-5xl font-black text-yellow-400">
+            {game.name}
+          </h1>
+
+          <p className="mt-4 text-white/60">
+            Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}
+          </p>
+
+          <p className="mt-2 text-green-400">
+            Prize: ₵{Number(game.prize_amount).toFixed(2)}
+          </p>
+
+          <p className="mt-6 text-white/60">
+            Choose one number from 1 to 20.
+          </p>
+
+          <div className="mt-6 grid grid-cols-5 gap-3 sm:grid-cols-10">
+            {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                disabled={drawingNumber}
+                onClick={() => {
+                  setNumberPick(n);
+                  setNumberResult(null);
+                  setMessage("");
+                }}
+                className={`flex aspect-square items-center justify-center rounded-full border font-black ${
+                  numberPick === n
+                    ? "border-yellow-300 bg-yellow-400 text-black"
+                    : "border-white/20 bg-white/5"
+                }`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+
+          {numberPick && !drawingNumber && (
+            <p className="mt-5 font-bold text-yellow-300">
+              Selected Number: {numberPick}
+            </p>
+          )}
+
+          <button
+            disabled={!numberPick || drawingNumber}
+            onClick={() => void playNumberDraw()}
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
+          >
+            {drawingNumber ? "Drawing..." : "Start Number Draw"}
+          </button>
+
+          {drawingNumber && (
+            <div className="mx-auto mt-8 flex h-28 w-28 animate-spin items-center justify-center rounded-full border-4 border-yellow-400 text-5xl">
+              🔢
+            </div>
+          )}
+
+          {numberResult !== null && !drawingNumber && (
+            <div className="mx-auto mt-8 flex h-28 w-28 animate-bounce items-center justify-center rounded-full bg-yellow-400 text-5xl font-black text-black">
+              {numberResult}
+            </div>
+          )}
+
+          {message && (
+            <p className="mt-6 rounded-xl bg-white/10 p-4">
+              {message}
+            </p>
+          )}
+
+          <Link
+            href="/games"
+            className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
+          >
+            Back to Games
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   if (slug === "lucky-draw") {
