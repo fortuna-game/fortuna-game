@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default function WalletPage() {
-  const searchParams = useSearchParams();
-  const paymentSuccess = searchParams.get("payment") === "success";
+  const paymentSuccess =
+    typeof window !== "undefined" &&
+    window.location.search.includes("payment=success");
   const [balance, setBalance] = useState("0.00");
   const [verifying, setVerifying] = useState(false);
   const [username, setUsername] = useState("");
