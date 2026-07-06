@@ -35,6 +35,7 @@ export default function GamePage({ params }: GamePageProps) {
   const [message, setMessage] = useState("");
   const [rolling, setRolling] = useState(false);
   const [diceResult, setDiceResult] = useState<number | null>(null);
+  const [chosenDice, setChosenDice] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadGame() {
@@ -112,9 +113,33 @@ export default function GamePage({ params }: GamePageProps) {
   async function playDiceRoll() {
     if (!game || rolling) return;
 
+    if (!chosenDice) {
+      setMessage("Please choose the dice side you want to roll first.");
+      return;
+    }
+
     setMessage("");
     setDiceResult(null);
     setRolling(true);
+
+    try {
+      const audioContext = new AudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.frequency.value = 220;
+      gain.gain.value = 0.08;
+
+      oscillator.start();
+
+      setTimeout(() => {
+        oscillator.stop();
+        void audioContext.close();
+      }, 350);
+    } catch {}
 
     const {
       data: { user },
@@ -151,16 +176,10 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
-    try {
-      const audio = new Audio("/dice-roll.mp3");
-      audio.volume = 0.6;
-      void audio.play();
-    } catch {}
-
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, 4000));
 
     const dice = Math.floor(Math.random() * 6) + 1;
-    const won = dice === 6;
+    const won = dice === chosenDice;
 
     setDiceResult(dice);
 
@@ -197,8 +216,8 @@ export default function GamePage({ params }: GamePageProps) {
 
     setMessage(
       won
-        ? `You rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
-        : `You rolled ${dice}. You did not win this round. Roll 6 to win.`
+        ? `You chose ${chosenDice} and rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : `You chose ${chosenDice} but rolled ${dice}. You did not win this round.`
     );
 
     setRolling(false);
@@ -286,10 +305,29 @@ export default function GamePage({ params }: GamePageProps) {
           <h1 className="mt-4 text-5xl font-black text-yellow-400">{game.name}</h1>
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
-          <p className="mt-6 text-white/60">Roll a 6 to win the prize.</p>
+          <p className="mt-6 text-white/60">
+            Choose the dice side you want. If the roll lands on your chosen side, you win.
+          </p>
+
+          <div className="mt-6 grid grid-cols-3 gap-3 sm:grid-cols-6">
+            {[1, 2, 3, 4, 5, 6].map((side) => (
+              <button
+                key={side}
+                disabled={rolling}
+                onClick={() => setChosenDice(side)}
+                className={`rounded-2xl border p-4 text-2xl font-black ${
+                  chosenDice === side
+                    ? "border-yellow-400 bg-yellow-400 text-black"
+                    : "border-white/10 bg-white/5 text-white"
+                } disabled:opacity-50`}
+              >
+                {side}
+              </button>
+            ))}
+          </div>
 
           <button
-            disabled={rolling}
+            disabled={rolling || !chosenDice}
             onClick={() => void playDiceRoll()}
             className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
           >
