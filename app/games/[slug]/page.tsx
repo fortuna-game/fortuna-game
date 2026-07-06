@@ -242,9 +242,9 @@ export default function GamePage({ params }: GamePageProps) {
     } catch {}
 
     setScratchPercent((current) => {
-      const next = Math.min(current + 0.35, 100);
+      const next = Math.min(current + 0.08, 100);
 
-      if (next >= 90) {
+      if (next >= 99) {
         setTimeout(() => void finishScratchGame(), 100);
       }
 
@@ -724,7 +724,7 @@ export default function GamePage({ params }: GamePageProps) {
                   <div
                     className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
                     style={{
-                      opacity: Math.max(0, 1 - scratchPercent / 90),
+                      opacity: scratchFinished ? 0 : 1,
                     }}
                   >
                     {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
@@ -916,7 +916,7 @@ export default function GamePage({ params }: GamePageProps) {
                   <div
                     className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
                     style={{
-                      opacity: Math.max(0, 1 - scratchPercent / 90),
+                      opacity: scratchFinished ? 0 : 1,
                     }}
                   >
                     {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
