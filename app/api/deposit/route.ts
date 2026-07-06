@@ -12,7 +12,12 @@ export async function POST(req: Request) {
     const clientId = process.env.HUBTEL_CLIENT_ID;
     const clientSecret = process.env.HUBTEL_CLIENT_SECRET;
     const merchantAccount = process.env.HUBTEL_MERCHANT_ACCOUNT;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+    const origin = req.headers.get("origin");
+    const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    const siteUrl =
+      envSiteUrl && !envSiteUrl.includes("localhost")
+        ? envSiteUrl
+        : origin || "http://localhost:3000";
 
     if (!clientId || !clientSecret || !merchantAccount) {
       return NextResponse.json({ error: "Missing Hubtel credentials" }, { status: 500 });
@@ -34,7 +39,7 @@ export async function POST(req: Request) {
           totalAmount: Number(amount),
           description: "Fortuna Play Wallet Deposit",
           callbackUrl: `${siteUrl}/api/deposit/callback`,
-          returnUrl: `${siteUrl}/wallet`,
+          returnUrl: `${siteUrl}/wallet?payment=success`,
           cancellationUrl: `${siteUrl}/wallet/deposit`,
           merchantAccountNumber: merchantAccount,
           clientReference: reference,
