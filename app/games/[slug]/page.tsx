@@ -43,9 +43,19 @@ export default function GamePage({ params }: GamePageProps) {
   const [numberPick, setNumberPick] = useState<number | null>(null);
   const [numberResult, setNumberResult] = useState<number | null>(null);
   const [drawingNumber, setDrawingNumber] = useState(false);
+  const [scratchStarted, setScratchStarted] = useState(false);
+  const [scratchFinished, setScratchFinished] = useState(false);
+  const [scratchPrize, setScratchPrize] = useState(0);
+  const [scratchPercent, setScratchPercent] = useState(0);
+  const [scratching, setScratching] = useState(false);
   const [numberPick, setNumberPick] = useState<number | null>(null);
   const [numberResult, setNumberResult] = useState<number | null>(null);
   const [drawingNumber, setDrawingNumber] = useState(false);
+  const [scratchStarted, setScratchStarted] = useState(false);
+  const [scratchFinished, setScratchFinished] = useState(false);
+  const [scratchPrize, setScratchPrize] = useState(0);
+  const [scratchPercent, setScratchPercent] = useState(0);
+  const [scratching, setScratching] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -121,6 +131,136 @@ export default function GamePage({ params }: GamePageProps) {
 
 
 
+
+
+  async function startScratchGame() {
+    if (!game || scratchStarted) return;
+
+    setMessage("");
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance. Please deposit funds.");
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    const won = Math.random() < 0.2;
+    const prize = won ? Number(game.prize_amount) : 0;
+
+    setScratchPrize(prize);
+    setScratchPercent(0);
+    setScratchFinished(false);
+    setScratchStarted(true);
+  }
+
+  async function finishScratchGame() {
+    if (!game || scratchFinished) return;
+
+    setScratchFinished(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const won = scratchPrize > 0;
+
+    if (won) {
+      const { data: wallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance: Number(wallet?.balance || 0) + scratchPrize,
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: scratchPrize,
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: won ? 1 : 0,
+      prize_amount: won ? scratchPrize : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `Congratulations! You won ₵${scratchPrize.toFixed(2)}!`
+        : "No prize this time. Try again."
+    );
+  }
+
+  function handleScratch() {
+    if (!scratchStarted || scratchFinished) return;
+
+    setScratching(true);
+
+    try {
+      const audioContext = new AudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.type = "sawtooth";
+      oscillator.frequency.value = 90 + Math.random() * 80;
+      gain.gain.value = 0.025;
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.08);
+    } catch {}
+
+    setScratchPercent((current) => {
+      const next = Math.min(current + 4, 100);
+
+      if (next >= 75) {
+        setTimeout(() => void finishScratchGame(), 100);
+      }
+
+      return next;
+    });
+
+    setTimeout(() => setScratching(false), 100);
+  }
 
   async function playNumberDraw() {
     if (!game || drawingNumber || !numberPick) return;
@@ -214,6 +354,136 @@ export default function GamePage({ params }: GamePageProps) {
     setNumberPick(null);
   }
 
+
+
+  async function startScratchGame() {
+    if (!game || scratchStarted) return;
+
+    setMessage("");
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance. Please deposit funds.");
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    const won = Math.random() < 0.2;
+    const prize = won ? Number(game.prize_amount) : 0;
+
+    setScratchPrize(prize);
+    setScratchPercent(0);
+    setScratchFinished(false);
+    setScratchStarted(true);
+  }
+
+  async function finishScratchGame() {
+    if (!game || scratchFinished) return;
+
+    setScratchFinished(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const won = scratchPrize > 0;
+
+    if (won) {
+      const { data: wallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance: Number(wallet?.balance || 0) + scratchPrize,
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: scratchPrize,
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: won ? 1 : 0,
+      prize_amount: won ? scratchPrize : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `Congratulations! You won ₵${scratchPrize.toFixed(2)}!`
+        : "No prize this time. Try again."
+    );
+  }
+
+  function handleScratch() {
+    if (!scratchStarted || scratchFinished) return;
+
+    setScratching(true);
+
+    try {
+      const audioContext = new AudioContext();
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.type = "sawtooth";
+      oscillator.frequency.value = 90 + Math.random() * 80;
+      gain.gain.value = 0.025;
+
+      oscillator.start();
+      oscillator.stop(audioContext.currentTime + 0.08);
+    } catch {}
+
+    setScratchPercent((current) => {
+      const next = Math.min(current + 4, 100);
+
+      if (next >= 75) {
+        setTimeout(() => void finishScratchGame(), 100);
+      }
+
+      return next;
+    });
+
+    setTimeout(() => setScratching(false), 100);
+  }
 
   async function playNumberDraw() {
     if (!game || drawingNumber || !numberPick) return;
@@ -628,6 +898,109 @@ export default function GamePage({ params }: GamePageProps) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
   }
 
+  if (slug === "scratch-win") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+
+          <h1 className="text-5xl font-black text-yellow-400">
+            Scratch & Win
+          </h1>
+
+          <p className="mt-4 text-white/60">
+            Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}
+          </p>
+
+          <p className="mt-2 text-green-400">
+            Win up to ₵{Number(game.prize_amount).toFixed(2)}
+          </p>
+
+          {!scratchStarted && (
+            <button
+              onClick={() => void startScratchGame()}
+              className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black"
+            >
+              Start Scratch Game
+            </button>
+          )}
+
+          {scratchStarted && (
+            <div className="mt-10">
+              <p className="mb-4 text-white/60">
+                Scratch the card until the prize is revealed.
+              </p>
+
+              <div
+                onMouseMove={(e) => {
+                  if (e.buttons === 1) handleScratch();
+                }}
+                onTouchMove={() => handleScratch()}
+                className="relative mx-auto flex h-56 max-w-md cursor-crosshair select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
+              >
+                <div className="text-center">
+                  <p className="text-xl font-black text-black">
+                    YOUR RESULT
+                  </p>
+
+                  <p className="mt-3 text-5xl font-black text-black">
+                    {scratchPrize > 0
+                      ? `₵${scratchPrize.toFixed(2)}`
+                      : "TRY AGAIN"}
+                  </p>
+                </div>
+
+                {!scratchFinished && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
+                    style={{
+                      opacity: Math.max(0, 1 - scratchPercent / 75),
+                    }}
+                  >
+                    {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
+                  </div>
+                )}
+              </div>
+
+              {!scratchFinished && (
+                <p className="mt-4 text-sm text-white/50">
+                  Scratch progress: {scratchPercent}%
+                </p>
+              )}
+
+              {message && (
+                <p className="mt-6 rounded-xl bg-white/10 p-4">
+                  {message}
+                </p>
+              )}
+
+              {scratchFinished && (
+                <button
+                  onClick={() => {
+                    setScratchStarted(false);
+                    setScratchFinished(false);
+                    setScratchPercent(0);
+                    setScratchPrize(0);
+                    setMessage("");
+                  }}
+                  className="mt-6 rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                >
+                  Play Again
+                </button>
+              )}
+            </div>
+          )}
+
+          <Link
+            href="/games"
+            className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
+          >
+            Back to Games
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   if (slug === "number-draw") {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
@@ -700,6 +1073,109 @@ export default function GamePage({ params }: GamePageProps) {
             <p className="mt-6 rounded-xl bg-white/10 p-4">
               {message}
             </p>
+          )}
+
+          <Link
+            href="/games"
+            className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
+          >
+            Back to Games
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (slug === "scratch-win") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+
+          <h1 className="text-5xl font-black text-yellow-400">
+            Scratch & Win
+          </h1>
+
+          <p className="mt-4 text-white/60">
+            Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}
+          </p>
+
+          <p className="mt-2 text-green-400">
+            Win up to ₵{Number(game.prize_amount).toFixed(2)}
+          </p>
+
+          {!scratchStarted && (
+            <button
+              onClick={() => void startScratchGame()}
+              className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black"
+            >
+              Start Scratch Game
+            </button>
+          )}
+
+          {scratchStarted && (
+            <div className="mt-10">
+              <p className="mb-4 text-white/60">
+                Scratch the card until the prize is revealed.
+              </p>
+
+              <div
+                onMouseMove={(e) => {
+                  if (e.buttons === 1) handleScratch();
+                }}
+                onTouchMove={() => handleScratch()}
+                className="relative mx-auto flex h-56 max-w-md cursor-crosshair select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
+              >
+                <div className="text-center">
+                  <p className="text-xl font-black text-black">
+                    YOUR RESULT
+                  </p>
+
+                  <p className="mt-3 text-5xl font-black text-black">
+                    {scratchPrize > 0
+                      ? `₵${scratchPrize.toFixed(2)}`
+                      : "TRY AGAIN"}
+                  </p>
+                </div>
+
+                {!scratchFinished && (
+                  <div
+                    className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
+                    style={{
+                      opacity: Math.max(0, 1 - scratchPercent / 75),
+                    }}
+                  >
+                    {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
+                  </div>
+                )}
+              </div>
+
+              {!scratchFinished && (
+                <p className="mt-4 text-sm text-white/50">
+                  Scratch progress: {scratchPercent}%
+                </p>
+              )}
+
+              {message && (
+                <p className="mt-6 rounded-xl bg-white/10 p-4">
+                  {message}
+                </p>
+              )}
+
+              {scratchFinished && (
+                <button
+                  onClick={() => {
+                    setScratchStarted(false);
+                    setScratchFinished(false);
+                    setScratchPercent(0);
+                    setScratchPrize(0);
+                    setMessage("");
+                  }}
+                  className="mt-6 rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                >
+                  Play Again
+                </button>
+              )}
+            </div>
           )}
 
           <Link
