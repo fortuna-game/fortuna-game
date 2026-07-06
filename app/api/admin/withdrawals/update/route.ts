@@ -69,7 +69,6 @@ export async function POST(req: Request) {
           status: "failed",
           processed_at: now,
           refunded_at: now,
-          failure_reason: "Payment failed. Wallet refunded.",
           admin_note: "Payment failed and wallet refunded",
         })
         .eq("id", id)
