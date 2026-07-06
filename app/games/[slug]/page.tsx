@@ -227,14 +227,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + prizeValue,
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: prizeValue,
+        amount: Number(game.prize_amount),
         status: "completed",
         reference: game.slug,
       });
@@ -244,7 +244,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: won ? 1 : 0,
-      prize_amount: won ? prizeValue : 0,
+      prize_amount: won ? Number(game.prize_amount) : 0,
       won,
     });
 
@@ -440,7 +440,7 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: prizeValue,
+        amount: Number(game.prize_amount),
         status: "completed",
         reference: game.slug,
       });
@@ -450,7 +450,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: result,
-      prize_amount: won ? prizeValue : 0,
+      prize_amount: won ? Number(game.prize_amount) : 0,
       won,
     });
 
@@ -560,14 +560,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + prizeValue,
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: prizeValue,
+        amount: Number(game.prize_amount),
         status: "completed",
         reference: game.slug,
       });
@@ -577,7 +577,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: result,
-      prize_amount: won ? prizeValue : 0,
+      prize_amount: won ? Number(game.prize_amount) : 0,
       won,
     });
 
@@ -684,14 +684,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + prizeValue,
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: prizeValue,
+        amount: Number(game.prize_amount),
         status: "completed",
         reference: game.slug,
       });
@@ -701,7 +701,7 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: dice,
-      prize_amount: won ? prizeValue : 0,
+      prize_amount: won ? Number(game.prize_amount) : 0,
       won,
     });
 
@@ -755,7 +755,7 @@ export default function GamePage({ params }: GamePageProps) {
         await supabase.from("wallet_transactions").insert({
           user_id: user.id,
           type: "game_win",
-          amount: prizeValue,
+          amount: Number(game.prize_amount),
           status: "completed",
           reference: game.slug,
         });
@@ -765,7 +765,7 @@ export default function GamePage({ params }: GamePageProps) {
         user_id: user.id,
         game_slug: game.slug,
         score: finalScore,
-        prize_amount: won ? prizeValue : 0,
+        prize_amount: won ? Number(game.prize_amount) : 0,
         won,
       });
     }
