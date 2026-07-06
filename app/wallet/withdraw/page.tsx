@@ -9,6 +9,7 @@ export default function WithdrawPage() {
   const [network, setNetwork] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   async function requestWithdrawal(e: React.FormEvent) {
     e.preventDefault();
@@ -45,6 +46,10 @@ export default function WithdrawPage() {
       }
 
       setMessage(data.message || data.error || "Withdrawal request finished.");
+
+      if (res.ok) {
+        setSubmitted(true);
+      }
     } catch {
       setMessage("Something went wrong. Please try again.");
     } finally {
@@ -95,11 +100,27 @@ export default function WithdrawPage() {
         </select>
 
         <button
-          disabled={loading}
+          disabled={loading || submitted}
           className="mt-5 w-full rounded-xl bg-green-500 py-4 font-black text-white disabled:opacity-60"
         >
-          {loading ? "Submitting..." : "Request Withdrawal"}
+          {submitted ? "Withdrawal Request Sent" : loading ? "Submitting..." : "Request Withdrawal"}
         </button>
+
+        {submitted && (
+          <button
+            type="button"
+            onClick={() => {
+              setSubmitted(false);
+              setAmount("");
+              setMomoNumber("");
+              setNetwork("");
+              setMessage("");
+            }}
+            className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 py-3 font-bold text-white"
+          >
+            Make Another Withdrawal
+          </button>
+        )}
 
         {message && (
           <p className="mt-5 whitespace-pre-line rounded-xl bg-white/10 p-4 text-sm text-white">
