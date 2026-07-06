@@ -15,31 +15,41 @@ export default function WithdrawPage() {
     setMessage("");
     setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
 
-    if (!user) {
-      setMessage("Please login first.");
+      if (!user) {
+        setMessage("Please login first.");
+        return;
+      }
+
+      const res = await fetch("/api/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id, amount, momoNumber, network }),
+      });
+
+      const text = await res.text();
+      let data: any = {};
+
+      try {
+        data = text ? JSON.parse(text) : {};
+      } catch {
+        data = { error: text };
+      }
+
+      setMessage(data.message || data.error || "Withdrawal request finished.");
+    } catch (error) {
+      console.error(error);
+      setMessage("Something went wrong. Please try again.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const res = await fetch("/api/withdraw", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId: user.id, amount, momoNumber, network }),
-    });
-
-    const data = await res.json();
-    setMessage(data.message || data.error || "Something happened.");
-    setLoading(false);
   }
 
   return (
     <main className="min-h-screen bg-black px-6 py-12 text-white">
-      <form
-        onSubmit={requestWithdrawal}
-        className="mx-auto max-w-xl rounded-3xl border border-red-400/20 bg-red-500/10 p-8"
-      >
+      <form onSubmit={requestWithdrawal} className="mx-auto max-w-xl rounded-3xl border border-red-400/20 bg-red-500/10 p-8">
         <h1 className="text-4xl font-black text-red-400">Withdraw</h1>
         <p className="mt-3 text-white/60">Withdraw winnings to your mobile money account.</p>
 
