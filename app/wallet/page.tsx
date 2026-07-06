@@ -9,6 +9,10 @@ export default function WalletPage() {
     typeof window !== "undefined" &&
     window.location.search.includes("payment=success");
 
+  const paymentFailed =
+    typeof window !== "undefined" &&
+    window.location.search.includes("payment=failed");
+
   const [balance, setBalance] = useState("0.00");
   const [verifying, setVerifying] = useState(false);
   const [username, setUsername] = useState("");
@@ -55,7 +59,13 @@ export default function WalletPage() {
 
         {verifying && (
           <div className="mt-5 rounded-xl border border-green-400/30 bg-green-500/10 p-4 text-green-300">
-            Verifying payment... your wallet will update shortly.
+            Deposit successful. Verifying payment... your wallet will update shortly.
+          </div>
+        )}
+
+        {paymentFailed && (
+          <div className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-red-300">
+            Transaction failed or was cancelled. Your wallet was not credited.
           </div>
         )}
 

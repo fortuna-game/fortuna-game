@@ -20,7 +20,10 @@ export async function POST(req: Request) {
       body?.Status;
 
     if (!reference) {
-      return NextResponse.json({ error: "No reference" }, { status: 400 });
+      return NextResponse.json(
+        { error: "No reference" },
+        { status: 400 }
+      );
     }
 
     const { data: deposit } = await supabaseAdmin
@@ -30,14 +33,32 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (!deposit) {
-      return NextResponse.json({ error: "Deposit not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Deposit not found" },
+        { status: 404 }
+      );
     }
 
-    if (deposit.status === "completed") {
+    if (
+      deposit.status === "completed" ||
+      deposit.status === "failed"
+    ) {
       return NextResponse.json({ success: true });
     }
 
-    if (String(status).toLowerCase().includes("success")) {
+    const normalizedStatus = String(status || "").toLowerCase();
+
+    const isSuccessful =
+      normalizedStatus.includes("success") ||
+      normalizedStatus.includes("completed");
+
+    const isFailed =
+      normalizedStatus.includes("failed") ||
+      normalizedStatus.includes("cancel") ||
+      normalizedStatus.includes("declined") ||
+      normalizedStatus.includes("expired");
+
+    if (isSuccessful) {
       const { data: wallet } = await supabaseAdmin
         .from("wallets")
         .select("balance")
@@ -45,7 +66,8 @@ export async function POST(req: Request) {
         .maybeSingle();
 
       const newBalance =
-        Number(wallet?.balance || 0) + Number(deposit.amount || 0);
+        Number(wallet?.balance || 0) +
+        Number(deposit.amount || 0);
 
       await supabaseAdmin
         .from("wallets")
@@ -57,18 +79,39 @@ export async function POST(req: Request) {
         .update({ status: "completed" })
         .eq("id", deposit.id);
 
-      await supabaseAdmin.from("wallet_transactions").insert({
-        user_id: deposit.user_id,
-        type: "deposit",
-        amount: Number(deposit.amount),
-        status: "completed",
-        reference,
-      });
+      await supabaseAdmin
+        .from("wallet_transactions")
+        .insert({
+          user_id: deposit.user_id,
+          type: "deposit",
+          amount: Number(deposit.amount),
+          status: "completed",
+          reference,
+        });
+    } else if (isFailed) {
+      await supabaseAdmin
+        .from("deposits")
+        .update({ status: "failed" })
+        .eq("id", deposit.id);
+
+      await supabaseAdmin
+        .from("wallet_transactions")
+        .insert({
+          user_id: deposit.user_id,
+          type: "deposit",
+          amount: Number(deposit.amount),
+          status: "failed",
+          reference,
+        });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("CALLBACK ERROR:", error);
-    return NextResponse.json({ error: "Callback failed" }, { status: 500 });
+
+    return NextResponse.json(
+      { error: "Callback failed" },
+      { status: 500 }
+    );
   }
 }
