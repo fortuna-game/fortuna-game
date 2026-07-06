@@ -56,16 +56,16 @@ export default function WithdrawPage() {
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <form
         onSubmit={requestWithdrawal}
-        className="mx-auto max-w-md rounded-3xl border border-red-400/20 bg-red-500/10 p-6"
+        className="mx-auto max-w-md rounded-3xl border border-green-400/20 bg-green-500/10 p-6"
       >
-        <h1 className="text-3xl font-black text-red-400">Withdraw</h1>
+        <h1 className="text-3xl font-black text-green-400">Withdraw</h1>
 
         <p className="mt-2 text-sm text-white/60">
-          Enter the correct Mobile Money number. Payment will be sent to this number after approval.
+          Withdraw your winnings securely to your Mobile Money account.
         </p>
 
         <div className="mt-5 rounded-xl border border-yellow-400/20 bg-yellow-400/10 p-3 text-sm text-yellow-200">
-          Please double-check your number and network before submitting. Wrong details may delay or fail payment.
+          Please ensure that the Mobile Money number and network provided are correct. Fortuna Play will not be responsible for payments sent to an incorrect number as a result of inaccurate information submitted by the user.
         </div>
 
         <input
@@ -96,7 +96,7 @@ export default function WithdrawPage() {
 
         <button
           disabled={loading}
-          className="mt-5 w-full rounded-xl bg-red-500 py-4 font-black text-white disabled:opacity-60"
+          className="mt-5 w-full rounded-xl bg-green-500 py-4 font-black text-white disabled:opacity-60"
         >
           {loading ? "Submitting..." : "Request Withdrawal"}
         </button>
