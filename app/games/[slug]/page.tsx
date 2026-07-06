@@ -224,23 +224,6 @@ export default function GamePage({ params }: GamePageProps) {
     if (!scratchStarted || scratchFinished) return;
 
     setScratching(true);
-
-    try {
-      const audioContext = new AudioContext();
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-
-      oscillator.connect(gain);
-      gain.connect(audioContext.destination);
-
-      oscillator.type = "sawtooth";
-      oscillator.frequency.value = 90 + Math.random() * 80;
-      gain.gain.value = 0.025;
-
-      oscillator.start();
-      oscillator.stop(audioContext.currentTime + 0.08);
-    } catch {}
-
     setScratchPercent((current) => {
       const next = Math.min(current + 0.08, 100);
 
