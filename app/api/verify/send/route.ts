@@ -19,11 +19,7 @@ export async function POST(req: Request) {
     let phoneNumber = phone.replace(/\D/g, "");
 
     if (phoneNumber.startsWith("0")) {
-      phoneNumber = phoneNumber.substring(1);
-    }
-
-    if (phoneNumber.startsWith("233")) {
-      phoneNumber = phoneNumber.substring(3);
+      phoneNumber = "233" + phoneNumber.substring(1);
     }
 
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
