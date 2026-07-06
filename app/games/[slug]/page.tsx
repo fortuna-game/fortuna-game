@@ -974,18 +974,28 @@ export default function GamePage({ params }: GamePageProps) {
               )}
 
               {scratchFinished && (
-                <button
-                  onClick={() => {
-                    setScratchStarted(false);
-                    setScratchFinished(false);
-                    setScratchPercent(0);
-                    setScratchPrize(0);
-                    setMessage("");
-                  }}
-                  className="mt-6 rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
-                >
-                  Play Again
-                </button>
+                <div className="mt-6 flex flex-wrap justify-center gap-4">
+                  <button
+                    onClick={() => {
+                      setScratchStarted(false);
+                      setScratchFinished(false);
+                      setScratchPercent(0);
+                      setScratchPrize(0);
+                      setMessage("");
+                      setScratching(false);
+                    }}
+                    className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                  >
+                    Play Again
+                  </button>
+
+                  <Link
+                    href="/games"
+                    className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white"
+                  >
+                    Go to Games
+                  </Link>
+                </div>
               )}
             </div>
           )}
@@ -1162,18 +1172,28 @@ export default function GamePage({ params }: GamePageProps) {
               )}
 
               {scratchFinished && (
-                <button
-                  onClick={() => {
-                    setScratchStarted(false);
-                    setScratchFinished(false);
-                    setScratchPercent(0);
-                    setScratchPrize(0);
-                    setMessage("");
-                  }}
-                  className="mt-6 rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
-                >
-                  Play Again
-                </button>
+                <div className="mt-6 flex flex-wrap justify-center gap-4">
+                  <button
+                    onClick={() => {
+                      setScratchStarted(false);
+                      setScratchFinished(false);
+                      setScratchPercent(0);
+                      setScratchPrize(0);
+                      setMessage("");
+                      setScratching(false);
+                    }}
+                    className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                  >
+                    Play Again
+                  </button>
+
+                  <Link
+                    href="/games"
+                    className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white"
+                  >
+                    Go to Games
+                  </Link>
+                </div>
               )}
             </div>
           )}
