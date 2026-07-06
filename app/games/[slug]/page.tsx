@@ -1004,7 +1004,7 @@ export default function GamePage({ params }: GamePageProps) {
             href="/games"
             className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
           >
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1089,7 +1089,7 @@ export default function GamePage({ params }: GamePageProps) {
             href="/games"
             className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
           >
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1202,7 +1202,7 @@ export default function GamePage({ params }: GamePageProps) {
             href="/games"
             className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
           >
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1287,7 +1287,7 @@ export default function GamePage({ params }: GamePageProps) {
             href="/games"
             className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold"
           >
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1368,7 +1368,7 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           <Link href="/games" className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold">
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1436,7 +1436,7 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           <Link href="/games" className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold">
-            Back to Games
+            Go to Games
           </Link>
         </div>
       </main>
@@ -1451,7 +1451,7 @@ export default function GamePage({ params }: GamePageProps) {
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
           <p className="mt-10 text-white/60">This game will be available soon.</p>
-          <Link href="/games" className="mt-8 inline-block rounded-full bg-yellow-400 px-8 py-4 font-black text-black">Back to Games</Link>
+          <Link href="/games" className="mt-8 inline-block rounded-full bg-yellow-400 px-8 py-4 font-black text-black">Go to Games</Link>
         </div>
       </main>
     );
@@ -1505,9 +1505,18 @@ export default function GamePage({ params }: GamePageProps) {
             <p className={score >= 4 ? "mt-3 text-green-400" : "mt-3 text-red-300"}>
               {score >= 4 ? `You won ₵${Number(game.prize_amount).toFixed(2)}!` : "You did not win this round."}
             </p>
-            <Link href="/games" className="mt-8 inline-block rounded-full bg-yellow-400 px-8 py-4 font-black text-black">
-              Back to Games
-            </Link>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <button
+                onClick={() => window.location.reload()}
+                className="rounded-full bg-yellow-400 px-8 py-4 font-black text-black"
+              >
+                Play Again
+              </button>
+
+              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-8 py-4 font-bold text-white">
+                Go to Games
+              </Link>
+            </div>
           </div>
         )}
       </div>
