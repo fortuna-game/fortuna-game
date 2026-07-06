@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default function WalletPage() {
+  const searchParams = useSearchParams();
+  const paymentSuccess = searchParams.get("payment") === "success";
   const [balance, setBalance] = useState("0.00");
+  const [verifying, setVerifying] = useState(false);
   const [username, setUsername] = useState("");
 
   useEffect(() => {
@@ -33,7 +37,18 @@ export default function WalletPage() {
     }
 
     void loadWallet();
-  }, []);
+
+    if (paymentSuccess) {
+      setVerifying(true);
+
+      const timer = setTimeout(() => {
+        void loadWallet();
+        setVerifying(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [paymentSuccess]);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -46,6 +61,12 @@ export default function WalletPage() {
         <p className="mt-2 text-white/60">
           @{username}
         </p>
+
+        {verifying && (
+          <div className="mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 text-green-300">
+            Verifying payment... your wallet will update shortly.
+          </div>
+        )}
 
         <div className="mt-10 rounded-3xl border border-yellow-400/20 bg-gradient-to-r from-yellow-500/10 via-black to-purple-900/20 p-10">
 
