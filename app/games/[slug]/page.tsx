@@ -151,7 +151,13 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 1200));
+    try {
+      const audio = new Audio("/dice-roll.mp3");
+      audio.volume = 0.6;
+      void audio.play();
+    } catch {}
+
+    await new Promise((resolve) => setTimeout(resolve, 2500));
 
     const dice = Math.floor(Math.random() * 6) + 1;
     const won = dice === 6;
@@ -265,7 +271,7 @@ export default function GamePage({ params }: GamePageProps) {
       <main className="min-h-screen bg-black px-6 py-12 text-white">
         <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
           <div
-            className={`text-8xl transition-transform ${
+            className={`text-9xl transition-transform ${
               rolling ? "animate-spin" : ""
             }`}
           >
