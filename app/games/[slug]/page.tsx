@@ -51,6 +51,7 @@ export default function GamePage({ params }: GamePageProps) {
   const [spinningWheel, setSpinningWheel] = useState(false);
   const [wheelResult, setWheelResult] = useState("");
   const [wheelDone, setWheelDone] = useState(false);
+  const [wheelRotation, setWheelRotation] = useState(0);
 
   useEffect(() => {
     async function loadGame() {
@@ -171,7 +172,39 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    let wheelAudioContext: AudioContext | null = null;
+    let wheelSoundTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      wheelAudioContext = new AudioContext();
+
+      wheelSoundTimer = setInterval(() => {
+        if (!wheelAudioContext) return;
+
+        const oscillator = wheelAudioContext.createOscillator();
+        const gain = wheelAudioContext.createGain();
+
+        oscillator.connect(gain);
+        gain.connect(wheelAudioContext.destination);
+
+        oscillator.type = "square";
+        oscillator.frequency.value = 180 + Math.random() * 100;
+        gain.gain.value = 0.025;
+
+        oscillator.start();
+        oscillator.stop(wheelAudioContext.currentTime + 0.04);
+      }, 90);
+    } catch {}
+
+    setWheelRotation((current) => current + 3600 + Math.floor(Math.random() * 360));
+
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+
+    if (wheelSoundTimer) clearInterval(wheelSoundTimer);
+
+    if (wheelAudioContext) {
+      await wheelAudioContext.close();
+    }
 
     const outcomes = ["WIN", "LOSE", "LOSE", "LOSE", "WIN", "LOSE"];
     const result = outcomes[Math.floor(Math.random() * outcomes.length)];
@@ -756,13 +789,34 @@ export default function GamePage({ params }: GamePageProps) {
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
 
-          <div className="relative mx-auto mt-10 flex h-72 w-72 items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl">
-            <div className={`absolute inset-4 rounded-full border-4 border-black/40 ${spinningWheel ? "animate-spin" : ""}`} style={{ animationDuration: "0.35s" }}></div>
+          <div className="relative mx-auto mt-10 h-80 w-80">
+            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-4xl text-yellow-400">
+              ▼
+            </div>
 
-            <div className="z-10 rounded-full bg-black px-6 py-4 text-2xl font-black text-yellow-400">
-              {wheelResult || "SPIN"}
+            <div
+              className="absolute inset-0 flex items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
+              style={{
+                transform: `rotate(${wheelRotation}deg)`,
+                transition: spinningWheel
+                  ? "transform 6s cubic-bezier(0.12, 0.8, 0.18, 1)"
+                  : "none",
+              }}
+            >
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+                FORTUNA
+              </div>
             </div>
           </div>
+
+          {wheelResult && !spinningWheel && (
+            <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
+              <p className="text-sm text-white/60">WHEEL RESULT</p>
+              <p className="mt-2 text-4xl font-black text-yellow-400">
+                {wheelResult}
+              </p>
+            </div>
+          )}
 
           <button
             disabled={spinningWheel || wheelDone}
@@ -1017,13 +1071,34 @@ export default function GamePage({ params }: GamePageProps) {
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
 
-          <div className="relative mx-auto mt-10 flex h-72 w-72 items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl">
-            <div className={`absolute inset-4 rounded-full border-4 border-black/40 ${spinningWheel ? "animate-spin" : ""}`} style={{ animationDuration: "0.35s" }}></div>
+          <div className="relative mx-auto mt-10 h-80 w-80">
+            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-4xl text-yellow-400">
+              ▼
+            </div>
 
-            <div className="z-10 rounded-full bg-black px-6 py-4 text-2xl font-black text-yellow-400">
-              {wheelResult || "SPIN"}
+            <div
+              className="absolute inset-0 flex items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
+              style={{
+                transform: `rotate(${wheelRotation}deg)`,
+                transition: spinningWheel
+                  ? "transform 6s cubic-bezier(0.12, 0.8, 0.18, 1)"
+                  : "none",
+              }}
+            >
+              <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+                FORTUNA
+              </div>
             </div>
           </div>
+
+          {wheelResult && !spinningWheel && (
+            <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
+              <p className="text-sm text-white/60">WHEEL RESULT</p>
+              <p className="mt-2 text-4xl font-black text-yellow-400">
+                {wheelResult}
+              </p>
+            </div>
+          )}
 
           <button
             disabled={spinningWheel || wheelDone}
