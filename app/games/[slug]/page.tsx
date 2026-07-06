@@ -48,6 +48,9 @@ export default function GamePage({ params }: GamePageProps) {
   const [scratchPrize, setScratchPrize] = useState(0);
   const [scratchPercent, setScratchPercent] = useState(0);
   const [scratching, setScratching] = useState(false);
+  const [spinningWheel, setSpinningWheel] = useState(false);
+  const [wheelResult, setWheelResult] = useState("");
+  const [wheelDone, setWheelDone] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -124,6 +127,98 @@ export default function GamePage({ params }: GamePageProps) {
 
 
 
+
+
+  async function playSpinWheel() {
+    if (!game || spinningWheel || wheelDone) return;
+
+    setMessage("");
+    setWheelResult("");
+    setSpinningWheel(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      setSpinningWheel(false);
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance. Please deposit funds.");
+      setSpinningWheel(false);
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    const outcomes = ["WIN", "LOSE", "LOSE", "LOSE", "WIN", "LOSE"];
+    const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+    const won = result === "WIN";
+
+    setWheelResult(result);
+
+    if (won) {
+      const { data: latestWallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: Number(game.prize_amount),
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: won ? 1 : 0,
+      prize_amount: won ? Number(game.prize_amount) : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `The wheel landed on WIN. You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : "The wheel landed on LOSE. Try again."
+    );
+
+    setSpinningWheel(false);
+    setWheelDone(true);
+  }
 
   async function startScratchGame() {
     if (!game || scratchStarted) return;
@@ -652,6 +747,60 @@ export default function GamePage({ params }: GamePageProps) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
   }
 
+  if (slug === "spin-wheel") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+          <h1 className="text-5xl font-black text-yellow-400">{game.name}</h1>
+
+          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+
+          <div className="relative mx-auto mt-10 flex h-72 w-72 items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl">
+            <div className={`absolute inset-4 rounded-full border-4 border-black/40 ${spinningWheel ? "animate-spin" : ""}`} style={{ animationDuration: "0.35s" }}></div>
+
+            <div className="z-10 rounded-full bg-black px-6 py-4 text-2xl font-black text-yellow-400">
+              {wheelResult || "SPIN"}
+            </div>
+          </div>
+
+          <button
+            disabled={spinningWheel || wheelDone}
+            onClick={() => void playSpinWheel()}
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
+          >
+            {spinningWheel ? "Spinning..." : wheelDone ? "Spin Completed" : "Spin Wheel"}
+          </button>
+
+          {message && (
+            <p className="mt-6 rounded-xl bg-white/10 p-4">
+              {message}
+            </p>
+          )}
+
+          {wheelDone && (
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <button
+                onClick={() => {
+                  setWheelDone(false);
+                  setWheelResult("");
+                  setMessage("");
+                }}
+                className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+              >
+                Play Again
+              </button>
+
+              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white">
+                Go to Games
+              </Link>
+            </div>
+          )}
+        </div>
+      </main>
+    );
+  }
+
   if (slug === "scratch-win") {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
@@ -854,6 +1003,60 @@ export default function GamePage({ params }: GamePageProps) {
           >
             Go to Games
           </Link>
+        </div>
+      </main>
+    );
+  }
+
+  if (slug === "spin-wheel") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+          <h1 className="text-5xl font-black text-yellow-400">{game.name}</h1>
+
+          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+
+          <div className="relative mx-auto mt-10 flex h-72 w-72 items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl">
+            <div className={`absolute inset-4 rounded-full border-4 border-black/40 ${spinningWheel ? "animate-spin" : ""}`} style={{ animationDuration: "0.35s" }}></div>
+
+            <div className="z-10 rounded-full bg-black px-6 py-4 text-2xl font-black text-yellow-400">
+              {wheelResult || "SPIN"}
+            </div>
+          </div>
+
+          <button
+            disabled={spinningWheel || wheelDone}
+            onClick={() => void playSpinWheel()}
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
+          >
+            {spinningWheel ? "Spinning..." : wheelDone ? "Spin Completed" : "Spin Wheel"}
+          </button>
+
+          {message && (
+            <p className="mt-6 rounded-xl bg-white/10 p-4">
+              {message}
+            </p>
+          )}
+
+          {wheelDone && (
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
+              <button
+                onClick={() => {
+                  setWheelDone(false);
+                  setWheelResult("");
+                  setMessage("");
+                }}
+                className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+              >
+                Play Again
+              </button>
+
+              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white">
+                Go to Games
+              </Link>
+            </div>
+          )}
         </div>
       </main>
     );
