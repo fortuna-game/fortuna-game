@@ -17,15 +17,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing SMS credentials" }, { status: 500 });
     }
 
+    const cleanPhone = phone.replace(/\D/g, "");
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-
-    await supabaseAdmin.from("verification_codes").insert({
-      user_id: userId,
-      phone,
-      code,
-      purpose: "verification",
-      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
-    });
 
     const text = `Your Fortuna Play verification code is ${code}. It expires in 10 minutes.`;
 
@@ -34,17 +27,31 @@ export async function POST(req: Request) {
       `clientsecret=${encodeURIComponent(clientSecret)}` +
       `&clientid=${encodeURIComponent(clientId)}` +
       `&from=${encodeURIComponent(sender)}` +
-      `&to=${encodeURIComponent(phone)}` +
+      `&to=${encodeURIComponent(cleanPhone)}` +
       `&content=${encodeURIComponent(text)}`;
 
     const response = await fetch(url);
     const raw = await response.text();
 
-    if (!response.ok) {
+    console.log("HUBTEL SMS STATUS:", response.status);
+    console.log("HUBTEL SMS RESPONSE:", raw);
+
+    if (!response.ok || raw.toLowerCase().includes("error") || raw.toLowerCase().includes("failed")) {
       return NextResponse.json({ error: raw || "SMS failed" }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true, message: "Verification code sent." });
+    await supabaseAdmin.from("verification_codes").insert({
+      user_id: userId,
+      phone: cleanPhone,
+      code,
+      purpose: "verification",
+      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Verification code sent. Hubtel response: ${raw}`,
+    });
   } catch (error) {
     console.error("SEND OTP ERROR:", error);
     return NextResponse.json({ error: "Could not send verification code" }, { status: 500 });
