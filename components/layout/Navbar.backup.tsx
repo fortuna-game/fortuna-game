@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { signOut } from "@/lib/auth";
 
@@ -12,19 +11,15 @@ type Profile = {
 };
 
 export default function Navbar() {
-  const pathname = usePathname();
-
-  if (pathname.startsWith("/admin")) {
-    return null;
-  }
-
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [balance, setBalance] = useState("0.00");
 
   useEffect(() => {
     async function loadUser() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       if (!user) {
         setLoading(false);
@@ -83,25 +78,40 @@ export default function Navbar() {
 
         {loading ? null : profile ? (
           <div className="flex items-center gap-3">
-            <Link href="/wallet" className="rounded-full border border-yellow-400/30 px-4 py-2 text-sm font-bold text-yellow-300">
+            <Link
+              href="/wallet"
+              className="rounded-full border border-yellow-400/30 px-4 py-2 text-sm font-bold text-yellow-300"
+            >
               ₵{balance}
             </Link>
 
-            <Link href="/dashboard" className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
+            <Link
+              href="/dashboard"
+              className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold"
+            >
               @{name}
             </Link>
 
-            <button onClick={() => void handleLogout()} className="rounded-full bg-red-600 px-4 py-2 text-sm font-bold text-white">
+            <button
+              onClick={() => void handleLogout()}
+              className="rounded-full bg-red-600 px-4 py-2 text-sm font-bold text-white"
+            >
               Logout
             </button>
           </div>
         ) : (
           <div className="flex gap-3">
-            <Link href="/login" className="rounded-full border border-yellow-400 px-5 py-2 text-yellow-400">
+            <Link
+              href="/login"
+              className="rounded-full border border-yellow-400 px-5 py-2 text-yellow-400"
+            >
               Login
             </Link>
 
-            <Link href="/signup" className="rounded-full bg-yellow-400 px-5 py-2 font-bold text-black">
+            <Link
+              href="/signup"
+              className="rounded-full bg-yellow-400 px-5 py-2 font-bold text-black"
+            >
               Sign Up
             </Link>
           </div>
