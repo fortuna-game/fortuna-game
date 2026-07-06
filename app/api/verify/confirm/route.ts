@@ -3,44 +3,58 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
   try {
-    const { userId, code } = await req.json();
+    const { userId, requestId, prefix, code } = await req.json();
 
-    if (!userId || !code) {
-      return NextResponse.json({ error: "Missing user or code" }, { status: 400 });
+    if (!userId || !requestId || !prefix || !code) {
+      return NextResponse.json({ error: "Missing verification details" }, { status: 400 });
     }
 
-    const { data } = await supabaseAdmin
-      .from("verification_codes")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("code", code)
-      .eq("used", false)
-      .gt("expires_at", new Date().toISOString())
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const clientId = process.env.HUBTEL_SMS_CLIENT_ID;
+    const clientSecret = process.env.HUBTEL_SMS_CLIENT_SECRET;
 
-    if (!data) {
-      return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
+    if (!clientId || !clientSecret) {
+      return NextResponse.json({ error: "Missing Hubtel OTP credentials" }, { status: 500 });
     }
 
-    await supabaseAdmin
-      .from("verification_codes")
-      .update({ used: true })
-      .eq("id", data.id);
+    const auth = Buffer.from(`${clientId}:${clientSecret}`).toString("base64");
+
+    const response = await fetch("https://api-otp.hubtel.com/otp/verify", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        requestId,
+        prefix,
+        code,
+      }),
+    });
+
+    const data = await response.json();
+
+    console.log("HUBTEL OTP VERIFY:", data);
+
+    if (!response.ok) {
+      return NextResponse.json(data, { status: response.status });
+    }
 
     await supabaseAdmin
       .from("profiles")
       .update({
         is_verified: true,
-        verification_method: "code",
+        verification_method: "hubtel_otp",
         verified_at: new Date().toISOString(),
       })
       .eq("user_id", userId);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({
+      success: true,
+      message: "Account verified successfully.",
+      raw: data,
+    });
   } catch (error) {
-    console.error("VERIFY CONFIRM ERROR:", error);
-    return NextResponse.json({ error: "Could not verify" }, { status: 500 });
+    console.error("OTP VERIFY ERROR:", error);
+    return NextResponse.json({ error: "Could not verify OTP" }, { status: 500 });
   }
 }
