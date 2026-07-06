@@ -15,7 +15,10 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function loadDashboard() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) return;
 
       const { data: profileData } = await supabase
@@ -35,100 +38,117 @@ export default function Dashboard() {
     }
 
     void loadDashboard();
+
+    const timer = setInterval(() => {
+      void loadDashboard();
+    }, 4000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const name = profile?.first_name || profile?.username || "Player";
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <div className="mx-auto max-w-7xl px-6 py-10">
+      <div className="mx-auto max-w-7xl px-5 py-8">
 
-        <section className="rounded-[36px] border border-yellow-400/20 bg-gradient-to-br from-yellow-500/20 via-black to-purple-950/40 p-8 shadow-2xl">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-yellow-300">
+        <section className="rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-500/15 via-black to-purple-950/30 p-6 md:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-yellow-300">
             Fortuna Play Dashboard
           </p>
 
-          <h1 className="mt-4 text-5xl font-black">
-            Welcome back, <span className="text-yellow-400">{name}</span>
-          </h1>
+          <div className="mt-3 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <h1 className="text-3xl font-black md:text-4xl">
+                Welcome, <span className="text-yellow-400">{name}</span>
+              </h1>
 
-          <p className="mt-3 max-w-2xl text-white/60">
-            Manage your wallet, play games, track withdrawals and view your winnings.
-          </p>
+              <p className="mt-2 text-sm text-white/50">
+                Play games, manage your funds and track your activity.
+              </p>
+            </div>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link href="/games" className="rounded-full bg-yellow-400 px-8 py-4 font-black text-black">
-              Play Games
-            </Link>
-            <Link href="/wallet/deposit" className="rounded-full border border-green-400/40 px-8 py-4 font-bold text-green-300">
-              Deposit
-            </Link>
-            <Link href="/wallet/withdraw" className="rounded-full border border-red-400/40 px-8 py-4 font-bold text-red-300">
-              Withdraw
-            </Link>
-          </div>
-        </section>
+            <div className="min-w-[220px] rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5">
+              <p className="text-sm text-white/60">Wallet</p>
 
-        <section className="mt-8 grid gap-6 md:grid-cols-4">
-          <div className="rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
-            <p className="text-white/60">Account Balance</p>
-            <h2 className="mt-4 text-5xl font-black text-yellow-400">₵{balance}</h2>
-          </div>
+              <p className="mt-1 text-3xl font-black text-yellow-400">
+                ₵{balance}
+              </p>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <p className="text-white/60">Games Available</p>
-            <h2 className="mt-4 text-5xl font-black">13</h2>
-          </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <Link
+                  href="/wallet/deposit"
+                  className="rounded-xl bg-green-500 px-4 py-2.5 text-center text-sm font-black text-black"
+                >
+                  Deposit
+                </Link>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <p className="text-white/60">Withdrawals</p>
-            <h2 className="mt-4 text-3xl font-black text-red-300">Track</h2>
-          </div>
-
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <p className="text-white/60">Status</p>
-            <h2 className="mt-4 text-3xl font-black text-green-300">Active</h2>
-          </div>
-        </section>
-
-        <section className="mt-10 grid gap-6 lg:grid-cols-3">
-          <div className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6 lg:col-span-2">
-            <h2 className="text-3xl font-black text-yellow-400">Quick Actions</h2>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <Link href="/wallet" className="rounded-2xl bg-yellow-400 p-5 text-center font-black text-black">
-                Wallet
-              </Link>
-              <Link href="/wallet/deposit" className="rounded-2xl border border-green-400/30 bg-green-500/10 p-5 text-center text-green-300">
-                Deposit Money
-              </Link>
-              <Link href="/wallet/withdraw" className="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-red-300">
-                Withdraw
-              </Link>
-              <Link href="/wallet/withdrawals" className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center">
-                Withdrawal History
-              </Link>
-              <Link href="/games" className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center">
-                Play Games
-              </Link>
-              <Link href="/verify" className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center">
-                Verify Account
-              </Link>
+                <Link
+                  href="/wallet/withdraw"
+                  className="rounded-xl bg-red-500 px-4 py-2.5 text-center text-sm font-black text-white"
+                >
+                  Withdraw
+                </Link>
+              </div>
             </div>
           </div>
-
-          <div className="rounded-3xl border border-yellow-400/20 bg-gradient-to-b from-yellow-500/10 to-black p-6">
-            <h2 className="text-2xl font-black">Player Tips</h2>
-            <p className="mt-4 text-white/60">
-              Deposit funds, choose a game, play responsibly, and track every withdrawal from your history page.
-            </p>
-
-            <Link href="/wallet/withdrawals" className="mt-6 block rounded-2xl bg-white/10 p-4 text-center font-bold">
-              View Withdrawal History
-            </Link>
-          </div>
         </section>
 
+        <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+
+          <Link
+            href="/games"
+            className="rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5 transition hover:border-yellow-400/50"
+          >
+            <p className="text-xl font-black text-yellow-400">
+              Play Games
+            </p>
+
+            <p className="mt-2 text-sm text-white/50">
+              Browse available games and start playing.
+            </p>
+          </Link>
+
+          <Link
+            href="/wallet/history"
+            className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30"
+          >
+            <p className="text-xl font-black">
+              Account History
+            </p>
+
+            <p className="mt-2 text-sm text-white/50">
+              View deposits and withdrawals.
+            </p>
+          </Link>
+
+          <Link
+            href="/game-history"
+            className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30"
+          >
+            <p className="text-xl font-black">
+              Game History
+            </p>
+
+            <p className="mt-2 text-sm text-white/50">
+              View games played, wins and losses.
+            </p>
+          </Link>
+
+          <Link
+            href="/profile"
+            className="rounded-2xl border border-white/10 bg-white/5 p-5 transition hover:border-white/30"
+          >
+            <p className="text-xl font-black">
+              Profile
+            </p>
+
+            <p className="mt-2 text-sm text-white/50">
+              Manage your Fortuna Play account.
+            </p>
+          </Link>
+
+        </section>
       </div>
     </main>
   );
