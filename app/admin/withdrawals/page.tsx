@@ -24,6 +24,8 @@ export default function AdminWithdrawalsPage() {
   const [profiles, setProfiles] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const [busyId, setBusyId] = useState("");
+  const [authorized, setAuthorized] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
 
   async function loadWithdrawals() {
     const { data: withdrawalsData } = await supabase
@@ -68,20 +70,58 @@ export default function AdminWithdrawalsPage() {
   }
 
   useEffect(() => {
-    void loadWithdrawals();
+    async function checkAdmin() {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        window.location.href = "/login";
+        return;
+      }
+
+      if (user.email?.toLowerCase() !== "fortunaplay2025@outlook.com") {
+        setAuthorized(false);
+        setCheckingAdmin(false);
+        return;
+      }
+
+      setAuthorized(true);
+      setCheckingAdmin(false);
+      await loadWithdrawals();
+    }
+
+    void checkAdmin();
 
     const timer = setInterval(() => {
-      void loadWithdrawals();
+      if (authorized) void loadWithdrawals();
     }, 4000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [authorized]);
 
   function statusLabel(status: string) {
     if (status === "sending") return "Payment Pending";
     if (status === "paid") return "Paid";
     if (status === "failed") return "Failed";
     return "Processing";
+  }
+
+  if (checkingAdmin) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+        Checking admin access...
+      </main>
+    );
+  }
+
+  if (!authorized) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+        <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
+          <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
+          <p className="mt-3 text-white/60">You are not allowed to view this admin page.</p>
+        </div>
+      </main>
+    );
   }
 
   return (
