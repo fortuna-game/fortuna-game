@@ -43,8 +43,16 @@ export default function AccountHistoryPage() {
     const history: HistoryItem[] = [
       ...(txs || []).map((t: any) => ({
         id: `tx-${t.id}`,
-        title: String(t.type || "Wallet Activity").replaceAll("_", " "),
-        amount: Number(t.amount || 0),
+        title:
+          t.type === "game_entry"
+            ? `${String(t.reference || "Game").replaceAll("-", " ")} — Entry Fee`
+            : t.type === "game_win"
+            ? `${String(t.reference || "Game").replaceAll("-", " ")} — Game Win`
+            : String(t.type || "Wallet Activity").replaceAll("_", " "),
+        amount:
+          t.type === "game_entry"
+            ? -Math.abs(Number(t.amount || 0))
+            : Number(t.amount || 0),
         status: t.status || "completed",
         reference: t.reference || t.description || null,
         date: t.created_at,
