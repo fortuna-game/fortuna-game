@@ -242,9 +242,9 @@ export default function GamePage({ params }: GamePageProps) {
     } catch {}
 
     setScratchPercent((current) => {
-      const next = Math.min(current + 4, 100);
+      const next = Math.min(current + 0.35, 100);
 
-      if (next >= 75) {
+      if (next >= 90) {
         setTimeout(() => void finishScratchGame(), 100);
       }
 
@@ -698,7 +698,7 @@ export default function GamePage({ params }: GamePageProps) {
           {scratchStarted && (
             <div className="mt-10">
               <p className="mb-4 text-white/60">
-                Scratch the card until the prize is revealed.
+                Scratch the entire card to reveal your result. Keep scratching until the card is fully cleared.
               </p>
 
               <div
@@ -724,19 +724,13 @@ export default function GamePage({ params }: GamePageProps) {
                   <div
                     className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
                     style={{
-                      opacity: Math.max(0, 1 - scratchPercent / 75),
+                      opacity: Math.max(0, 1 - scratchPercent / 90),
                     }}
                   >
                     {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
                   </div>
                 )}
               </div>
-
-              {!scratchFinished && (
-                <p className="mt-4 text-sm text-white/50">
-                  Scratch progress: {scratchPercent}%
-                </p>
-              )}
 
               {message && (
                 <p className="mt-6 rounded-xl bg-white/10 p-4">
@@ -896,7 +890,7 @@ export default function GamePage({ params }: GamePageProps) {
           {scratchStarted && (
             <div className="mt-10">
               <p className="mb-4 text-white/60">
-                Scratch the card until the prize is revealed.
+                Scratch the entire card to reveal your result. Keep scratching until the card is fully cleared.
               </p>
 
               <div
@@ -922,19 +916,13 @@ export default function GamePage({ params }: GamePageProps) {
                   <div
                     className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
                     style={{
-                      opacity: Math.max(0, 1 - scratchPercent / 75),
+                      opacity: Math.max(0, 1 - scratchPercent / 90),
                     }}
                   >
                     {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
                   </div>
                 )}
               </div>
-
-              {!scratchFinished && (
-                <p className="mt-4 text-sm text-white/50">
-                  Scratch progress: {scratchPercent}%
-                </p>
-              )}
 
               {message && (
                 <p className="mt-6 rounded-xl bg-white/10 p-4">
