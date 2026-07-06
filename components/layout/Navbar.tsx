@@ -73,20 +73,24 @@ export default function Navbar() {
           Fortuna <span className="text-white">Play</span>
         </Link>
 
-        <nav className="hidden items-center gap-8 text-sm font-semibold lg:flex">
-          <Link href="/">Home</Link>
-          <Link href="/games">Games</Link>
-          <Link href="/winners">Winners</Link>
-          <Link href="/promotions">Promotions</Link>
+        <nav className="hidden items-center gap-5 text-sm font-semibold lg:flex">
           <Link href="/support">Support</Link>
+          <Link
+            href="/wallet/deposit"
+            className="rounded-full bg-green-500 px-5 py-2 font-black text-black"
+          >
+            Deposit
+          </Link>
+          <Link
+            href="/wallet/withdraw"
+            className="rounded-full bg-red-500 px-5 py-2 font-black text-white"
+          >
+            Withdraw
+          </Link>
         </nav>
 
         {loading ? null : profile ? (
           <div className="flex items-center gap-3">
-            <Link href="/wallet" className="rounded-full border border-yellow-400/30 px-4 py-2 text-sm font-bold text-yellow-300">
-              ₵{balance}
-            </Link>
-
             <Link href="/dashboard" className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold">
               @{name}
             </Link>

@@ -75,21 +75,7 @@ export default function Dashboard() {
                 ₵{balance}
               </p>
 
-              <div className="mt-4 grid grid-cols-2 gap-2">
-                <Link
-                  href="/wallet/deposit"
-                  className="rounded-xl bg-green-500 px-4 py-2.5 text-center text-sm font-black text-black"
-                >
-                  Deposit
-                </Link>
 
-                <Link
-                  href="/wallet/withdraw"
-                  className="rounded-xl bg-red-500 px-4 py-2.5 text-center text-sm font-black text-white"
-                >
-                  Withdraw
-                </Link>
-              </div>
             </div>
           </div>
         </section>
