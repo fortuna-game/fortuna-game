@@ -16,54 +16,49 @@ type Withdrawal = {
 export default function WithdrawalHistoryPage() {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
 
+  async function loadWithdrawals() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data } = await supabase
+      .from("withdrawals")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
+
+    setWithdrawals(data || []);
+  }
+
   useEffect(() => {
-    async function loadWithdrawals() {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data } = await supabase
-        .from("withdrawals")
-        .select("*")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-
-      setWithdrawals(data || []);
-    }
-
     void loadWithdrawals();
+
+    const timer = setInterval(() => {
+      void loadWithdrawals();
+    }, 4000);
+
+    return () => clearInterval(timer);
   }, []);
+
+  function label(status: string) {
+    if (status === "paid") return "Paid";
+    if (status === "failed") return "Failed";
+    return "Processing";
+  }
 
   return (
     <main className="min-h-screen bg-black px-6 py-12 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-yellow-400">
-          Withdrawal History
-        </h1>
-
-        <p className="mt-2 text-white/60">
-          Track your withdrawal requests.
-        </p>
+        <h1 className="text-4xl font-black text-yellow-400">Withdrawal History</h1>
+        <p className="mt-2 text-white/60">Live status of your withdrawals.</p>
 
         <div className="mt-8 space-y-4">
           {withdrawals.map((w) => (
-            <div
-              key={w.id}
-              className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6"
-            >
+            <div key={w.id} className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-bold text-yellow-300">
-                    {w.reference || "No reference"}
-                  </p>
-
-                  <p className="mt-2 text-2xl font-black">
-                    GH₵{Number(w.amount).toFixed(2)}
-                  </p>
-
-                  <p className="mt-1 text-white/60">
-                    {w.network} • {w.momo_number}
-                  </p>
+                  <p className="font-bold text-yellow-300">{w.reference}</p>
+                  <p className="mt-2 text-2xl font-black">GH₵{Number(w.amount).toFixed(2)}</p>
+                  <p className="mt-1 text-white/60">{w.network} • {w.momo_number}</p>
                 </div>
 
                 <span className={`rounded-full px-4 py-2 text-sm font-bold ${
@@ -73,11 +68,7 @@ export default function WithdrawalHistoryPage() {
                     ? "bg-red-500/20 text-red-300"
                     : "bg-yellow-500/20 text-yellow-300"
                 }`}>
-                  {w.status === "paid"
-                    ? "Paid"
-                    : w.status === "failed"
-                    ? "Failed"
-                    : "Processing"}
+                  {label(w.status)}
                 </span>
               </div>
 
