@@ -69,21 +69,21 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-yellow-500/20 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="text-3xl font-black tracking-wide text-yellow-400">
+        <Link href="/" className="text-xl font-black tracking-wide text-yellow-400 sm:text-3xl">
           Fortuna <span className="text-white">Play</span>
         </Link>
 
-        <nav className="hidden items-center gap-5 text-sm font-semibold lg:flex">
+        <nav className="flex items-center gap-2 text-xs font-semibold sm:gap-4 sm:text-sm">
           <Link href="/support">Support</Link>
           <Link
             href="/wallet/deposit"
-            className="rounded-full bg-green-500 px-5 py-2 font-black text-black"
+            className="rounded-full bg-green-500 px-3 py-2 font-black text-black sm:px-5"
           >
             Deposit
           </Link>
           <Link
             href="/wallet/withdraw"
-            className="rounded-full bg-red-500 px-5 py-2 font-black text-white"
+            className="rounded-full bg-red-500 px-3 py-2 font-black text-white sm:px-5"
           >
             Withdraw
           </Link>
