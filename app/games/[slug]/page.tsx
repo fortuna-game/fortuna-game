@@ -33,6 +33,8 @@ export default function GamePage({ params }: GamePageProps) {
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
   const [message, setMessage] = useState("");
+  const [rolling, setRolling] = useState(false);
+  const [diceResult, setDiceResult] = useState<number | null>(null);
 
   useEffect(() => {
     async function loadGame() {
@@ -108,9 +110,11 @@ export default function GamePage({ params }: GamePageProps) {
 
 
   async function playDiceRoll() {
-    if (!game) return;
+    if (!game || rolling) return;
 
     setMessage("");
+    setDiceResult(null);
+    setRolling(true);
 
     const {
       data: { user },
@@ -147,8 +151,12 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+
     const dice = Math.floor(Math.random() * 6) + 1;
     const won = dice === 6;
+
+    setDiceResult(dice);
 
     if (won) {
       const { data: latestWallet } = await supabase
@@ -183,9 +191,11 @@ export default function GamePage({ params }: GamePageProps) {
 
     setMessage(
       won
-        ? `🎲 You rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
-        : `🎲 You rolled ${dice}. You did not win this round. Roll 6 to win.`
+        ? `You rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : `You rolled ${dice}. You did not win this round. Roll 6 to win.`
     );
+
+    setRolling(false);
   }
 
   async function answer(selected: string) {
@@ -254,17 +264,30 @@ export default function GamePage({ params }: GamePageProps) {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
         <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
-          <div className="text-7xl">🎲</div>
+          <div
+            className={`text-8xl transition-transform ${
+              rolling ? "animate-spin" : ""
+            }`}
+          >
+            🎲
+          </div>
+
+          {diceResult !== null && !rolling && (
+            <p className="mt-3 text-3xl font-black text-yellow-400">
+              {diceResult}
+            </p>
+          )}
           <h1 className="mt-4 text-5xl font-black text-yellow-400">{game.name}</h1>
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
           <p className="mt-6 text-white/60">Roll a 6 to win the prize.</p>
 
           <button
+            disabled={rolling}
             onClick={() => void playDiceRoll()}
-            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black"
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Roll Dice
+            {rolling ? "Rolling..." : "Roll Dice"}
           </button>
 
           {message && (
