@@ -162,7 +162,37 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    let drawAudioContext: AudioContext | null = null;
+    let drawSoundTimer: ReturnType<typeof setInterval> | null = null;
+
+    try {
+      drawAudioContext = new AudioContext();
+
+      drawSoundTimer = setInterval(() => {
+        if (!drawAudioContext) return;
+
+        const oscillator = drawAudioContext.createOscillator();
+        const gain = drawAudioContext.createGain();
+
+        oscillator.connect(gain);
+        gain.connect(drawAudioContext.destination);
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = 100 + Math.random() * 180;
+        gain.gain.value = 0.035;
+
+        oscillator.start();
+        oscillator.stop(drawAudioContext.currentTime + 0.07);
+      }, 100);
+    } catch {}
+
+    await new Promise((resolve) => setTimeout(resolve, 8000));
+
+    if (drawSoundTimer) clearInterval(drawSoundTimer);
+
+    if (drawAudioContext) {
+      await drawAudioContext.close();
+    }
 
     const result = Math.floor(Math.random() * 10) + 1;
     const won = result === luckyPick;
@@ -410,7 +440,26 @@ export default function GamePage({ params }: GamePageProps) {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
         <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
-          <div className={drawingLucky ? "text-8xl animate-pulse" : "text-8xl"}>🎁</div>
+          <div className="mx-auto flex h-72 max-w-md items-center justify-center overflow-hidden rounded-[50%] border-4 border-yellow-400/40 bg-gradient-to-b from-white/10 to-yellow-500/10 shadow-2xl">
+            <div className="relative h-full w-full">
+              {[1,2,3,4,5,6,7,8,9,10].map((ball, index) => (
+                <div
+                  key={ball}
+                  className={`absolute flex h-14 w-14 items-center justify-center rounded-full border-2 border-yellow-300 bg-yellow-400 text-xl font-black text-black shadow-lg ${
+                    drawingLucky ? "animate-bounce" : ""
+                  }`}
+                  style={{
+                    left: `${10 + ((index * 27) % 75)}%`,
+                    top: `${10 + ((index * 37) % 70)}%`,
+                    animationDelay: `${index * 90}ms`,
+                    animationDuration: `${500 + (index % 4) * 130}ms`,
+                  }}
+                >
+                  {ball}
+                </div>
+              ))}
+            </div>
+          </div>
 
           <h1 className="mt-4 text-5xl font-black text-yellow-400">{game.name}</h1>
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
@@ -445,7 +494,7 @@ export default function GamePage({ params }: GamePageProps) {
             onClick={() => void playLuckyDraw()}
             className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
           >
-            {drawingLucky ? "Drawing..." : "Start Lucky Draw"}
+            {drawingLucky ? "Drawing Winning Number..." : "Start Lucky Draw"}
           </button>
 
           {luckyResult !== null && (
