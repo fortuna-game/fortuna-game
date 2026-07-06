@@ -705,7 +705,7 @@ export default function GamePage({ params }: GamePageProps) {
 
                 {!scratchFinished && (
                   <div
-                    className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
+                    className="absolute inset-0 flex items-center justify-center bg-black text-3xl font-black text-yellow-400"
                     style={{
                       opacity: scratchFinished ? 0 : 1,
                     }}
@@ -897,7 +897,7 @@ export default function GamePage({ params }: GamePageProps) {
 
                 {!scratchFinished && (
                   <div
-                    className="absolute inset-0 flex items-center justify-center bg-gray-400 text-3xl font-black text-black"
+                    className="absolute inset-0 flex items-center justify-center bg-black text-3xl font-black text-yellow-400"
                     style={{
                       opacity: scratchFinished ? 0 : 1,
                     }}
