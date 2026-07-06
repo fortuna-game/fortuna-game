@@ -36,6 +36,10 @@ export default function GamePage({ params }: GamePageProps) {
   const [rolling, setRolling] = useState(false);
   const [diceResult, setDiceResult] = useState<number | null>(null);
   const [chosenDice, setChosenDice] = useState<number | null>(null);
+  const [diceRoundFinished, setDiceRoundFinished] = useState(false);
+  const [luckyPick, setLuckyPick] = useState<number | null>(null);
+  const [luckyResult, setLuckyResult] = useState<number | null>(null);
+  const [drawingLucky, setDrawingLucky] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -110,6 +114,102 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
 
+
+  async function playLuckyDraw() {
+    if (!game || drawingLucky) return;
+
+    if (!luckyPick) {
+      setMessage("Choose a lucky number first.");
+      return;
+    }
+
+    setMessage("");
+    setLuckyResult(null);
+    setDrawingLucky(true);
+
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      setDrawingLucky(false);
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance. Please deposit funds.");
+      setDrawingLucky(false);
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
+
+    const result = Math.floor(Math.random() * 10) + 1;
+    const won = result === luckyPick;
+
+    setLuckyResult(result);
+
+    if (won) {
+      const { data: latestWallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: Number(game.prize_amount),
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: result,
+      prize_amount: won ? Number(game.prize_amount) : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `You picked ${luckyPick}. Draw result was ${result}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : `You picked ${luckyPick}. Draw result was ${result}. You did not win this round.`
+    );
+
+    setDrawingLucky(false);
+    setLuckyPick(null);
+  }
+
   async function playDiceRoll() {
     if (!game || rolling) return;
 
@@ -122,23 +222,27 @@ export default function GamePage({ params }: GamePageProps) {
     setDiceResult(null);
     setRolling(true);
 
+    let audioContext: AudioContext | null = null;
+    let soundTimer: ReturnType<typeof setInterval> | null = null;
+
     try {
-      const audioContext = new AudioContext();
-      const oscillator = audioContext.createOscillator();
-      const gain = audioContext.createGain();
+      audioContext = new AudioContext();
 
-      oscillator.connect(gain);
-      gain.connect(audioContext.destination);
+      soundTimer = setInterval(() => {
+        if (!audioContext) return;
 
-      oscillator.frequency.value = 220;
-      gain.gain.value = 0.08;
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
 
-      oscillator.start();
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
 
-      setTimeout(() => {
-        oscillator.stop();
-        void audioContext.close();
-      }, 350);
+        oscillator.frequency.value = 140 + Math.random() * 180;
+        gain.gain.value = 0.06;
+
+        oscillator.start();
+        oscillator.stop(audioContext.currentTime + 0.08);
+      }, 120);
     } catch {}
 
     const {
@@ -176,7 +280,13 @@ export default function GamePage({ params }: GamePageProps) {
       reference: game.slug,
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 4000));
+    await new Promise((resolve) => setTimeout(resolve, 6000));
+
+    if (soundTimer) clearInterval(soundTimer);
+
+    if (audioContext) {
+      await audioContext.close();
+    }
 
     const dice = Math.floor(Math.random() * 6) + 1;
     const won = dice === chosenDice;
@@ -221,6 +331,8 @@ export default function GamePage({ params }: GamePageProps) {
     );
 
     setRolling(false);
+    setDiceRoundFinished(true);
+    setChosenDice(null);
   }
 
   async function answer(selected: string) {
@@ -281,8 +393,79 @@ export default function GamePage({ params }: GamePageProps) {
     setFinished(true);
   }
 
+  const diceFaces: Record<number, string> = {
+    1: "⚀",
+    2: "⚁",
+    3: "⚂",
+    4: "⚃",
+    5: "⚄",
+    6: "⚅",
+  };
+
   if (!game) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
+  }
+
+  if (slug === "lucky-draw") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+          <div className={drawingLucky ? "text-8xl animate-pulse" : "text-8xl"}>🎁</div>
+
+          <h1 className="mt-4 text-5xl font-black text-yellow-400">{game.name}</h1>
+          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+          <p className="mt-6 text-white/60">
+            Pick one lucky number from 1 to 10. If the draw matches your number, you win.
+          </p>
+
+          <div className="mt-6 grid grid-cols-5 gap-3">
+            {[1,2,3,4,5,6,7,8,9,10].map((n) => (
+              <button
+                key={n}
+                disabled={drawingLucky}
+                onClick={() => {
+                  setLuckyPick(n);
+                  setLuckyResult(null);
+                  setMessage("");
+                }}
+                className={`rounded-2xl border p-4 text-xl font-black ${
+                  luckyPick === n
+                    ? "border-yellow-400 bg-yellow-400 text-black"
+                    : "border-white/10 bg-white/5 text-white"
+                } disabled:opacity-50`}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+
+          <button
+            disabled={drawingLucky || !luckyPick}
+            onClick={() => void playLuckyDraw()}
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
+          >
+            {drawingLucky ? "Drawing..." : "Start Lucky Draw"}
+          </button>
+
+          {luckyResult !== null && (
+            <p className="mt-5 text-3xl font-black text-yellow-400">
+              Draw Result: {luckyResult}
+            </p>
+          )}
+
+          {message && (
+            <p className="mt-6 whitespace-pre-line rounded-xl bg-white/10 p-4 text-white">
+              {message}
+            </p>
+          )}
+
+          <Link href="/games" className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold">
+            Back to Games
+          </Link>
+        </div>
+      </main>
+    );
   }
 
   if (slug === "dice-roll") {
@@ -314,20 +497,25 @@ export default function GamePage({ params }: GamePageProps) {
               <button
                 key={side}
                 disabled={rolling}
-                onClick={() => setChosenDice(side)}
+                onClick={() => {
+                  setChosenDice(side);
+                  setDiceRoundFinished(false);
+                  setDiceResult(null);
+                  setMessage("");
+                }}
                 className={`rounded-2xl border p-4 text-2xl font-black ${
                   chosenDice === side
                     ? "border-yellow-400 bg-yellow-400 text-black"
                     : "border-white/10 bg-white/5 text-white"
-                } disabled:opacity-50`}
+                } text-4xl disabled:opacity-50`}
               >
-                {side}
+                {diceFaces[side]}
               </button>
             ))}
           </div>
 
           <button
-            disabled={rolling || !chosenDice}
+            disabled={rolling || !chosenDice || diceRoundFinished}
             onClick={() => void playDiceRoll()}
             className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
           >
