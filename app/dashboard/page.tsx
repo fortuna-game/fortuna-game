@@ -19,7 +19,6 @@ export default function Dashboard() {
       } = await supabase.auth.getUser();
 
       if (!user) {
-        setDebug("No logged-in user found");
         return;
       }
 
