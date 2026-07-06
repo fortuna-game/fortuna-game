@@ -67,7 +67,27 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    const data = await hubtelResponse.json();
+    const responseText = await hubtelResponse.text();
+
+    let data;
+
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      console.error(
+        "HUBTEL NON-JSON RESPONSE:",
+        hubtelResponse.status,
+        responseText.slice(0, 500)
+      );
+
+      return NextResponse.json(
+        {
+          error: "Hubtel returned a non-JSON response.",
+          hubtelStatus: hubtelResponse.status,
+        },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json(data, { status: hubtelResponse.status });
   } catch (error) {
