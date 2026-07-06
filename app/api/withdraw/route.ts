@@ -11,13 +11,9 @@ export async function POST(req: Request) {
 
     const value = Number(amount);
 
-    if (value <= 0) {
-      return NextResponse.json({ error: "Enter a valid amount." }, { status: 400 });
-    }
-
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("is_verified")
+      .select("username, is_verified")
       .eq("user_id", userId)
       .maybeSingle();
 
@@ -40,12 +36,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Insufficient wallet balance." }, { status: 400 });
     }
 
-    const newBalance = balance - value;
-    const reference = `WITHDRAW-${Date.now()}`;
+    const username = (profile.username || "PLAYER").toUpperCase();
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+    const random = Math.floor(1000 + Math.random() * 9000);
+    const reference = `FP-${username}-${date}-${random}`;
 
     await supabaseAdmin
       .from("wallets")
-      .update({ balance: newBalance })
+      .update({ balance: balance - value })
       .eq("user_id", userId);
 
     await supabaseAdmin.from("withdrawals").insert({
@@ -53,7 +51,7 @@ export async function POST(req: Request) {
       amount: value,
       momo_number: momoNumber,
       network,
-      status: "pending",
+      status: "processing",
       reference,
     });
 
@@ -61,18 +59,17 @@ export async function POST(req: Request) {
       user_id: userId,
       type: "withdrawal",
       amount: -value,
-      status: "pending",
+      status: "processing",
       reference,
-      description: "Withdrawal request",
     });
 
     return NextResponse.json({
       success: true,
-      message: "Withdrawal request submitted for review.",
-      balance: newBalance,
+      message: `✅ Withdrawal is being processed.\n\nAmount: GH₵${value.toFixed(2)}\nDestination: ${network} • ${momoNumber}\nReference: ${reference}\n\nEstimated processing time: 5–30 minutes.`,
+      reference,
     });
   } catch (error) {
     console.error("WITHDRAW ERROR:", error);
-    return NextResponse.json({ error: "Withdrawal failed. Check server logs." }, { status: 500 });
+    return NextResponse.json({ error: "Withdrawal failed." }, { status: 500 });
   }
 }
