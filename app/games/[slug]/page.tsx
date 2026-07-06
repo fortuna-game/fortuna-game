@@ -52,6 +52,7 @@ export default function GamePage({ params }: GamePageProps) {
   const [wheelResult, setWheelResult] = useState("");
   const [wheelDone, setWheelDone] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
+  const [wheelRotation, setWheelRotation] = useState(0);
 
   useEffect(() => {
     async function loadGame() {
