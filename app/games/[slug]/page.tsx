@@ -106,6 +106,88 @@ export default function GamePage({ params }: GamePageProps) {
     setMessage("");
   }
 
+
+  async function playDiceRoll() {
+    if (!game) return;
+
+    setMessage("");
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setMessage("Please login first.");
+      return;
+    }
+
+    const { data: wallet } = await supabase
+      .from("wallets")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const balance = Number(wallet?.balance || 0);
+
+    if (balance < Number(game.entry_fee)) {
+      setMessage("Insufficient balance. Please deposit funds.");
+      return;
+    }
+
+    await supabase
+      .from("wallets")
+      .update({ balance: balance - Number(game.entry_fee) })
+      .eq("user_id", user.id);
+
+    await supabase.from("wallet_transactions").insert({
+      user_id: user.id,
+      type: "game_entry",
+      amount: Number(game.entry_fee),
+      status: "completed",
+      reference: game.slug,
+    });
+
+    const dice = Math.floor(Math.random() * 6) + 1;
+    const won = dice === 6;
+
+    if (won) {
+      const { data: latestWallet } = await supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      await supabase
+        .from("wallets")
+        .update({
+          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+        })
+        .eq("user_id", user.id);
+
+      await supabase.from("wallet_transactions").insert({
+        user_id: user.id,
+        type: "game_win",
+        amount: Number(game.prize_amount),
+        status: "completed",
+        reference: game.slug,
+      });
+    }
+
+    await supabase.from("game_results").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      score: dice,
+      prize_amount: won ? Number(game.prize_amount) : 0,
+      won,
+    });
+
+    setMessage(
+      won
+        ? `🎲 You rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
+        : `🎲 You rolled ${dice}. You did not win this round. Roll 6 to win.`
+    );
+  }
+
   async function answer(selected: string) {
     if (!game) return;
 
@@ -168,6 +250,37 @@ export default function GamePage({ params }: GamePageProps) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
   }
 
+  if (slug === "dice-roll") {
+    return (
+      <main className="min-h-screen bg-black px-6 py-12 text-white">
+        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+          <div className="text-7xl">🎲</div>
+          <h1 className="mt-4 text-5xl font-black text-yellow-400">{game.name}</h1>
+          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+          <p className="mt-6 text-white/60">Roll a 6 to win the prize.</p>
+
+          <button
+            onClick={() => void playDiceRoll()}
+            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black"
+          >
+            Roll Dice
+          </button>
+
+          {message && (
+            <p className="mt-6 whitespace-pre-line rounded-xl bg-white/10 p-4 text-white">
+              {message}
+            </p>
+          )}
+
+          <Link href="/games" className="mt-8 inline-block rounded-full border border-white/10 px-8 py-4 font-bold">
+            Back to Games
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   if (slug !== "trivia") {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
@@ -175,7 +288,7 @@ export default function GamePage({ params }: GamePageProps) {
           <h1 className="text-5xl font-black text-yellow-400">{game.name}</h1>
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
-          <p className="mt-10 text-white/60">This game will be built after Trivia.</p>
+          <p className="mt-10 text-white/60">This game will be available soon.</p>
           <Link href="/games" className="mt-8 inline-block rounded-full bg-yellow-400 px-8 py-4 font-black text-black">Back to Games</Link>
         </div>
       </main>
