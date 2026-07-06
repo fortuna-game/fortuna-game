@@ -225,7 +225,7 @@ export default function GamePage({ params }: GamePageProps) {
 
     setScratching(true);
     setScratchPercent((current) => {
-      const next = Math.min(current + 0.08, 100);
+      const next = Math.min(current + 1, 99);
 
       if (next >= 99) {
         setTimeout(() => void finishScratchGame(), 100);
@@ -689,7 +689,7 @@ export default function GamePage({ params }: GamePageProps) {
                   if (e.buttons === 1) handleScratch();
                 }}
                 onTouchMove={() => handleScratch()}
-                className="relative mx-auto flex h-56 max-w-md cursor-crosshair select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
+                className="relative mx-auto flex h-56 max-w-md cursor-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2210%22 fill=%22white%22 stroke=%22%23dddddd%22 stroke-width=%222%22/%3E%3C/svg%3E')_16_16,crosshair] select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
               >
                 <div className="text-center">
                   <p className="text-xl font-black text-black">
@@ -710,10 +710,25 @@ export default function GamePage({ params }: GamePageProps) {
                       opacity: scratchFinished ? 0 : 1,
                     }}
                   >
-                    {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
+                    "SCRATCH HERE"
                   </div>
                 )}
               </div>
+
+              {!scratchFinished && scratchStarted && (
+                <div className="mt-5">
+                  <p className="font-bold text-white">
+                    Scratch Progress: {Math.max(1, Math.floor(scratchPercent))}%
+                  </p>
+
+                  <div className="mx-auto mt-3 h-3 max-w-md overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full bg-yellow-400 transition-all"
+                      style={{ width: `${scratchPercent}%` }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {message && (
                 <p className="mt-6 rounded-xl bg-white/10 p-4">
@@ -881,7 +896,7 @@ export default function GamePage({ params }: GamePageProps) {
                   if (e.buttons === 1) handleScratch();
                 }}
                 onTouchMove={() => handleScratch()}
-                className="relative mx-auto flex h-56 max-w-md cursor-crosshair select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
+                className="relative mx-auto flex h-56 max-w-md cursor-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2210%22 fill=%22white%22 stroke=%22%23dddddd%22 stroke-width=%222%22/%3E%3C/svg%3E')_16_16,crosshair] select-none items-center justify-center overflow-hidden rounded-3xl border-4 border-yellow-400 bg-gradient-to-br from-yellow-300 to-yellow-600"
               >
                 <div className="text-center">
                   <p className="text-xl font-black text-black">
@@ -902,10 +917,25 @@ export default function GamePage({ params }: GamePageProps) {
                       opacity: scratchFinished ? 0 : 1,
                     }}
                   >
-                    {scratching ? "SCRATCHING..." : "SCRATCH HERE"}
+                    "SCRATCH HERE"
                   </div>
                 )}
               </div>
+
+              {!scratchFinished && scratchStarted && (
+                <div className="mt-5">
+                  <p className="font-bold text-white">
+                    Scratch Progress: {Math.max(1, Math.floor(scratchPercent))}%
+                  </p>
+
+                  <div className="mx-auto mt-3 h-3 max-w-md overflow-hidden rounded-full bg-white/10">
+                    <div
+                      className="h-full bg-yellow-400 transition-all"
+                      style={{ width: `${scratchPercent}%` }}
+                    />
+                  </div>
+                </div>
+              )}
 
               {message && (
                 <p className="mt-6 rounded-xl bg-white/10 p-4">
