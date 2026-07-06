@@ -53,6 +53,8 @@ export default function GamePage({ params }: GamePageProps) {
   const [wheelDone, setWheelDone] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
   const [freeSpin, setFreeSpin] = useState(false);
+  const [airtimePhone, setAirtimePhone] = useState("");
+  const [airtimeSaved, setAirtimeSaved] = useState(false);
 
   useEffect(() => {
     async function loadGame() {
@@ -190,9 +192,9 @@ export default function GamePage({ params }: GamePageProps) {
         oscillator.connect(gain);
         gain.connect(wheelAudioContext.destination);
 
-        oscillator.type = "square";
-        oscillator.frequency.value = 180 + Math.random() * 100;
-        gain.gain.value = 0.025;
+        oscillator.type = "triangle";
+        oscillator.frequency.value = 260 + Math.random() * 220;
+        gain.gain.value = 0.018;
 
         oscillator.start();
         oscillator.stop(wheelAudioContext.currentTime + 0.04);
@@ -203,16 +205,22 @@ export default function GamePage({ params }: GamePageProps) {
 
     await new Promise((resolve) => setTimeout(resolve, 15000));
 
-    if (wheelSoundTimer) clearInterval(wheelSoundTimer);
+    if (wheelSoundTimer) {
+      clearInterval(wheelSoundTimer);
+      wheelSoundTimer = null;
+    }
 
     if (wheelAudioContext) {
       await wheelAudioContext.close();
+      wheelAudioContext = null;
     }
 
     const outcomes = ["GH₵200", "TRY AGAIN", "GH₵2 Airtime", "FREE SPIN", "LOST", "TRY AGAIN"];
     const result = outcomes[Math.floor(Math.random() * outcomes.length)];
-    const won = result === "GH₵200" || result === "GH₵2 Airtime";
-    const prizeValue = result === "GH₵200" ? 200 : result === "GH₵2 Airtime" ? 2 : 0;
+    const wonCash = result === "GH₵200";
+    const wonAirtime = result === "GH₵2 Airtime";
+    const won = wonCash || wonAirtime;
+    const cashPrize = wonCash ? 200 : 0;
 
     setWheelResult(result);
     setFreeSpin(result === "FREE SPIN");
@@ -249,8 +257,10 @@ export default function GamePage({ params }: GamePageProps) {
     });
 
     setMessage(
-      won
-        ? `🏆 Congratulations! You won ${result}.`
+      wonCash
+        ? `🏆 Congratulations! You won GH₵200.`
+        : wonAirtime
+        ? "🏆 Congratulations! You won GH₵2 Airtime. Please enter your phone number below to receive your airtime reward."
         : result === "FREE SPIN"
         ? "🎡 You won a Free Spin! Spin again without wallet deduction."
         : `The wheel landed on ${result}. Try again.`
@@ -787,6 +797,28 @@ export default function GamePage({ params }: GamePageProps) {
     return <main className="flex min-h-screen items-center justify-center bg-black text-white">Loading...</main>;
   }
 
+  async function submitAirtimeReward() {
+    if (!airtimePhone || !game || wheelResult !== "GH₵2 Airtime") {
+      setMessage("Please enter your phone number for airtime.");
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase.from("airtime_rewards").insert({
+      user_id: user.id,
+      game_slug: game.slug,
+      phone: airtimePhone,
+      amount: 2,
+      status: "pending",
+      reference: `AIRTIME-${Date.now()}`,
+    });
+
+    setAirtimeSaved(true);
+    setMessage("Your airtime reward request has been sent to admin.");
+  }
+
   if (slug === "spin-wheel") {
     return (
       <main className="min-h-screen bg-black px-6 py-12 text-white">
@@ -796,8 +828,8 @@ export default function GamePage({ params }: GamePageProps) {
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
 
-          <div className="relative mx-auto mt-10 h-80 w-80">
-            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-4xl text-yellow-400">
+          <div className="relative mx-auto mt-10 h-60 w-60">
+            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-3xl text-yellow-400">
               ▼
             </div>
 
@@ -810,7 +842,7 @@ export default function GamePage({ params }: GamePageProps) {
                   : "none",
               }}
             >
-              <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
                 FORTUNA
               </div>
             </div>
@@ -819,7 +851,7 @@ export default function GamePage({ params }: GamePageProps) {
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
               <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-4xl font-black text-green-400" : "mt-2 text-4xl font-black text-yellow-400"}>
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-3xl font-black text-green-400" : "mt-2 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
@@ -837,6 +869,28 @@ export default function GamePage({ params }: GamePageProps) {
             <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
+          )}
+
+          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && (
+            <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
+              <p className="text-sm font-bold text-green-300">
+                Enter your phone number to receive your airtime reward.
+              </p>
+
+              <input
+                value={airtimePhone}
+                onChange={(e) => setAirtimePhone(e.target.value)}
+                placeholder="Phone number"
+                className="mt-3 w-full rounded-xl border border-white/10 bg-black p-3 outline-none"
+              />
+
+              <button
+                onClick={() => void submitAirtimeReward()}
+                className="mt-3 w-full rounded-xl bg-green-500 py-3 font-black text-black"
+              >
+                Submit Airtime Number
+              </button>
+            </div>
           )}
 
           {wheelDone && (
@@ -1079,8 +1133,8 @@ export default function GamePage({ params }: GamePageProps) {
           <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
           <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
 
-          <div className="relative mx-auto mt-10 h-80 w-80">
-            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-4xl text-yellow-400">
+          <div className="relative mx-auto mt-10 h-60 w-60">
+            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-3xl text-yellow-400">
               ▼
             </div>
 
@@ -1093,7 +1147,7 @@ export default function GamePage({ params }: GamePageProps) {
                   : "none",
               }}
             >
-              <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
                 FORTUNA
               </div>
             </div>
@@ -1102,7 +1156,7 @@ export default function GamePage({ params }: GamePageProps) {
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
               <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-4xl font-black text-green-400" : "mt-2 text-4xl font-black text-yellow-400"}>
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-3xl font-black text-green-400" : "mt-2 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
@@ -1120,6 +1174,28 @@ export default function GamePage({ params }: GamePageProps) {
             <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
               {message}
             </p>
+          )}
+
+          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && (
+            <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
+              <p className="text-sm font-bold text-green-300">
+                Enter your phone number to receive your airtime reward.
+              </p>
+
+              <input
+                value={airtimePhone}
+                onChange={(e) => setAirtimePhone(e.target.value)}
+                placeholder="Phone number"
+                className="mt-3 w-full rounded-xl border border-white/10 bg-black p-3 outline-none"
+              />
+
+              <button
+                onClick={() => void submitAirtimeReward()}
+                className="mt-3 w-full rounded-xl bg-green-500 py-3 font-black text-black"
+              >
+                Submit Airtime Number
+              </button>
+            </div>
           )}
 
           {wheelDone && (
@@ -1473,7 +1549,7 @@ export default function GamePage({ params }: GamePageProps) {
                   chosenDice === side
                     ? "border-yellow-400 bg-yellow-400 text-black"
                     : "border-white/10 bg-white/5 text-white"
-                } text-4xl disabled:opacity-50`}
+                } text-3xl disabled:opacity-50`}
               >
                 {diceFaces[side]}
               </button>
