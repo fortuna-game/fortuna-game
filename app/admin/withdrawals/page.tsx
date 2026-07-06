@@ -27,7 +27,7 @@ export default function AdminWithdrawalsPage() {
     setWithdrawals(data || []);
   }
 
-  async function updateStatus(id: string, status: "paid" | "failed") {
+  async function updateStatus(id: string, status: "sending" | "paid" | "failed") {
     setMessage("");
 
     const res = await fetch("/api/admin/withdrawals/update", {
@@ -73,20 +73,30 @@ export default function AdminWithdrawalsPage() {
                   <td className="p-4">GH₵{Number(w.amount).toFixed(2)}</td>
                   <td className="p-4">{w.network}</td>
                   <td className="p-4">{w.momo_number}</td>
-                  <td className="p-4 capitalize">{w.status}</td>
+                  <td className="p-4 capitalize">
+                    {w.status === "sending" ? "Payment Pending" : w.status}
+                  </td>
                   <td className="p-4">{new Date(w.created_at).toLocaleString()}</td>
                   <td className="flex gap-2 p-4">
+                    <button
+                      onClick={() => void updateStatus(w.id, "sending")}
+                      className="rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black"
+                    >
+                      Send Payment
+                    </button>
+
                     <button
                       onClick={() => void updateStatus(w.id, "paid")}
                       className="rounded-xl bg-green-500 px-4 py-2 font-bold text-black"
                     >
-                      Send Payment
+                      Mark Paid
                     </button>
+
                     <button
                       onClick={() => void updateStatus(w.id, "failed")}
                       className="rounded-xl bg-red-500 px-4 py-2 font-bold text-white"
                     >
-                      Mark Failed
+                      Failed Payment
                     </button>
                   </td>
                 </tr>

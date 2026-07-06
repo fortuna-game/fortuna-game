@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   try {
     const { id, status } = await req.json();
 
-    if (!id || !["paid", "failed"].includes(status)) {
+    if (!id || !["sending", "paid", "failed"].includes(status)) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
@@ -82,6 +82,38 @@ export async function POST(req: Request) {
         success: true,
         message: "Payment has been sent to Hubtel for processing.",
         raw: payoutData,
+      });
+    }
+
+
+    if (status === "sending") {
+      await supabaseAdmin
+        .from("withdrawals")
+        .update({
+          status: "sending",
+          admin_note: "Payment being processed manually",
+        })
+        .eq("id", id);
+
+      return NextResponse.json({
+        success: true,
+        message: "Withdrawal moved to payment pending.",
+      });
+    }
+
+    if (status === "paid") {
+      await supabaseAdmin
+        .from("withdrawals")
+        .update({
+          status: "paid",
+          processed_at: new Date().toISOString(),
+          admin_note: "Payment marked paid manually",
+        })
+        .eq("id", id);
+
+      return NextResponse.json({
+        success: true,
+        message: "Withdrawal marked as paid.",
       });
     }
 
