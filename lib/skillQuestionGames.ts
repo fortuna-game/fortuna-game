@@ -127,4 +127,35 @@ export const QUESTION_GAMES: Record<
       { id: "l12", question: "Complete: 1, 1, 2, 3, 5, ?", options: ["6", "7", "8", "9"], answer: "8" },
     ],
   },
+
+  "speed-sort": {
+    name: "Speed Sort",
+    minScore: 7,
+    total: 8,
+    questions: [
+      { id: "ss1", question: "🍎 belongs to which group?", options: ["Food", "Animal"], answer: "Food" },
+      { id: "ss2", question: "🐘 belongs to which group?", options: ["Animal", "Food"], answer: "Animal" },
+      { id: "ss3", question: "🚗 belongs to which group?", options: ["Vehicle", "Fruit"], answer: "Vehicle" },
+      { id: "ss4", question: "🍌 belongs to which group?", options: ["Animal", "Fruit"], answer: "Fruit" },
+      { id: "ss5", question: "✈️ belongs to which group?", options: ["Vehicle", "Food"], answer: "Vehicle" },
+      { id: "ss6", question: "🐶 belongs to which group?", options: ["Fruit", "Animal"], answer: "Animal" },
+      { id: "ss7", question: "🍕 belongs to which group?", options: ["Food", "Vehicle"], answer: "Food" },
+      { id: "ss8", question: "🚲 belongs to which group?", options: ["Animal", "Vehicle"], answer: "Vehicle" },
+    ],
+  },
+
+  "quick-count": {
+    name: "Quick Count",
+    minScore: 5,
+    total: 6,
+    questions: [
+      { id: "qc1", question: "Count quickly: ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐", options: ["5", "7", "8", "9"], answer: "7" },
+      { id: "qc2", question: "Count quickly: 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵", options: ["9", "10", "11", "13"], answer: "11" },
+      { id: "qc3", question: "How many? 🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", options: ["7", "8", "9", "11"], answer: "9" },
+      { id: "qc4", question: "How many? 💎 💎 💎 💎 💎 💎 💎 💎", options: ["6", "7", "8", "10"], answer: "8" },
+      { id: "qc5", question: "Count quickly: 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥", options: ["8", "9", "10", "12"], answer: "10" },
+      { id: "qc6", question: "How many? ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽", options: ["10", "11", "12", "14"], answer: "12" },
+    ],
+  },
+
 };
