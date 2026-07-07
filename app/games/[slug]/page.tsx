@@ -803,11 +803,9 @@ export default function GamePage({ params }: GamePageProps) {
           <h1 className="text-3xl font-black text-yellow-400">{game.name}</h1>
 
           <p className="mt-2 text-sm text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
-          <p className="mt-1 text-sm text-green-400">Top Prize: GH₵200</p>
+          <p className="mt-1 text-sm text-green-400">Possible prizes: GH₵200, GH₵2 Airtime, Free Spin</p>
 
           <div className="relative mx-auto mt-5 h-64 w-64 sm:h-72 sm:w-72">
-            <div className="absolute left-1/2 top-[-14px] z-30 -translate-x-1/2 text-3xl text-yellow-400">▼</div>
-
             <div
               className="absolute inset-0 rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
               style={{
@@ -818,7 +816,7 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 flex h-8 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[8px] font-black leading-tight text-white sm:text-[10px]"
+                  className="absolute left-1/2 top-1/2 flex h-7 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[7px] font-black leading-tight text-white sm:text-[9px]"
                   style={{
                     transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
                   }}
@@ -843,7 +841,7 @@ export default function GamePage({ params }: GamePageProps) {
 
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-4 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
-              <p className="text-xs text-white/60">THE WHEEL LANDED ON</p>
+              <p className="text-xs text-white/60">OFFICIAL RESULT</p>
               <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-1 text-3xl font-black text-green-400" : "mt-1 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
@@ -1118,11 +1116,9 @@ export default function GamePage({ params }: GamePageProps) {
           <h1 className="text-3xl font-black text-yellow-400">{game.name}</h1>
 
           <p className="mt-2 text-sm text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
-          <p className="mt-1 text-sm text-green-400">Top Prize: GH₵200</p>
+          <p className="mt-1 text-sm text-green-400">Possible prizes: GH₵200, GH₵2 Airtime, Free Spin</p>
 
           <div className="relative mx-auto mt-5 h-64 w-64 sm:h-72 sm:w-72">
-            <div className="absolute left-1/2 top-[-14px] z-30 -translate-x-1/2 text-3xl text-yellow-400">▼</div>
-
             <div
               className="absolute inset-0 rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
               style={{
@@ -1133,7 +1129,7 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 flex h-8 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[8px] font-black leading-tight text-white sm:text-[10px]"
+                  className="absolute left-1/2 top-1/2 flex h-7 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[7px] font-black leading-tight text-white sm:text-[9px]"
                   style={{
                     transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
                   }}
@@ -1158,7 +1154,7 @@ export default function GamePage({ params }: GamePageProps) {
 
           {wheelResult && !spinningWheel && (
             <div className="mx-auto mt-4 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
-              <p className="text-xs text-white/60">THE WHEEL LANDED ON</p>
+              <p className="text-xs text-white/60">OFFICIAL RESULT</p>
               <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-1 text-3xl font-black text-green-400" : "mt-1 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
