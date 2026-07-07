@@ -180,9 +180,15 @@ export default function GamePage({ params }: GamePageProps) {
     }
 
     const outcomes = ["GH₵200", "TRY AGAIN", "GH₵2 Airtime", "FREE SPIN", "LOST", "TRY AGAIN"];
-    const result = outcomes[Math.floor(Math.random() * outcomes.length)];
+    const resultIndex = Math.floor(Math.random() * outcomes.length);
+    const result = outcomes[resultIndex];
 
-    setWheelRotation((current) => current + 9000 + Math.floor(Math.random() * 720));
+    const segmentSize = 60;
+    const pointerAngle = 270;
+    const segmentCenter = resultIndex * segmentSize + segmentSize / 2;
+    const finalRotation = 9000 + pointerAngle - segmentCenter;
+
+    setWheelRotation(finalRotation);
 
     await new Promise((resolve) => setTimeout(resolve, 15000));
 
@@ -812,7 +818,7 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 flex h-10 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 px-2 text-center text-[10px] font-black leading-tight text-white sm:text-xs"
+                  className="absolute left-1/2 top-1/2 flex h-8 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[8px] font-black leading-tight text-white sm:text-[10px]"
                   style={{
                     transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
                   }}
@@ -1127,7 +1133,7 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 flex h-10 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 px-2 text-center text-[10px] font-black leading-tight text-white sm:text-xs"
+                  className="absolute left-1/2 top-1/2 flex h-8 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/75 px-1 text-center text-[8px] font-black leading-tight text-white sm:text-[10px]"
                   style={{
                     transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
                   }}
