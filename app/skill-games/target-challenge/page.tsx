@@ -235,7 +235,7 @@ export default function ArrowTargetPage() {
               disabled={loading}
               className="mt-5 w-full rounded-xl bg-purple-400 py-4 font-black text-black disabled:opacity-40"
             >
-              {loading ? "Checking..." : "Shoot"}
+              {loading ? "Finishing..." : "Shoot"}
             </button>
           </div>
         )}
