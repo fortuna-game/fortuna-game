@@ -44,9 +44,13 @@ export default function AccountHistoryPage() {
       ...(txs || []).map((t: any) => ({
         id: `tx-${t.id}`,
         title:
-          t.type === "game_entry"
+          t.description
+            ? String(t.description)
+                .replace("entry stake", "Entry")
+                .replace("win payout", "Win")
+            : t.type === "game_entry" || t.type === "skill_game_entry"
             ? `${String(t.reference || "Game").replaceAll("-", " ")} — Entry Fee`
-            : t.type === "game_win"
+            : t.type === "game_win" || t.type === "skill_game_win"
             ? `${String(t.reference || "Game").replaceAll("-", " ")} — Game Win`
             : String(t.type || "Wallet Activity").replaceAll("_", " "),
         amount:
