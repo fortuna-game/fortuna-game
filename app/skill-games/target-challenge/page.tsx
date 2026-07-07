@@ -203,10 +203,10 @@ export default function ArrowTargetPage() {
 
             <div className="relative mt-6 h-44 rounded-3xl border border-purple-400/20 bg-gradient-to-b from-purple-950/40 to-black p-3">
               <div
-                className="absolute top-2 z-20 -translate-x-1/2 text-4xl drop-shadow-lg"
+                className="absolute top-2 z-20 -translate-x-1/2 text-5xl drop-shadow-lg"
                 style={{ left: `${aim}%` }}
               >
-                ▼
+                🏹
               </div>
 
               <div
