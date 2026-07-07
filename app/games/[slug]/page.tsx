@@ -138,6 +138,8 @@ export default function GamePage({ params }: GamePageProps) {
 
     setMessage("");
     setWheelResult("");
+    setAirtimePhone("");
+    setAirtimeSaved(false);
     setSpinningWheel(true);
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -177,46 +179,13 @@ export default function GamePage({ params }: GamePageProps) {
       });
     }
 
-    let wheelAudioContext: AudioContext | null = null;
-    let wheelSoundTimer: ReturnType<typeof setInterval> | null = null;
-
-    try {
-      wheelAudioContext = new AudioContext();
-
-      wheelSoundTimer = setInterval(() => {
-        if (!wheelAudioContext) return;
-
-        const oscillator = wheelAudioContext.createOscillator();
-        const gain = wheelAudioContext.createGain();
-
-        oscillator.connect(gain);
-        gain.connect(wheelAudioContext.destination);
-
-        oscillator.type = "triangle";
-        oscillator.frequency.value = 260 + Math.random() * 220;
-        gain.gain.value = 0.018;
-
-        oscillator.start();
-        oscillator.stop(wheelAudioContext.currentTime + 0.04);
-      }, 90);
-    } catch {}
+    const outcomes = ["GH₵200", "TRY AGAIN", "GH₵2 Airtime", "FREE SPIN", "LOST", "TRY AGAIN"];
+    const result = outcomes[Math.floor(Math.random() * outcomes.length)];
 
     setWheelRotation((current) => current + 9000 + Math.floor(Math.random() * 720));
 
     await new Promise((resolve) => setTimeout(resolve, 15000));
 
-    if (wheelSoundTimer) {
-      clearInterval(wheelSoundTimer);
-      wheelSoundTimer = null;
-    }
-
-    if (wheelAudioContext) {
-      await wheelAudioContext.close();
-      wheelAudioContext = null;
-    }
-
-    const outcomes = ["GH₵200", "TRY AGAIN", "GH₵2 Airtime", "FREE SPIN", "LOST", "TRY AGAIN"];
-    const result = outcomes[Math.floor(Math.random() * outcomes.length)];
     const wonCash = result === "GH₵200";
     const wonAirtime = result === "GH₵2 Airtime";
     const won = wonCash || wonAirtime;
@@ -225,7 +194,7 @@ export default function GamePage({ params }: GamePageProps) {
     setWheelResult(result);
     setFreeSpin(result === "FREE SPIN");
 
-    if (won) {
+    if (wonCash) {
       const { data: latestWallet } = await supabase
         .from("wallets")
         .select("balance")
@@ -235,14 +204,14 @@ export default function GamePage({ params }: GamePageProps) {
       await supabase
         .from("wallets")
         .update({
-          balance: Number(latestWallet?.balance || 0) + Number(game.prize_amount),
+          balance: Number(latestWallet?.balance || 0) + cashPrize,
         })
         .eq("user_id", user.id);
 
       await supabase.from("wallet_transactions").insert({
         user_id: user.id,
         type: "game_win",
-        amount: Number(game.prize_amount),
+        amount: cashPrize,
         status: "completed",
         reference: game.slug,
       });
@@ -252,18 +221,18 @@ export default function GamePage({ params }: GamePageProps) {
       user_id: user.id,
       game_slug: game.slug,
       score: won ? 1 : 0,
-      prize_amount: won ? Number(game.prize_amount) : 0,
+      prize_amount: wonCash ? cashPrize : 0,
       won,
     });
 
     setMessage(
       wonCash
-        ? `🏆 Congratulations! You won GH₵200.`
+        ? "🏆 Congratulations! You won GH₵200."
         : wonAirtime
-        ? "🏆 Congratulations! You won GH₵2 Airtime. Please enter your phone number below to receive your airtime reward."
+        ? "🏆 Congratulations! You won GH₵2 airtime. Enter your phone number below to receive your reward."
         : result === "FREE SPIN"
-        ? "🎡 You won a Free Spin! Spin again without wallet deduction."
-        : `The wheel landed on ${result}. Try again.`
+        ? "🎡 You won a Free Spin. Spin again without wallet deduction."
+        : "Not a winning spin this time. Please try again."
     );
 
     setSpinningWheel(false);
@@ -361,7 +330,7 @@ export default function GamePage({ params }: GamePageProps) {
     setMessage(
       won
         ? `Congratulations! You won ₵${scratchPrize.toFixed(2)}!`
-        : "No prize this time. Try again."
+        : "No prize this time. Please try again."
     );
   }
 
@@ -594,7 +563,7 @@ export default function GamePage({ params }: GamePageProps) {
     setMessage(
       won
         ? `You picked ${luckyPick}. Draw result was ${result}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
-        : `You picked ${luckyPick}. Draw result was ${result}. You did not win this round.`
+        : `You picked ${luckyPick}. Draw result was ${result}. Not a winning round this time. Please try again.`
     );
 
     setDrawingLucky(false);
@@ -718,7 +687,7 @@ export default function GamePage({ params }: GamePageProps) {
     setMessage(
       won
         ? `You chose ${chosenDice} and rolled ${dice}. You won ₵${Number(game.prize_amount).toFixed(2)}!`
-        : `You chose ${chosenDice} but rolled ${dice}. You did not win this round.`
+        : `You chose ${chosenDice} but rolled ${dice}. Not a winning round this time. Please try again.`
     );
 
     setRolling(false);
@@ -820,62 +789,68 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
   if (slug === "spin-wheel") {
+    const wheelPrizes = ["GH₵200", "TRY AGAIN", "GH₵2 AIRTIME", "FREE SPIN", "LOST", "TRY AGAIN"];
+
     return (
-      <main className="min-h-screen bg-black px-6 py-12 text-white">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
-          <h1 className="text-5xl font-black text-yellow-400">{game.name}</h1>
+      <main className="min-h-screen bg-black px-4 py-6 text-white">
+        <div className="mx-auto max-w-2xl rounded-3xl border border-yellow-400/20 bg-white/5 p-5 text-center">
+          <h1 className="text-3xl font-black text-yellow-400">{game.name}</h1>
 
-          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
-          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+          <p className="mt-2 text-sm text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-1 text-sm text-green-400">Top Prize: GH₵200</p>
 
-          <div className="relative mx-auto mt-10 h-60 w-60">
-            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-3xl text-yellow-400">
-              ▼
-            </div>
+          <div className="relative mx-auto mt-5 h-64 w-64 sm:h-72 sm:w-72">
+            <div className="absolute left-1/2 top-[-14px] z-30 -translate-x-1/2 text-3xl text-yellow-400">▼</div>
 
             <div
-              className="absolute inset-0 flex items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
+              className="absolute inset-0 rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
               style={{
                 transform: `rotate(${wheelRotation}deg)`,
-                transition: spinningWheel
-                  ? "transform 6s cubic-bezier(0.12, 0.8, 0.18, 1)"
-                  : "none",
+                transition: spinningWheel ? "transform 15s cubic-bezier(0.08, 0.85, 0.12, 1)" : "none",
               }}
             >
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+              {wheelPrizes.map((prize, index) => (
+                <div
+                  key={prize + index}
+                  className="absolute left-1/2 top-1/2 w-24 origin-left text-[10px] font-black text-black sm:text-xs"
+                  style={{ transform: `rotate(${index * 60 + 30}deg) translateX(28px)` }}
+                >
+                  {prize}
+                </div>
+              ))}
+
+              <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-sm font-black text-yellow-400">
                 FORTUNA
               </div>
             </div>
           </div>
 
+          <button
+            disabled={spinningWheel || wheelDone}
+            onClick={() => void playSpinWheel()}
+            className="mt-5 rounded-full bg-yellow-400 px-8 py-3 font-black text-black disabled:opacity-50"
+          >
+            {spinningWheel ? "Spinning..." : freeSpin ? "Use Free Spin" : wheelDone ? "Spin Completed" : "Spin Wheel"}
+          </button>
+
           {wheelResult && !spinningWheel && (
-            <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
-              <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-3xl font-black text-green-400" : "mt-2 text-3xl font-black text-yellow-400"}>
+            <div className="mx-auto mt-4 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
+              <p className="text-xs text-white/60">THE WHEEL LANDED ON</p>
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-1 text-3xl font-black text-green-400" : "mt-1 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
           )}
 
-          <button
-            disabled={spinningWheel || wheelDone}
-            onClick={() => void playSpinWheel()}
-            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
-          >
-            {spinningWheel ? "Spinning..." : wheelDone ? "Spin Completed" : "Spin Wheel"}
-          </button>
-
           {message && (
-            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
+            <p className={message.includes("Congratulations") ? "mt-4 rounded-xl border border-green-400/30 bg-green-500/10 p-3 font-bold text-green-300" : "mt-4 rounded-xl bg-white/10 p-3 text-white"}>
               {message}
             </p>
           )}
 
-          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && (
+          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && !spinningWheel && (
             <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
-              <p className="text-sm font-bold text-green-300">
-                Enter your phone number to receive your airtime reward.
-              </p>
+              <p className="text-sm font-bold text-green-300">Enter your phone number to receive your airtime reward.</p>
 
               <input
                 value={airtimePhone}
@@ -894,20 +869,22 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           {wheelDone && (
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
               <button
                 onClick={() => {
                   setWheelDone(false);
                   setWheelResult("");
                   setMessage("");
                   setFreeSpin(false);
+                  setAirtimePhone("");
+                  setAirtimeSaved(false);
                 }}
-                className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                className="rounded-full bg-yellow-400 px-6 py-3 font-black text-black"
               >
                 Play Again
               </button>
 
-              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white">
+              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-6 py-3 font-bold text-white">
                 Go to Games
               </Link>
             </div>
@@ -1125,62 +1102,68 @@ export default function GamePage({ params }: GamePageProps) {
   }
 
   if (slug === "spin-wheel") {
+    const wheelPrizes = ["GH₵200", "TRY AGAIN", "GH₵2 AIRTIME", "FREE SPIN", "LOST", "TRY AGAIN"];
+
     return (
-      <main className="min-h-screen bg-black px-6 py-12 text-white">
-        <div className="mx-auto max-w-3xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
-          <h1 className="text-5xl font-black text-yellow-400">{game.name}</h1>
+      <main className="min-h-screen bg-black px-4 py-6 text-white">
+        <div className="mx-auto max-w-2xl rounded-3xl border border-yellow-400/20 bg-white/5 p-5 text-center">
+          <h1 className="text-3xl font-black text-yellow-400">{game.name}</h1>
 
-          <p className="mt-4 text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
-          <p className="mt-2 text-green-400">Prize: ₵{Number(game.prize_amount).toFixed(2)}</p>
+          <p className="mt-2 text-sm text-white/60">Entry Fee: ₵{Number(game.entry_fee).toFixed(2)}</p>
+          <p className="mt-1 text-sm text-green-400">Top Prize: GH₵200</p>
 
-          <div className="relative mx-auto mt-10 h-60 w-60">
-            <div className="absolute left-1/2 top-[-18px] z-30 -translate-x-1/2 text-3xl text-yellow-400">
-              ▼
-            </div>
+          <div className="relative mx-auto mt-5 h-64 w-64 sm:h-72 sm:w-72">
+            <div className="absolute left-1/2 top-[-14px] z-30 -translate-x-1/2 text-3xl text-yellow-400">▼</div>
 
             <div
-              className="absolute inset-0 flex items-center justify-center rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
+              className="absolute inset-0 rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
               style={{
                 transform: `rotate(${wheelRotation}deg)`,
-                transition: spinningWheel
-                  ? "transform 6s cubic-bezier(0.12, 0.8, 0.18, 1)"
-                  : "none",
+                transition: spinningWheel ? "transform 15s cubic-bezier(0.08, 0.85, 0.12, 1)" : "none",
               }}
             >
-              <div className="flex h-20 w-20 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-xl font-black text-yellow-400">
+              {wheelPrizes.map((prize, index) => (
+                <div
+                  key={prize + index}
+                  className="absolute left-1/2 top-1/2 w-24 origin-left text-[10px] font-black text-black sm:text-xs"
+                  style={{ transform: `rotate(${index * 60 + 30}deg) translateX(28px)` }}
+                >
+                  {prize}
+                </div>
+              ))}
+
+              <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-4 border-yellow-400 bg-black text-sm font-black text-yellow-400">
                 FORTUNA
               </div>
             </div>
           </div>
 
+          <button
+            disabled={spinningWheel || wheelDone}
+            onClick={() => void playSpinWheel()}
+            className="mt-5 rounded-full bg-yellow-400 px-8 py-3 font-black text-black disabled:opacity-50"
+          >
+            {spinningWheel ? "Spinning..." : freeSpin ? "Use Free Spin" : wheelDone ? "Spin Completed" : "Spin Wheel"}
+          </button>
+
           {wheelResult && !spinningWheel && (
-            <div className="mx-auto mt-6 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5">
-              <p className="text-sm text-white/60">WHEEL RESULT</p>
-              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-2 text-3xl font-black text-green-400" : "mt-2 text-3xl font-black text-yellow-400"}>
+            <div className="mx-auto mt-4 max-w-sm animate-bounce rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-4">
+              <p className="text-xs text-white/60">THE WHEEL LANDED ON</p>
+              <p className={wheelResult === "GH₵200" || wheelResult === "GH₵2 Airtime" ? "mt-1 text-3xl font-black text-green-400" : "mt-1 text-3xl font-black text-yellow-400"}>
                 {wheelResult}
               </p>
             </div>
           )}
 
-          <button
-            disabled={spinningWheel || wheelDone}
-            onClick={() => void playSpinWheel()}
-            className="mt-8 rounded-full bg-yellow-400 px-10 py-4 font-black text-black disabled:opacity-50"
-          >
-            {spinningWheel ? "Spinning..." : wheelDone ? "Spin Completed" : "Spin Wheel"}
-          </button>
-
           {message && (
-            <p className={message.includes("Congratulations") ? "mt-6 rounded-xl border border-green-400/30 bg-green-500/10 p-4 font-bold text-green-300" : "mt-6 rounded-xl bg-white/10 p-4"}>
+            <p className={message.includes("Congratulations") ? "mt-4 rounded-xl border border-green-400/30 bg-green-500/10 p-3 font-bold text-green-300" : "mt-4 rounded-xl bg-white/10 p-3 text-white"}>
               {message}
             </p>
           )}
 
-          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && (
+          {wheelResult === "GH₵2 Airtime" && !airtimeSaved && !spinningWheel && (
             <div className="mx-auto mt-4 max-w-sm rounded-2xl border border-green-400/30 bg-green-500/10 p-4">
-              <p className="text-sm font-bold text-green-300">
-                Enter your phone number to receive your airtime reward.
-              </p>
+              <p className="text-sm font-bold text-green-300">Enter your phone number to receive your airtime reward.</p>
 
               <input
                 value={airtimePhone}
@@ -1199,20 +1182,22 @@ export default function GamePage({ params }: GamePageProps) {
           )}
 
           {wheelDone && (
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
               <button
                 onClick={() => {
                   setWheelDone(false);
                   setWheelResult("");
                   setMessage("");
                   setFreeSpin(false);
+                  setAirtimePhone("");
+                  setAirtimeSaved(false);
                 }}
-                className="rounded-full bg-yellow-400 px-8 py-3 font-black text-black"
+                className="rounded-full bg-yellow-400 px-6 py-3 font-black text-black"
               >
                 Play Again
               </button>
 
-              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-8 py-3 font-bold text-white">
+              <Link href="/games" className="rounded-full border border-white/20 bg-white/5 px-6 py-3 font-bold text-white">
                 Go to Games
               </Link>
             </div>
@@ -1638,7 +1623,7 @@ export default function GamePage({ params }: GamePageProps) {
             <h2 className="text-3xl font-black">Game Finished</h2>
             <p className="mt-3 text-xl">Score: {score}/{questions.length}</p>
             <p className={score >= 4 ? "mt-3 text-green-400" : "mt-3 text-red-300"}>
-              {score >= 4 ? `You won ₵${Number(game.prize_amount).toFixed(2)}!` : "You did not win this round."}
+              {score >= 4 ? `You won ₵${Number(game.prize_amount).toFixed(2)}!` : "Not a winning round this time. Please try again."}
             </p>
             <div className="mt-8 flex flex-wrap justify-center gap-4">
               <button
