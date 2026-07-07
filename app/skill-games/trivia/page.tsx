@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -26,9 +26,11 @@ export default function TriviaSprintPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [timeLeft, setTimeLeft] = useState(90);
 
   async function startGame() {
     setMessage("");
+    setTimeLeft(90);
     setLoading(true);
 
     const { data: auth } = await supabase.auth.getSession();
@@ -62,19 +64,11 @@ export default function TriviaSprintPage() {
     setAnswers([]);
     setCurrent(0);
     setResult(null);
+    setTimeLeft(90);
     setLoading(false);
   }
 
-  async function chooseAnswer(answer: string) {
-    const q = questions[current];
-    const nextAnswers = [...answers, { id: q.id, answer }];
-    setAnswers(nextAnswers);
-
-    if (current + 1 < questions.length) {
-      setCurrent((value) => value + 1);
-      return;
-    }
-
+  async function finishGame(finalAnswers: { id: string; answer: string }[]) {
     setLoading(true);
 
     const { data: auth } = await supabase.auth.getSession();
@@ -88,7 +82,7 @@ export default function TriviaSprintPage() {
       },
       body: JSON.stringify({
         sessionId,
-        answers: nextAnswers,
+        answers: finalAnswers,
       }),
     });
 
@@ -104,6 +98,19 @@ export default function TriviaSprintPage() {
     setLoading(false);
   }
 
+  async function chooseAnswer(answer: string) {
+    const q = questions[current];
+    const nextAnswers = [...answers, { id: q.id, answer }];
+    setAnswers(nextAnswers);
+
+    if (current + 1 < questions.length) {
+      setCurrent((value) => value + 1);
+      return;
+    }
+
+    await finishGame(nextAnswers);
+  }
+
   function resetGame() {
     setStake("");
     setSessionId("");
@@ -112,7 +119,38 @@ export default function TriviaSprintPage() {
     setCurrent(0);
     setResult(null);
     setMessage("");
+    setTimeLeft(90);
   }
+
+
+  useEffect(() => {
+    if (!playing || result) return;
+
+    const warning = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Your active game may be lost if you leave.";
+    };
+
+    window.addEventListener("beforeunload", warning);
+
+    return () => window.removeEventListener("beforeunload", warning);
+  }, [playing, result]);
+
+  useEffect(() => {
+    if (!playing || result || loading) return;
+
+    if (timeLeft <= 0) {
+      void finishGame(answers);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((t) => t - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [playing, result, loading, timeLeft, answers]);
+
 
   const payout = Number(stake || 0) * 2;
   const playing = questions.length > 0 && !result;
@@ -173,7 +211,9 @@ export default function TriviaSprintPage() {
           <div className="mt-6">
             <div className="flex justify-between text-sm text-white/50">
               <span>Question {current + 1}/{questions.length}</span>
-              <span>Answered: {answers.length}</span>
+              <span className={timeLeft <= 20 ? "text-red-300" : "text-yellow-300"}>
+                Time: {timeLeft}s
+              </span>
             </div>
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
