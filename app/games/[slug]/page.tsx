@@ -812,8 +812,10 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 w-24 origin-left text-[10px] font-black text-black sm:text-xs"
-                  style={{ transform: `rotate(${index * 60 + 30}deg) translateX(28px)` }}
+                  className="absolute left-1/2 top-1/2 flex h-10 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 px-2 text-center text-[10px] font-black leading-tight text-white sm:text-xs"
+                  style={{
+                    transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
+                  }}
                 >
                   {prize}
                 </div>
@@ -1125,8 +1127,10 @@ export default function GamePage({ params }: GamePageProps) {
               {wheelPrizes.map((prize, index) => (
                 <div
                   key={prize + index}
-                  className="absolute left-1/2 top-1/2 w-24 origin-left text-[10px] font-black text-black sm:text-xs"
-                  style={{ transform: `rotate(${index * 60 + 30}deg) translateX(28px)` }}
+                  className="absolute left-1/2 top-1/2 flex h-10 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 px-2 text-center text-[10px] font-black leading-tight text-white sm:text-xs"
+                  style={{
+                    transform: `rotate(${index * 60 + 30}deg) translateY(-86px) rotate(-${index * 60 + 30}deg)`,
+                  }}
                 >
                   {prize}
                 </div>
