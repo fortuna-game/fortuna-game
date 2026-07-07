@@ -19,6 +19,23 @@ export default function AccountHistoryPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("username, first_name")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    const displayName =
+      profile?.username || profile?.first_name || "Player";
+
+    const formatFGReference = (dateValue: string) => {
+      const d = new Date(dateValue);
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      const yy = String(d.getFullYear()).slice(-2);
+      return `FG/${mm}/${dd}/${yy}`;
+    };
+
     const { data: txs } = await supabase
       .from("wallet_transactions")
       .select("*")
@@ -58,7 +75,10 @@ export default function AccountHistoryPage() {
             ? -Math.abs(Number(t.amount || 0))
             : Number(t.amount || 0),
         status: t.status || "completed",
-        reference: t.reference || t.description || null,
+        reference:
+          t.type === "skill_game_entry" || t.type === "skill_game_win"
+            ? `@${displayName}`
+            : t.reference || t.description || null,
         date: t.created_at,
       })),
 
@@ -67,7 +87,7 @@ export default function AccountHistoryPage() {
         title: "Deposit",
         amount: Number(d.amount || 0),
         status: d.status || "completed",
-        reference: d.reference || d.provider || null,
+        reference: formatFGReference(d.created_at),
         date: d.created_at,
       })),
 
@@ -76,7 +96,7 @@ export default function AccountHistoryPage() {
         title: "Withdrawal",
         amount: -Math.abs(Number(w.amount || 0)),
         status: w.status,
-        reference: w.reference || w.momo_number || null,
+        reference: w.reference || formatFGReference(w.created_at),
         date: w.processed_at || w.created_at,
       })),
     ];
