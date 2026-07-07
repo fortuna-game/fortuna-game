@@ -20,7 +20,8 @@ export default function AdminDashboardPage() {
       const json = await res.json();
 
       if (!res.ok) {
-        setMessage(json.error || "Admin access denied.");
+        const { data: userData } = await supabase.auth.getUser();
+        setMessage(`${json.error || "Admin access denied."} Logged in as: ${userData.user?.email || "No email found"}`);
         return;
       }
 
