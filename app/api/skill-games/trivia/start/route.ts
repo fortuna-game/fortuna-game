@@ -136,89 +136,30 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: wallet, error: walletError } =
-      await supabaseAdmin
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user.id)
-        .maybeSingle();
+    const selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
 
-    if (walletError || !wallet) {
+    const { data: sessionId, error: startError } =
+      await supabaseAdmin.rpc("start_skill_game_atomic", {
+        p_user_id: user.id,
+        p_game_slug: "trivia",
+        p_stake: stakeAmount,
+        p_payout: stakeAmount * 2,
+        p_answers: selectedQuestions.map((q) => ({
+          id: q.id,
+          answer: q.answer,
+        })),
+      });
+
+    if (startError || !sessionId) {
       return NextResponse.json(
-        { error: "Wallet not found." },
-        { status: 404 }
-      );
-    }
-
-    const balance = Number(wallet.balance || 0);
-
-    if (balance < stakeAmount) {
-      return NextResponse.json(
-        { error: "Insufficient wallet balance." },
+        { error: startError?.message || "Could not start game." },
         { status: 400 }
       );
     }
 
-    const selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
-
-    const { data: session, error: sessionError } =
-      await supabaseAdmin
-        .from("skill_game_sessions")
-        .insert({
-          user_id: user.id,
-          game_slug: "trivia",
-          stake: stakeAmount,
-          payout: stakeAmount * 2,
-          score: 0,
-          status: "started",
-          result: "pending",
-          answers: selectedQuestions.map((q) => ({
-            id: q.id,
-            answer: q.answer,
-          })),
-        })
-        .select("id")
-        .single();
-
-    if (sessionError || !session) {
-      return NextResponse.json(
-        { error: "Could not create game session." },
-        { status: 500 }
-      );
-    }
-
-    const { error: deductError } =
-      await supabaseAdmin
-        .from("wallets")
-        .update({
-          balance: balance - stakeAmount,
-        })
-        .eq("user_id", user.id);
-
-    if (deductError) {
-      await supabaseAdmin
-        .from("skill_game_sessions")
-        .delete()
-        .eq("id", session.id);
-
-      return NextResponse.json(
-        { error: "Could not deduct game stake." },
-        { status: 500 }
-      );
-    }
-
-    await supabaseAdmin.from("wallet_transactions").insert({
-      user_id: user.id,
-      type: "skill_game_entry",
-      amount: -stakeAmount,
-      status: "completed",
-      reference: session.id,
-      description: "Trivia Sprint entry stake",
-    });
-
     return NextResponse.json({
       success: true,
-      sessionId: session.id,
+      sessionId: sessionId,
       questions: selectedQuestions.map(({ answer, ...question }) => ({
         ...question,
         options: shuffle(question.options),

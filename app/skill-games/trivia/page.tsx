@@ -26,11 +26,11 @@ export default function TriviaSprintPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [timeLeft, setTimeLeft] = useState(90);
+  const [timeLeft, setTimeLeft] = useState(30);
 
   async function startGame() {
     setMessage("");
-    setTimeLeft(90);
+    setTimeLeft(30);
     setLoading(true);
 
     const { data: auth } = await supabase.auth.getSession();
@@ -64,7 +64,7 @@ export default function TriviaSprintPage() {
     setAnswers([]);
     setCurrent(0);
     setResult(null);
-    setTimeLeft(90);
+    setTimeLeft(30);
     setLoading(false);
   }
 
@@ -119,9 +119,12 @@ export default function TriviaSprintPage() {
     setCurrent(0);
     setResult(null);
     setMessage("");
-    setTimeLeft(90);
+    setTimeLeft(30);
   }
 
+
+  const playing = questions.length > 0 && !result;
+  const q = questions[current];
 
   useEffect(() => {
     if (!playing || result) return;
@@ -153,8 +156,6 @@ export default function TriviaSprintPage() {
 
 
   const payout = Number(stake || 0) * 2;
-  const playing = questions.length > 0 && !result;
-  const q = questions[current];
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
