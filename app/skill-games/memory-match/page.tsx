@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-type Card = { id: string };
+type Card = { id: string; symbol: string };
 type Result = { score: number; total: number; won: boolean; payout: number };
 
 export default function MemoryMatchPage() {
@@ -19,6 +19,7 @@ export default function MemoryMatchPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [timeLeft, setTimeLeft] = useState(60);
 
   async function startGame() {
     setLoading(true);
@@ -49,6 +50,7 @@ export default function MemoryMatchPage() {
     setMatched([]);
     setMoves([]);
     setResult(null);
+    setTimeLeft(60);
     setLoading(false);
   }
 
@@ -76,6 +78,10 @@ export default function MemoryMatchPage() {
     setLoading(false);
   }
 
+  function finishNow(finalMoves: [string, string][]) {
+    void finishGame(finalMoves);
+  }
+
   function flipCard(id: string) {
     if (loading || result || matched.includes(id) || flipped.includes(id)) return;
     if (flipped.length >= 2) return;
@@ -89,10 +95,23 @@ export default function MemoryMatchPage() {
       setMoves(nextMoves);
 
       setTimeout(() => {
+        const first = cards.find((c) => c.id === pair[0]);
+        const second = cards.find((c) => c.id === pair[1]);
+
+        if (first && second && first.symbol === second.symbol) {
+          const nextMatched = [...matched, pair[0], pair[1]];
+          setMatched(nextMatched);
+
+          if (nextMatched.length === cards.length) {
+            finishNow(nextMoves);
+            return;
+          }
+        }
+
         setFlipped([]);
 
         if (nextMoves.length >= maxMoves) {
-          void finishGame(nextMoves);
+          finishNow(nextMoves);
         }
       }, 700);
     }
@@ -108,7 +127,38 @@ export default function MemoryMatchPage() {
     setMoves([]);
     setResult(null);
     setMessage("");
+    setTimeLeft(60);
   }
+
+
+  const playing = cards.length > 0 && !result;
+
+  useEffect(() => {
+    if (!playing) return;
+
+    const warning = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", warning);
+    return () => window.removeEventListener("beforeunload", warning);
+  }, [playing]);
+
+  useEffect(() => {
+    if (!playing || loading) return;
+
+    if (timeLeft <= 0) {
+      void finishGame(moves);
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setTimeLeft((value) => value - 1);
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [playing, loading, timeLeft, moves]);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
@@ -147,7 +197,9 @@ export default function MemoryMatchPage() {
           <div className="mt-6">
             <div className="flex justify-between text-sm text-white/60">
               <span>Moves: {moves.length}/{maxMoves}</span>
-              <span>Find all pairs</span>
+              <span className={timeLeft <= 10 ? "text-red-400" : "text-yellow-400"}>
+                ⏱ {timeLeft}s
+              </span>
             </div>
 
             <div className="mt-5 grid grid-cols-4 gap-3">
@@ -159,7 +211,7 @@ export default function MemoryMatchPage() {
                     onClick={() => flipCard(card.id)}
                     className="flex aspect-square items-center justify-center rounded-2xl border border-yellow-400/20 bg-black text-3xl font-black"
                   >
-                    {open ? "✨" : "?"}
+                    {open ? card.symbol : "?"}
                   </button>
                 );
               })}

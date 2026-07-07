@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     sessionId,
-    cards: cards.map((c) => ({ id: c.id })),
+    cards,
     maxMoves: 10,
   });
 }
