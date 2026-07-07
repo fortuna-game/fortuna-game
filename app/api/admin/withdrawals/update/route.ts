@@ -3,6 +3,19 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
   try {
+    const authHeader = req.headers.get("authorization");
+    const token = authHeader?.replace("Bearer ", "");
+
+    if (!token) {
+      return NextResponse.json({ error: "Admin login required." }, { status: 401 });
+    }
+
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
+
+    if (userError || !user || user.email?.toLowerCase() !== "fortunaplay2025@outlook.com") {
+      return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
+    }
+
     const { id, status } = await req.json();
 
     if (!id || !["sending", "paid", "failed"].includes(status)) {
