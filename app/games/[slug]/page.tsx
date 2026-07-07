@@ -807,6 +807,17 @@ export default function GamePage({ params }: GamePageProps) {
 
           <div className="relative mx-auto mt-5 h-64 w-64 sm:h-72 sm:w-72">
             <div
+              className="absolute left-1/2 top-[-12px] z-50 -translate-x-1/2"
+              style={{
+                width: 0,
+                height: 0,
+                borderLeft: "16px solid transparent",
+                borderRight: "16px solid transparent",
+                borderTop: "32px solid black",
+                filter: "drop-shadow(0 0 2px white) drop-shadow(0 3px 4px rgba(0,0,0,0.8))",
+              }}
+            />
+            <div
               className="absolute inset-0 rounded-full border-8 border-yellow-400 bg-[conic-gradient(from_0deg,#facc15_0_60deg,#ef4444_60deg_120deg,#22c55e_120deg_180deg,#a855f7_180deg_240deg,#f97316_240deg_300deg,#3b82f6_300deg_360deg)] shadow-2xl"
               style={{
                 transform: `rotate(${wheelRotation}deg)`,
