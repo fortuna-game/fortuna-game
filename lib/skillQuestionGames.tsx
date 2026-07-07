@@ -201,4 +201,17 @@ export const QUESTION_GAMES = {
       { id: "at6", question: "Best action before shooting is to?", options: ["Aim", "Close eyes", "Reload", "Logout"], answer: "Aim" },
     ],
   },
+  "reaction-tap": {
+    name: "Reaction Rush",
+    minScore: 5,
+    total: 6,
+    questions: [
+      { id: "rr1", question: "When the screen says TAP NOW, what should you do?", options: ["Tap fast", "Wait", "Logout", "Refresh"], answer: "Tap fast" },
+      { id: "rr2", question: "If you tap before the signal, what happens?", options: ["Win", "Too early", "Bonus", "Deposit"], answer: "Too early" },
+      { id: "rr3", question: "Reaction games test your?", options: ["Speed", "Sleep", "Luck", "Name"], answer: "Speed" },
+      { id: "rr4", question: "Best reaction means tapping?", options: ["Late", "Fast", "Never", "Wrong"], answer: "Fast" },
+      { id: "rr5", question: "If the target appears quickly, you need?", options: ["Focus", "Delay", "Guessing", "Scrolling"], answer: "Focus" },
+      { id: "rr6", question: "Reaction Rush is mainly about?", options: ["Fast response", "Long reading", "Random chance", "Wallet only"], answer: "Fast response" },
+    ],
+  },
 };
