@@ -30,7 +30,7 @@ export default function TriviaSprintPage() {
 
   async function startGame() {
     setMessage("");
-    setTimeLeft(30);
+    setTimeLeft(45);
     setLoading(true);
 
     const { data: auth } = await supabase.auth.getSession();
@@ -64,7 +64,7 @@ export default function TriviaSprintPage() {
     setAnswers([]);
     setCurrent(0);
     setResult(null);
-    setTimeLeft(30);
+    setTimeLeft(45);
     setLoading(false);
   }
 
@@ -119,7 +119,7 @@ export default function TriviaSprintPage() {
     setCurrent(0);
     setResult(null);
     setMessage("");
-    setTimeLeft(30);
+    setTimeLeft(45);
   }
 
 
