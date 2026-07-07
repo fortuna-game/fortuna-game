@@ -12,15 +12,24 @@ export default function TargetChallengePreview() {
   const [shot, setShot] = useState<number | null>(null);
 
   const payout = Number(stake || 0) * 2;
-  const zones = [1, 2, 3, 4, 5];
-  const won = shot !== null && targetNumber !== null && Math.ceil(shot / 20) === targetNumber;
+  const [zones, setZones] = useState([1, 2, 3, 4, 5]);
+  const landedZoneIndex =
+    shot === null ? -1 : Math.min(4, Math.max(0, Math.floor(shot / 20)));
+
+  const landedNumber =
+    landedZoneIndex >= 0 ? zones[landedZoneIndex] : null;
+
+  const won =
+    shot !== null &&
+    targetNumber !== null &&
+    landedNumber === targetNumber;
 
   useEffect(() => {
     if (!started || shot !== null) return;
 
     const timer = setInterval(() => {
       setAim((current) => {
-        let next = current + direction * 4;
+        let next = current + direction * 8;
 
         if (next >= 100) {
           setDirection(-1);
@@ -34,17 +43,29 @@ export default function TargetChallengePreview() {
 
         return next;
       });
-    }, 45);
+    }, 30);
 
     return () => clearInterval(timer);
   }, [started, direction, shot]);
+
+  useEffect(() => {
+    if (!started || shot !== null) return;
+
+    const zoneTimer = setInterval(() => {
+      setZones((current) => [...current].sort(() => Math.random() - 0.5));
+    }, 900);
+
+    return () => clearInterval(zoneTimer);
+  }, [started, shot]);
 
   function startGame() {
     if (!stake || Number(stake) <= 0 || !targetNumber) return;
     setStarted(true);
     setShot(null);
     setAim(50);
+    setZones([1, 2, 3, 4, 5]);
     setDirection(1);
+    setZones([1, 2, 3, 4, 5].sort(() => Math.random() - 0.5));
   }
 
   function playAgain() {
@@ -53,6 +74,7 @@ export default function TargetChallengePreview() {
     setTargetNumber(null);
     setShot(null);
     setAim(50);
+    setZones([1, 2, 3, 4, 5]);
   }
 
   return (
@@ -158,7 +180,7 @@ export default function TargetChallengePreview() {
                   <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
                     <h2 className="text-2xl font-black">Missed Target</h2>
                     <p className="mt-3 text-white/60">
-                      Your arrow landed in zone {Math.ceil((shot || 1) / 20)}. You needed zone {targetNumber}.
+                      Your arrow landed on number {landedNumber}. You needed number {targetNumber}.
                     </p>
                     <p className="mt-2 text-white/50">Please try again.</p>
                   </div>
