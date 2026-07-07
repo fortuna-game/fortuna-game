@@ -1,54 +1,74 @@
 import Link from "next/link";
 
 const games = [
-  ["trivia", "🧠", "Trivia Sprint", "Answer questions and beat the required score."],
-  ["math-rush", "➗", "Math Rush", "Solve fast math challenges."],
-  ["word-puzzle", "🔤", "Word Puzzle", "Unscramble words correctly."],
-  ["memory-match", "🧩", "Memory Match", "Match hidden pairs with limited moves."],
-  ["reaction-tap", "⚡", "Reaction Rush", "Fast reflex challenge."],
-  ["target-challenge", "🏹", "Arrow Target", "Hit your chosen moving number."],
-  ["pattern-sequence", "🧩", "Pattern Sequence", "Find what comes next."],
-  ["speed-sort", "⚡", "Speed Sort", "Sort items quickly and correctly."],
-  ["code-breaker", "🔐", "Code Breaker", "Crack secret codes using clues."],
-  ["maze-escape", "🧭", "Maze Escape", "Reach the exit with limited moves."],
-  ["color-clash", "🎨", "Color Clash", "Choose the actual display color."],
-  ["quick-count", "👁️", "Quick Count", "Count objects before they disappear."],
-  ["stack-balance", "📦", "Stack Balance", "Drop blocks carefully and build high."],
-  ["number-hunt", "🔢", "Number Hunt", "Find the hidden target number."],
-  ["logic-lock", "🔒", "Logic Lock", "Solve logic challenges and unlock the vault."],
+  ["trivia", "🧠", "Trivia Sprint", "Knowledge challenge"],
+  ["math-rush", "➗", "Math Rush", "Fast calculations"],
+  ["word-puzzle", "🔤", "Word Puzzle", "Word mastery"],
+  ["memory-match", "🧩", "Memory Match", "Memory challenge"],
+  ["reaction-tap", "⚡", "Reaction Rush", "Reflex test"],
+  ["target-challenge", "🏹", "Arrow Target", "Accuracy challenge"],
+  ["pattern-sequence", "🧬", "Pattern Sequence", "Logic patterns"],
+  ["speed-sort", "⚡", "Speed Sort", "Fast decisions"],
+  ["code-breaker", "🔐", "Code Breaker", "Crack the code"],
+  ["maze-escape", "🧭", "Maze Escape", "Find the exit"],
+  ["color-clash", "🎨", "Color Clash", "Focus test"],
+  ["quick-count", "👁️", "Quick Count", "Sharp eyes"],
+  ["stack-balance", "📦", "Stack Balance", "Timing skill"],
+  ["number-hunt", "🔢", "Number Hunt", "Find numbers"],
+  ["logic-lock", "🔒", "Logic Lock", "Reasoning test"],
 ];
 
 export default function SkillGamesPage() {
   return (
-    <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <h1 className="text-3xl font-black text-yellow-400 sm:text-5xl">
-          Skill Games
-        </h1>
+    <main className="min-h-screen overflow-hidden bg-black px-4 py-8 text-white sm:px-6">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,#facc1530,transparent_35%),radial-gradient(circle_at_bottom_right,#7c3aed30,transparent_35%)]" />
 
-        <p className="mt-2 max-w-2xl text-sm text-white/60 sm:text-base">
-          Choose a game, test your skill, and win based on performance.
-        </p>
+      <div className="relative mx-auto max-w-7xl">
+        <section className="rounded-[2rem] border border-yellow-400/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-10">
+          <p className="text-xs font-black uppercase tracking-[0.35em] text-yellow-400">
+            Skill-Based Challenges
+          </p>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {games.map(([slug, icon, name, desc]) => (
+          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight sm:text-6xl">
+            Play smarter. Test your skill. Win by performance.
+          </h1>
+
+          <p className="mt-4 max-w-2xl text-sm text-white/60 sm:text-lg">
+            Choose from professional skill games built around speed, memory,
+            logic, accuracy, focus, and problem solving.
+          </p>
+        </section>
+
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {games.map(([slug, icon, name, tag], index) => (
             <Link
               key={slug}
               href={`/skill-games/${slug}`}
-              className="rounded-3xl border border-yellow-400/20 bg-white/5 p-5 transition hover:border-yellow-400/60 hover:bg-yellow-400/10"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-black p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-yellow-400/60"
             >
-              <div className="text-5xl">{icon}</div>
+              <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-yellow-400/10 blur-2xl transition group-hover:bg-yellow-400/25" />
 
-              <h2 className="mt-4 text-xl font-black text-white">
+              <div className="relative flex items-start justify-between gap-3">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-yellow-400/20 bg-black/60 text-4xl shadow-lg transition group-hover:scale-110">
+                  {icon}
+                </div>
+
+                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50">
+                  #{index + 1}
+                </span>
+              </div>
+
+              <h2 className="relative mt-5 text-2xl font-black text-white">
                 {name}
               </h2>
 
-              <p className="mt-2 text-sm text-white/50">
-                {desc}
+              <p className="relative mt-2 text-sm text-yellow-300">
+                {tag}
               </p>
 
-              <div className="mt-5 rounded-xl bg-yellow-400 py-3 text-center font-black text-black">
-                Preview Game
+              <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-yellow-400 px-4 py-3 font-black text-black">
+                <span>Open Game</span>
+                <span className="transition group-hover:translate-x-1">→</span>
               </div>
             </Link>
           ))}
