@@ -173,5 +173,32 @@ export const QUESTION_GAMES = {
       { id: "mz8", question: "A maze tests which skill most?", options: ["Navigation", "Cooking", "Singing", "Sleeping"], answer: "Navigation" },
     ],
   }
+,
+  "stack-balance": {
+    name: "Stack Balance",
+    minScore: 5,
+    total: 6,
+    questions: [
+      { id: "sb1", question: "A block is moving left and right. What should you focus on?", options: ["Timing", "Color", "Sound", "Name"], answer: "Timing" },
+      { id: "sb2", question: "To keep a stack balanced, where should the next block land?", options: ["Far left", "Far right", "Near the center", "Outside"], answer: "Near the center" },
+      { id: "sb3", question: "If a block is placed too far from the previous block, what happens?", options: ["Stack improves", "Stack collapses", "Nothing", "Prize doubles"], answer: "Stack collapses" },
+      { id: "sb4", question: "A stable stack needs good?", options: ["Balance", "Luck", "Noise", "Delay"], answer: "Balance" },
+      { id: "sb5", question: "If the block speed increases, what skill is tested?", options: ["Reaction", "Sleeping", "Guessing", "Reading"], answer: "Reaction" },
+      { id: "sb6", question: "Best time to drop a block is when it is?", options: ["Aligned", "Far away", "Hidden", "Gone"], answer: "Aligned" },
+    ],
+  },
 
+  "target-challenge": {
+    name: "Arrow Target",
+    minScore: 5,
+    total: 6,
+    questions: [
+      { id: "at1", question: "If your chosen number is 3, what should the arrow hit?", options: ["1", "2", "3", "4"], answer: "3" },
+      { id: "at2", question: "The target number moves. What should you track?", options: ["The number", "The background", "The border", "The title"], answer: "The number" },
+      { id: "at3", question: "Accuracy means hitting the?", options: ["Wrong zone", "Chosen target", "Menu", "Wallet"], answer: "Chosen target" },
+      { id: "at4", question: "When the arrow is moving fast, you need good?", options: ["Timing", "Luck", "Silence", "Color"], answer: "Timing" },
+      { id: "at5", question: "If the arrow lands on the wrong number, the result is?", options: ["Win", "Miss", "Bonus", "Deposit"], answer: "Miss" },
+      { id: "at6", question: "Best action before shooting is to?", options: ["Aim", "Close eyes", "Reload", "Logout"], answer: "Aim" },
+    ],
+  },
 };
