@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Game already completed." }, { status: 400 });
     }
 
-    const game = QUESTION_GAMES[String(session.game_slug)];
+    const game = (QUESTION_GAMES as Record<string, any>)[String(session.game_slug)];
 
     if (!game) {
       return NextResponse.json({ error: "Game rules not found." }, { status: 404 });

@@ -23,7 +23,7 @@ export async function POST(req: Request) {
     }
 
     const { gameSlug, stake } = await req.json();
-    const game = QUESTION_GAMES[String(gameSlug)];
+    const game = (QUESTION_GAMES as Record<string, any>)[String(gameSlug)];
     const stakeAmount = Number(stake);
 
     if (!game) {
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Stake must be between GH₵1 and GH₵50." }, { status: 400 });
     }
 
-    const selectedQuestions = shuffle(game.questions).slice(0, game.total);
+    const selectedQuestions = shuffle(game.questions).slice(0, game.total) as any[];
 
     const { data: sessionId, error: startError } =
       await supabaseAdmin.rpc("start_skill_game_atomic", {

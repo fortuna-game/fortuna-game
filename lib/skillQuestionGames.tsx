@@ -1,19 +1,4 @@
-export type QuestionGameItem = {
-  id: string;
-  question: string;
-  options: string[];
-  answer: string;
-};
-
-export const QUESTION_GAMES: Record<
-  string,
-  {
-    name: string;
-    minScore: number;
-    total: number;
-    questions: QuestionGameItem[];
-  }
-> = {
+export const QUESTION_GAMES = {
   "word-puzzle": {
     name: "Word Puzzle",
     minScore: 8,
@@ -157,5 +142,36 @@ export const QUESTION_GAMES: Record<
       { id: "qc6", question: "How many? ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽", options: ["10", "11", "12", "14"], answer: "12" },
     ],
   },
+
+  "memory-match": {
+    name: "Memory Match",
+    minScore: 8,
+    total: 8,
+    questions: [
+      { id: "mm1", question: "Find the pair for 🍎", options: ["🍎", "⭐", "💎", "🔥"], answer: "🍎" },
+      { id: "mm2", question: "Find the pair for ⭐", options: ["🍎", "⭐", "💎", "��"], answer: "⭐" },
+      { id: "mm3", question: "Find the pair for 💎", options: ["🍎", "⭐", "💎", "🔥"], answer: "💎" },
+      { id: "mm4", question: "Find the pair for 🔥", options: ["🍎", "⭐", "💎", "🔥"], answer: "🔥" },
+      { id: "mm5", question: "Remember: 🟢 🔴 🟡. What was first?", options: ["🟢", "🔴", "🟡", "🔵"], answer: "🟢" },
+      { id: "mm6", question: "Remember: 🐶 🐱 🐵. What was second?", options: ["🐶", "🐱", "🐵", "🦁"], answer: "🐱" },
+      { id: "mm7", question: "Remember: A B C D. What came after B?", options: ["A", "C", "D", "B"], answer: "C" },
+      { id: "mm8", question: "Remember: 7 4 9. What was last?", options: ["7", "4", "9", "1"], answer: "9" },
+    ],
+  },
+  "maze-escape": {
+    name: "Maze Escape",
+    minScore: 8,
+    total: 8,
+    questions: [
+      { id: "mz1", question: "From Start, move Right then Down. Where are you?", options: ["A2", "B2", "C1", "B1"], answer: "B2" },
+      { id: "mz2", question: "Which direction moves you closer to the exit on the right?", options: ["Left", "Right", "Up", "Back"], answer: "Right" },
+      { id: "mz3", question: "A wall blocks Up. Which move is impossible?", options: ["Up", "Down", "Left", "Right"], answer: "Up" },
+      { id: "mz4", question: "You are at B2. Exit is at B4. Best direction?", options: ["Up", "Down", "Left", "Right"], answer: "Right" },
+      { id: "mz5", question: "If you hit a wall, what should you do?", options: ["Repeat move", "Choose another route", "Stop", "Go through wall"], answer: "Choose another route" },
+      { id: "mz6", question: "Shortest path means using what?", options: ["More moves", "Fewer moves", "Random moves", "No moves"], answer: "Fewer moves" },
+      { id: "mz7", question: "Exit is below you. Which direction?", options: ["Up", "Down", "Left", "Right"], answer: "Down" },
+      { id: "mz8", question: "A maze tests which skill most?", options: ["Navigation", "Cooking", "Singing", "Sleeping"], answer: "Navigation" },
+    ],
+  }
 
 };
