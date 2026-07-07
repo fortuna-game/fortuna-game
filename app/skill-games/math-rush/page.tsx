@@ -1,60 +1,165 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
-const questions = [
-  { question: "12 + 8", options: ["18", "20", "22", "24"], answer: "20" },
-  { question: "7 × 6", options: ["36", "40", "42", "48"], answer: "42" },
-  { question: "50 - 17", options: ["31", "32", "33", "34"], answer: "33" },
-  { question: "81 ÷ 9", options: ["7", "8", "9", "10"], answer: "9" },
-  { question: "15 + 18", options: ["31", "32", "33", "35"], answer: "33" },
-];
+type Question = {
+  id: string;
+  question: string;
+  options: string[];
+};
 
-export default function MathRushPreview() {
+type Result = {
+  score: number;
+  total: number;
+  won: boolean;
+  payout: number;
+};
+
+export default function MathRushPage() {
   const [stake, setStake] = useState("");
-  const [started, setStarted] = useState(false);
+  const [sessionId, setSessionId] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answers, setAnswers] = useState<{ id: string; answer: string }[]>([]);
   const [current, setCurrent] = useState(0);
-  const [score, setScore] = useState(0);
-  const [finished, setFinished] = useState(false);
+  const [result, setResult] = useState<Result | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [timeLeft, setTimeLeft] = useState(30);
 
-  function startGame() {
-    if (!stake || Number(stake) <= 0) return;
+  async function startGame() {
+    setMessage("");
+    setTimeLeft(30);
+    setLoading(true);
 
-    setStarted(true);
-    setCurrent(0);
-    setScore(0);
-    setFinished(false);
-  }
+    const { data: auth } = await supabase.auth.getSession();
+    const token = auth.session?.access_token;
 
-  function answerQuestion(selected: string) {
-    const correct = selected === questions[current].answer;
-    const newScore = correct ? score + 1 : score;
-
-    if (current + 1 >= questions.length) {
-      setScore(newScore);
-      setFinished(true);
+    if (!token) {
+      setMessage("Please log in to play.");
+      setLoading(false);
       return;
     }
 
-    setScore(newScore);
-    setCurrent(current + 1);
-  }
+    const res = await fetch("/api/skill-games/math-rush/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ stake: Number(stake) }),
+    });
 
-  function playAgain() {
-    setStarted(false);
-    setFinished(false);
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.error || "Could not start game.");
+      setLoading(false);
+      return;
+    }
+
+    setSessionId(data.sessionId);
+    setQuestions(data.questions || []);
+    setAnswers([]);
     setCurrent(0);
-    setScore(0);
-    setStake("");
+    setResult(null);
+    setTimeLeft(30);
+    setLoading(false);
   }
 
-  const won = score >= 4;
+  async function finishGame(finalAnswers: { id: string; answer: string }[]) {
+    setLoading(true);
+
+    const { data: auth } = await supabase.auth.getSession();
+    const token = auth.session?.access_token;
+
+    const res = await fetch("/api/skill-games/math-rush/finish", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        sessionId,
+        answers: finalAnswers,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.error || "Could not finish game.");
+      setLoading(false);
+      return;
+    }
+
+    setResult(data);
+    setLoading(false);
+  }
+
+  async function chooseAnswer(answer: string) {
+    const q = questions[current];
+    const nextAnswers = [...answers, { id: q.id, answer }];
+    setAnswers(nextAnswers);
+
+    if (current + 1 < questions.length) {
+      setCurrent((value) => value + 1);
+      return;
+    }
+
+    await finishGame(nextAnswers);
+  }
+
+  function resetGame() {
+    setStake("");
+    setSessionId("");
+    setQuestions([]);
+    setAnswers([]);
+    setCurrent(0);
+    setResult(null);
+    setMessage("");
+    setTimeLeft(30);
+  }
+
+
+  const playing = questions.length > 0 && !result;
+  const q = questions[current];
+
+  useEffect(() => {
+    if (!playing || result) return;
+
+    const warning = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "Your active game may be lost if you leave.";
+    };
+
+    window.addEventListener("beforeunload", warning);
+
+    return () => window.removeEventListener("beforeunload", warning);
+  }, [playing, result]);
+
+  useEffect(() => {
+    if (!playing || result || loading) return;
+
+    if (timeLeft <= 0) {
+      void finishGame(answers);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setTimeLeft((t) => t - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [playing, result, loading, timeLeft, answers]);
+
+
   const payout = Number(stake || 0) * 2;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-white/5 p-6 text-center">
+      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-white/5 p-5 text-center shadow-2xl sm:p-6">
         <div className="text-5xl">➗</div>
 
         <h1 className="mt-3 text-3xl font-black text-blue-400">
@@ -62,117 +167,121 @@ export default function MathRushPreview() {
         </h1>
 
         <p className="mt-2 text-sm text-white/60">
-          Solve at least 4 out of 5 math challenges correctly to win.
+          Solve at least 8 out of 10 math challenges correctly to win 2x payout.
         </p>
 
-        {!started && (
-          <div className="mt-6">
-            <label className="text-sm text-white/60">
-              How much do you want to play with?
-            </label>
+        {message && (
+          <p className="mt-4 rounded-xl border border-red-400/30 bg-red-500/10 p-3 text-red-300">
+            {message}
+          </p>
+        )}
 
+        {!playing && !result && (
+          <div className="mt-6">
             <input
               type="number"
               min="1"
+              max="50"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
-              placeholder="Enter amount"
-              className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-blue-400"
+              placeholder="Enter stake amount"
+              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-blue-400"
             />
 
             {Number(stake) > 0 && (
               <div className="mt-4 rounded-xl bg-green-500/10 p-3 text-green-300">
-                Win this game and receive GH₵{payout.toFixed(2)} total payout.
+                Stake GH₵{Number(stake).toFixed(2)} → Win GH₵{payout.toFixed(2)}
               </div>
             )}
 
             <button
-              onClick={startGame}
-              disabled={!stake || Number(stake) <= 0}
+              onClick={() => void startGame()}
+              disabled={loading || !stake || Number(stake) < 1 || Number(stake) > 50}
               className="mt-5 w-full rounded-xl bg-blue-400 py-4 font-black text-black disabled:opacity-40"
             >
-              Start Math Rush
+              {loading ? "Starting..." : "Start Real Game"}
             </button>
+
+            <p className="mt-3 text-xs text-white/40">
+              Stake is deducted from your wallet when the game starts.
+            </p>
           </div>
         )}
 
-        {started && !finished && (
+        {playing && q && (
           <div className="mt-6">
             <div className="flex justify-between text-sm text-white/50">
-              <span>Challenge {current + 1} of {questions.length}</span>
-              <span>Score: {score}</span>
+              <span>Question {current + 1}/{questions.length}</span>
+              <span className={timeLeft <= 20 ? "text-red-300" : "text-blue-300"}>
+                Time: {timeLeft}s
+              </span>
             </div>
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
               <div
                 className="h-full bg-blue-400 transition-all"
-                style={{
-                  width: `${((current + 1) / questions.length) * 100}%`,
-                }}
+                style={{ width: `${((current + 1) / questions.length) * 100}%` }}
               />
             </div>
 
-            <p className="mt-7 text-sm font-bold uppercase tracking-widest text-white/40">
-              Solve
-            </p>
-
-            <h2 className="mt-3 text-5xl font-black">
-              {questions[current].question}
+            <h2 className="mt-6 text-2xl font-black leading-snug">
+              {q.question}
             </h2>
 
-            <div className="mt-7 grid grid-cols-2 gap-3">
-              {questions[current].options.map((option) => (
+            <div className="mt-6 grid gap-3">
+              {q.options.map((option) => (
                 <button
                   key={option}
-                  onClick={() => answerQuestion(option)}
-                  className="rounded-2xl border border-white/10 bg-black/60 p-5 text-xl font-black transition hover:border-blue-400 hover:bg-blue-400/10"
+                  disabled={loading}
+                  onClick={() => void chooseAnswer(option)}
+                  className="rounded-xl border border-white/10 bg-black/60 p-4 font-bold transition hover:border-blue-400 hover:bg-blue-400/10 disabled:opacity-50"
                 >
                   {option}
                 </button>
               ))}
             </div>
+
+            {loading && (
+              <p className="mt-4 text-sm text-blue-300">
+                Checking result securely...
+              </p>
+            )}
           </div>
         )}
 
-        {finished && (
+        {result && (
           <div className="mt-6">
-            {won ? (
+            {result.won ? (
               <div className="rounded-2xl border border-green-400/30 bg-green-500/10 p-6">
                 <div className="text-5xl">🏆</div>
-
                 <h2 className="mt-3 text-3xl font-black text-green-400">
                   Congratulations!
                 </h2>
-
                 <p className="mt-3">
-                  You solved {score}/{questions.length} challenges correctly.
+                  You scored {result.score}/{result.total}.
                 </p>
-
                 <p className="mt-3 text-xl font-black text-green-300">
-                  You won GH₵{payout.toFixed(2)}
+                  You won GH₵{Number(result.payout).toFixed(2)}
                 </p>
               </div>
             ) : (
               <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
-                <div className="text-5xl">🧮</div>
-
+                <div className="text-5xl">🎮</div>
                 <h2 className="mt-3 text-2xl font-black">
-                  Challenge Complete
+                  Good Attempt
                 </h2>
-
                 <p className="mt-3 text-white/70">
-                  You scored {score}/{questions.length}.
+                  You scored {result.score}/{result.total}.
                 </p>
-
                 <p className="mt-2 text-white/50">
-                  You needed 4 correct answers to win. Sharpen your skills and try again.
+                  You needed 8 correct answers to win. Sharpen your speed and try again.
                 </p>
               </div>
             )}
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
-                onClick={playAgain}
+                onClick={resetGame}
                 className="rounded-xl bg-blue-400 py-3 font-black text-black"
               >
                 Play Again
@@ -187,10 +296,6 @@ export default function MathRushPreview() {
             </div>
           </div>
         )}
-
-        <p className="mt-5 text-xs text-white/30">
-          Preview Mode — wallet balance is not affected.
-        </p>
       </div>
     </main>
   );
