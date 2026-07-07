@@ -1,15 +1,210 @@
 "use client";
 
-import QuestionGame from "@/components/skill-games/QuestionGame";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
+
+type Status = "idle" | "waiting" | "ready" | "done";
+type Result = {
+  score: number;
+  total: number;
+  won: boolean;
+  reactionMs: number | null;
+  payout: number;
+};
 
 export default function ReactionRushPage() {
+  const [stake, setStake] = useState("");
+  const [sessionId, setSessionId] = useState("");
+  const [status, setStatus] = useState<Status>("idle");
+  const [readyAt, setReadyAt] = useState(0);
+  const [delayMs, setDelayMs] = useState(0);
+  const [targetMs, setTargetMs] = useState(450);
+  const [result, setResult] = useState<Result | null>(null);
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const playing = status === "waiting" || status === "ready";
+
+  async function startGame() {
+    setLoading(true);
+    setMessage("");
+
+    const { data: auth } = await supabase.auth.getSession();
+    const token = auth.session?.access_token;
+
+    const res = await fetch("/api/skill-games/reaction-tap/secure-start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ stake: Number(stake) }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.error || "Could not start game.");
+      setLoading(false);
+      return;
+    }
+
+    setSessionId(data.sessionId);
+    setDelayMs(Number(data.delayMs));
+    setTargetMs(Number(data.targetMs || 450));
+    setResult(null);
+    setStatus("waiting");
+    setMessage("Wait for green...");
+    setLoading(false);
+
+    window.setTimeout(() => {
+      setReadyAt(Date.now());
+      setStatus("ready");
+      setMessage("TAP NOW!");
+    }, Number(data.delayMs));
+  }
+
+  async function finishGame(reactionMs: number | null, tooEarly: boolean) {
+    if (loading || result) return;
+    setLoading(true);
+
+    const { data: auth } = await supabase.auth.getSession();
+    const token = auth.session?.access_token;
+
+    const res = await fetch("/api/skill-games/reaction-tap/secure-finish", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ sessionId, reactionMs, tooEarly }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.error || "Could not finish game.");
+      setLoading(false);
+      return;
+    }
+
+    setResult(data);
+    setStatus("done");
+    setLoading(false);
+  }
+
+  function tap() {
+    if (status === "waiting") {
+      void finishGame(null, true);
+      return;
+    }
+
+    if (status === "ready") {
+      const reaction = Date.now() - readyAt;
+      void finishGame(reaction, false);
+    }
+  }
+
+  function resetGame() {
+    setStake("");
+    setSessionId("");
+    setStatus("idle");
+    setReadyAt(0);
+    setDelayMs(0);
+    setResult(null);
+    setMessage("");
+  }
+
+  useEffect(() => {
+    if (!playing) return;
+
+    const warning = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", warning);
+    return () => window.removeEventListener("beforeunload", warning);
+  }, [playing]);
+
   return (
-    <QuestionGame
-      slug="reaction-tap"
-      name="Reaction Rush"
-      icon="⚡"
-      description="Test your speed, focus, and fast decision-making before time runs out."
-      seconds={15}
-    />
+    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-green-400/20 bg-white/5 p-5 text-center">
+        <div className="text-5xl">⚡</div>
+        <h1 className="mt-3 text-3xl font-black text-green-400">Reaction Rush</h1>
+        <p className="mt-2 text-sm text-white/60">
+          Wait for green, then tap as fast as possible. Beat {targetMs}ms to win.
+        </p>
+
+        {message && status === "idle" && (
+          <div className="mt-4 rounded-xl bg-red-500/10 p-3 text-red-300">{message}</div>
+        )}
+
+        {status === "idle" && !result && (
+          <div className="mt-6">
+            <input
+              type="number"
+              min="1"
+              max="50"
+              value={stake}
+              onChange={(e) => setStake(e.target.value)}
+              placeholder="Enter stake amount"
+              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+            />
+
+            <button
+              onClick={() => void startGame()}
+              disabled={loading || !stake || Number(stake) < 1}
+              className="mt-5 w-full rounded-xl bg-green-400 py-4 font-black text-black disabled:opacity-40"
+            >
+              {loading ? "Starting..." : "Start Reaction Rush"}
+            </button>
+          </div>
+        )}
+
+        {playing && (
+          <button
+            onClick={tap}
+            disabled={loading}
+            className={`mt-8 flex h-72 w-full items-center justify-center rounded-3xl text-4xl font-black transition ${
+              status === "ready"
+                ? "bg-green-500 text-black"
+                : "bg-red-500/20 text-red-300"
+            }`}
+          >
+            {loading ? "Checking..." : message}
+          </button>
+        )}
+
+        {result && (
+          <div className="mt-6">
+            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+              <div className="text-5xl">{result.won ? "🏆" : "⚡"}</div>
+              <h2 className="mt-3 text-2xl font-black">
+                {result.won ? "Lightning Fast!" : "Reaction Complete"}
+              </h2>
+
+              {result.reactionMs !== null && (
+                <p className="mt-3">Reaction Time: <b>{result.reactionMs}ms</b></p>
+              )}
+
+              {result.won ? (
+                <p className="mt-3 font-black">You won GH₵{Number(result.payout).toFixed(2)}</p>
+              ) : (
+                <p className="mt-3">Too early or not fast enough. Try again.</p>
+              )}
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
+              <button onClick={resetGame} className="rounded-xl bg-green-400 py-3 font-black text-black">
+                Play Again
+              </button>
+              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">
+                All Games
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <p className="mt-5 text-xs text-white/30">
+          Secure mode — stake is handled through wallet.
+        </p>
+      </div>
+    </main>
   );
 }
