@@ -196,15 +196,34 @@ export default function ArrowTargetPage() {
               <span className={timeLeft <= 10 ? "text-red-400" : "text-purple-400"}>⏱ {timeLeft}s</span>
             </div>
 
-            <div className="relative mt-6 h-28 rounded-3xl border border-white/10 bg-black">
+            <div className="mt-4 rounded-2xl border border-purple-400/20 bg-purple-500/10 p-4">
+              <p className="text-sm text-white/60">Hit this number</p>
+              <div className="mt-1 text-5xl font-black text-purple-300">{targetNumber}</div>
+            </div>
+
+            <div className="relative mt-6 h-44 rounded-3xl border border-purple-400/20 bg-gradient-to-b from-purple-950/40 to-black p-3">
               <div
-                className="absolute top-0 z-10 h-full w-1 bg-purple-400 shadow-lg shadow-purple-400/50"
+                className="absolute top-2 z-20 -translate-x-1/2 text-4xl drop-shadow-lg"
+                style={{ left: `${aim}%` }}
+              >
+                ▼
+              </div>
+
+              <div
+                className="absolute bottom-4 top-14 z-10 w-1 -translate-x-1/2 rounded-full bg-purple-300 shadow-lg shadow-purple-400/70"
                 style={{ left: `${aim}%` }}
               />
 
-              <div className="grid h-full grid-cols-5">
+              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-5 overflow-hidden rounded-2xl border border-white/10">
                 {zones.map((zone) => (
-                  <div key={zone} className="flex items-center justify-center border-r border-white/10 text-3xl font-black">
+                  <div
+                    key={zone}
+                    className={`flex items-center justify-center border-r border-white/10 text-4xl font-black ${
+                      zone === targetNumber
+                        ? "bg-green-500/20 text-green-300"
+                        : "bg-black text-white"
+                    }`}
+                  >
                     {zone}
                   </div>
                 ))}
