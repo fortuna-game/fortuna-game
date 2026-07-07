@@ -9,7 +9,7 @@ export default function SpeedSortPage() {
       name="Speed Sort"
       icon="⚡"
       description="Sort each item into the correct category before time runs out."
-      seconds={20}
+      seconds={30}
     />
   );
 }

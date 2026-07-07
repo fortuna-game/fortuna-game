@@ -14,7 +14,7 @@ export default function StackBalancePage() {
   const [direction, setDirection] = useState(1);
   const [placements, setPlacements] = useState<number[]>([]);
   const [targetBlocks, setTargetBlocks] = useState(8);
-  const [timeLeft, setTimeLeft] = useState(45);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [result, setResult] = useState<Result | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -98,7 +98,7 @@ export default function StackBalancePage() {
     setPlacements([]);
     setResult(null);
     setMessage("");
-    setTimeLeft(45);
+    setTimeLeft(60);
   }
 
   useEffect(() => {

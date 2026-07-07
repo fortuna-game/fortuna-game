@@ -21,7 +21,7 @@ export default function MazeEscapePage() {
   const [maze, setMaze] = useState<Maze | null>(null);
   const [player, setPlayer] = useState({ x: 0, y: 0 });
   const [moves, setMoves] = useState<string[]>([]);
-  const [timeLeft, setTimeLeft] = useState(45);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -126,7 +126,7 @@ export default function MazeEscapePage() {
     setMoves([]);
     setResult(null);
     setMessage("");
-    setTimeLeft(45);
+    setTimeLeft(60);
   }
 
   useEffect(() => {

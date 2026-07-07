@@ -9,7 +9,7 @@ export default function GamePage() {
       name="Color Clash"
       icon="🎨"
       description="Stay focused, identify the correct colors and beat the clock."
-      seconds={30}
+      seconds={45}
     />
   );
 }

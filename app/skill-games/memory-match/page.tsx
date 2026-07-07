@@ -19,7 +19,7 @@ export default function MemoryMatchPage() {
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [timeLeft, setTimeLeft] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(75);
 
   async function startGame() {
     setLoading(true);
@@ -50,7 +50,7 @@ export default function MemoryMatchPage() {
     setMatched([]);
     setMoves([]);
     setResult(null);
-    setTimeLeft(60);
+    setTimeLeft(75);
     setLoading(false);
   }
 
@@ -127,7 +127,7 @@ export default function MemoryMatchPage() {
     setMoves([]);
     setResult(null);
     setMessage("");
-    setTimeLeft(60);
+    setTimeLeft(75);
   }
 
 

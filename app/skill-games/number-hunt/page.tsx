@@ -9,7 +9,7 @@ export default function GamePage() {
       name="Number Hunt"
       icon="🔎"
       description="Find the correct numbers quickly and reach the winning target."
-      seconds={30}
+      seconds={45}
     />
   );
 }

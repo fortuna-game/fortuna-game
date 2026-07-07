@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     start: { x: 0, y: 0 },
     exit: { x: 4, y: 4 },
     maxMoves: 12,
-    timeLimit: 45,
+    timeLimit: 60,
   };
 
   const { data: sessionId, error } = await supabaseAdmin.rpc("start_skill_game_atomic", {

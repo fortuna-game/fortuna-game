@@ -9,7 +9,7 @@ export default function GamePage() {
       name="Word Puzzle"
       icon="🔤"
       description="Unscramble words quickly and reach the target score before time runs out."
-      seconds={30}
+      seconds={45}
     />
   );
 }

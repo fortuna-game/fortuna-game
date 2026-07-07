@@ -9,7 +9,7 @@ export default function GamePage() {
       name="Code Breaker"
       icon="🔐"
       description="Study the clues, break the codes and reach the winning score."
-      seconds={30}
+      seconds={45}
     />
   );
 }

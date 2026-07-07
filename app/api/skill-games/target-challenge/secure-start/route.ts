@@ -16,7 +16,7 @@ export async function POST(req: Request) {
   const challenge = {
     targetNumber,
     zones: [1, 2, 3, 4, 5],
-    timeLimit: 45,
+    timeLimit: 60,
   };
 
   const { data: sessionId, error } = await supabaseAdmin.rpc("start_skill_game_atomic", {

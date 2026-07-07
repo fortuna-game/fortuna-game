@@ -21,7 +21,7 @@ export default function ArrowTargetPage() {
   const [aim, setAim] = useState(50);
   const [direction, setDirection] = useState(1);
   const [zones, setZones] = useState([1, 2, 3, 4, 5]);
-  const [timeLeft, setTimeLeft] = useState(45);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [result, setResult] = useState<Result | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -97,7 +97,7 @@ export default function ArrowTargetPage() {
     setZones([1, 2, 3, 4, 5]);
     setResult(null);
     setMessage("");
-    setTimeLeft(45);
+    setTimeLeft(60);
   }
 
   useEffect(() => {
