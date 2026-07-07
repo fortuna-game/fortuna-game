@@ -68,46 +68,29 @@ export async function POST(req: Request) {
 
     const won = score >= 8;
 
-    if (won) {
-      const { data: wallet } = await supabaseAdmin
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      await supabaseAdmin
-        .from("wallets")
-        .update({
-          balance: Number(wallet?.balance || 0) + Number(session.payout),
-        })
-        .eq("user_id", user.id);
-
-      await supabaseAdmin.from("wallet_transactions").insert({
-        user_id: user.id,
-        type: "skill_game_win",
-        amount: Number(session.payout),
-        status: "completed",
-        reference: session.id,
-        description: "Trivia Sprint win payout",
+    const { data: settlement, error: settleError } =
+      await supabaseAdmin.rpc("settle_skill_game_atomic", {
+        p_session_id: session.id,
+        p_user_id: user.id,
+        p_score: score,
+        p_won: won,
       });
+
+    if (settleError) {
+      return NextResponse.json(
+        { error: settleError.message },
+        { status: 400 }
+      );
     }
 
-    await supabaseAdmin
-      .from("skill_game_sessions")
-      .update({
-        score,
-        status: "completed",
-        result: won ? "won" : "lost",
-        completed_at: new Date().toISOString(),
-      })
-      .eq("id", session.id);
+    const settled = Array.isArray(settlement) ? settlement[0] : null;
 
     return NextResponse.json({
       success: true,
       score,
       total: storedAnswers.length,
       won,
-      payout: won ? Number(session.payout) : 0,
+      payout: Number(settled?.payout || 0),
     });
   } catch (error) {
     console.error("TRIVIA FINISH ERROR:", error);
