@@ -68,7 +68,7 @@ export default function AdminUsersPage() {
                 {users.map((u) => (
                   <tr key={u.user_id} className="border-t border-white/10">
                     <td className="p-4">
-                      <p className="font-black">@{u.username}</p>
+                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-yellow-300 hover:underline">@{u.username}</Link>
                       <p className="text-sm text-white/50">{u.first_name}</p>
                     </td>
                     <td className="p-4">{u.phone || "-"}</td>
