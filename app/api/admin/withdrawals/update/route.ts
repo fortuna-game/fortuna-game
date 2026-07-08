@@ -12,7 +12,17 @@ export async function POST(req: Request) {
 
     const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
 
-    if (userError || !user || user.email?.toLowerCase() !== "fortunaplay2025@outlook.com") {
+    if (userError || !user) {
+      return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
+    }
+
+    const { data: adminRole } = await supabaseAdmin
+      .from("admin_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!adminRole || !["super_admin", "admin"].includes(adminRole.role)) {
       return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
     }
 

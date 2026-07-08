@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-const ADMIN_EMAIL = "fortunaplay2025@outlook.com";
-
 export async function GET(req: Request) {
   try {
     const token = req.headers.get("authorization")?.replace("Bearer ", "");
@@ -13,7 +11,17 @@ export async function GET(req: Request) {
 
     const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
 
-    if (error || !user || user.email?.toLowerCase() !== ADMIN_EMAIL) {
+    if (error || !user) {
+      return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
+    }
+
+    const { data: adminRole } = await supabaseAdmin
+      .from("admin_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    if (!adminRole || !["super_admin", "admin"].includes(adminRole.role)) {
       return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
     }
 
