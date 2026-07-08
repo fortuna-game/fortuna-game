@@ -33,27 +33,18 @@ export async function POST(req: Request) {
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
+    if (profileError) {
+      return NextResponse.json({ error: profileError.message }, { status: 500 });
+    }
 
     if (!profile?.is_verified) {
       return NextResponse.json({ error: "Please verify your account before withdrawing." }, { status: 403 });
     }
 
-    const { data: wallet, error: walletError } = await supabaseAdmin
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", user.id)
-      .maybeSingle();
+    const safeUsername = String(profile?.username || "PLAYER")
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "");
 
-    if (walletError) return NextResponse.json({ error: walletError.message }, { status: 500 });
-
-    const balance = Number(wallet?.balance || 0);
-
-    if (balance < value) {
-      return NextResponse.json({ error: "Insufficient wallet balance." }, { status: 400 });
-    }
-
-    const safeUsername = String(profile?.username || "PLAYER").toUpperCase().replace(/[^A-Z0-9]/g, "");
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const reference = `FG-${safeUsername}-${today}-${Math.floor(1000 + Math.random() * 9000)}`;
 
@@ -77,36 +68,6 @@ export async function POST(req: Request) {
     if (!row?.success) {
       return NextResponse.json({ error: row?.message || "Withdrawal failed." }, { status: 400 });
     }
-
-    return NextResponse.json({ error: updateWalletError.message }, { status: 500 });
-    }
-
-    const { error: withdrawalError } = await supabaseAdmin.from("withdrawals").insert({
-      user_id: user.id,
-      amount: value,
-      momo_number: momoNumber,
-      network,
-      status: "processing",
-      reference,
-    });
-
-    if (withdrawalError) {
-      await supabaseAdmin
-        .from("wallets")
-        .update({ balance })
-        .eq("user_id", user.id);
-
-      return NextResponse.json({ error: withdrawalError.message }, { status: 500 });
-    }
-
-    await supabaseAdmin.from("wallet_transactions").insert({
-      user_id: user.id,
-      type: "withdrawal",
-      amount: -value,
-      status: "processing",
-      reference,
-      description: "Withdrawal request",
-    });
 
     return NextResponse.json({
       success: true,
