@@ -86,13 +86,14 @@ export default function AdminWithdrawalsPage() {
         return;
       }
 
-      const { data: role } = await supabase
-        .from("admin_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { data: auth } = await supabase.auth.getSession();
+      const token = auth.session?.access_token;
 
-      if (!role || !["super_admin", "admin"].includes(role.role)) {
+      const res = await fetch("/api/admin/dashboard", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
         setAuthorized(false);
         setCheckingAdmin(false);
         return;
