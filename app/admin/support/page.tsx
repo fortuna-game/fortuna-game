@@ -1,6 +1,7 @@
 "use client";
 
 import AdminNav from "@/components/AdminNav";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -123,9 +124,9 @@ export default function AdminSupportPage() {
                     {ticket.issue_type}
                   </p>
 
-                  <h2 className="mt-2 text-2xl font-black">
+                  <Link href={`/admin/support/${ticket.id}`} className="mt-2 block text-2xl font-black hover:text-pink-400">
                     @{ticket.username || "Player"}
-                  </h2>
+                  </Link>
 
                   <p className="mt-2 text-sm text-white/50">
                     {new Date(ticket.created_at).toLocaleString()}

@@ -21,6 +21,7 @@ export default function AdminNav() {
           <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-4 py-2">Deposits</Link>
           <Link href="/admin/games" className="rounded-xl bg-white/10 px-4 py-2">Games</Link>
           <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-4 py-2">Transactions</Link>
+          <Link href="/admin/support" className="rounded-xl bg-white/10 px-4 py-2">Support</Link>
           <Link href="/admin/withdrawals" className="rounded-xl bg-pink-500 px-4 py-2 text-black">Withdrawals</Link>
           <button onClick={logout} className="rounded-xl bg-pink-600 px-4 py-2 text-white">
             Logout
