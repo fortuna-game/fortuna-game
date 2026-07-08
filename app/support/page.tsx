@@ -63,6 +63,12 @@ export default function SupportPage() {
     }
 
     void loadProfile();
+
+    const timer = setInterval(() => {
+      void loadTickets();
+    }, 3000);
+
+    return () => clearInterval(timer);
   }, []);
 
   async function submitTicket(e: React.FormEvent) {

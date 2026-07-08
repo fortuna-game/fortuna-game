@@ -15,6 +15,7 @@ type Ticket = {
   status: string;
   admin_reply: string | null;
   replied_at: string | null;
+  screenshot_url: string | null;
   created_at: string;
 };
 
@@ -157,6 +158,17 @@ export default function AdminTicketDetailPage() {
             <p className="mt-3 whitespace-pre-line text-white/80">
               {ticket.message}
             </p>
+
+            {ticket.screenshot_url && (
+              <a
+                href={ticket.screenshot_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-5 inline-block rounded-xl bg-pink-500 px-5 py-3 font-black text-white"
+              >
+                View User Screenshot
+              </a>
+            )}
           </div>
 
           <div className="mt-6">
