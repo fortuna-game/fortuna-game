@@ -84,55 +84,27 @@ export async function POST(req: Request) {
     }
 
     if (status === "failed") {
-      const now = new Date().toISOString();
+      const { data: result, error: refundError } = await supabaseAdmin.rpc(
+        "fail_withdrawal_and_refund_atomic",
+        {
+          p_withdrawal_id: id,
+          p_failure_reason: "Payment failed manually by admin",
+        }
+      );
 
-      const { data: updatedRows, error: lockError } = await supabaseAdmin
-        .from("withdrawals")
-        .update({
-          status: "failed",
-          processed_at: now,
-          refunded_at: now,
-          admin_note: "Payment failed and wallet refunded",
-        })
-        .eq("id", id)
-        .is("refunded_at", null)
-        .neq("status", "paid")
-        .neq("status", "failed")
-        .select();
-
-      if (lockError) return NextResponse.json({ error: lockError.message }, { status: 500 });
-
-      if (!updatedRows || updatedRows.length === 0) {
-        return NextResponse.json({ error: "This withdrawal was already handled. No second refund allowed." }, { status: 400 });
+      if (refundError) {
+        return NextResponse.json({ error: refundError.message }, { status: 500 });
       }
 
-      const { data: wallet } = await supabaseAdmin
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", withdrawal.user_id)
-        .maybeSingle();
+      const row = Array.isArray(result) ? result[0] : null;
 
-      const { error: refundError } = await supabaseAdmin
-        .from("wallets")
-        .update({
-          balance: Number(wallet?.balance || 0) + Number(withdrawal.amount),
-        })
-        .eq("user_id", withdrawal.user_id);
-
-      if (refundError) return NextResponse.json({ error: refundError.message }, { status: 500 });
-
-      await supabaseAdmin.from("wallet_transactions").insert({
-        user_id: withdrawal.user_id,
-        type: "withdrawal_refund",
-        amount: Number(withdrawal.amount),
-        status: "completed",
-        reference: withdrawal.reference,
-        description: "Withdrawal failed and refunded",
-      });
+      if (!row?.success) {
+        return NextResponse.json({ error: row?.message || "Refund failed." }, { status: 400 });
+      }
 
       return NextResponse.json({
         success: true,
-        message: "Withdrawal failed and wallet refunded once.",
+        message: row.message || "Withdrawal failed and wallet refunded once.",
       });
     }
 
