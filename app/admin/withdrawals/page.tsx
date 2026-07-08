@@ -30,28 +30,28 @@ export default function AdminWithdrawalsPage() {
   const [checkingAdmin, setCheckingAdmin] = useState(true);
 
   async function loadWithdrawals() {
-    const { data: withdrawalsData } = await supabase
-      .from("withdrawals")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data: auth } = await supabase.auth.getSession();
+    const token = auth.session?.access_token;
 
-    setWithdrawals(withdrawalsData || []);
+    const res = await fetch("/api/admin/withdrawals", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
 
-    const userIds = [...new Set((withdrawalsData || []).map((w) => w.user_id))];
-
-    if (userIds.length) {
-      const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("user_id, username")
-        .in("user_id", userIds);
-
-      const map: Record<string, string> = {};
-      (profilesData as Profile[] | null)?.forEach((p) => {
-        map[p.user_id] = p.username || "Player";
-      });
-
-      setProfiles(map);
+    if (!res.ok) {
+      setAuthorized(false);
+      return;
     }
+
+    const data = await res.json();
+
+    setWithdrawals(data.withdrawals || []);
+
+    const map: Record<string, string> = {};
+    (data.profiles || []).forEach((p: Profile) => {
+      map[p.user_id] = p.username || "Player";
+    });
+
+    setProfiles(map);
   }
 
   async function updateStatus(id: string, status: "sending" | "paid" | "failed") {
@@ -83,19 +83,6 @@ export default function AdminWithdrawalsPage() {
 
       if (!user) {
         window.location.href = "/login";
-        return;
-      }
-
-      const { data: auth } = await supabase.auth.getSession();
-      const token = auth.session?.access_token;
-
-      const res = await fetch("/api/admin/dashboard", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (!res.ok) {
-        setAuthorized(false);
-        setCheckingAdmin(false);
         return;
       }
 

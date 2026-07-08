@@ -45,8 +45,11 @@ export async function POST(req: Request) {
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "");
 
-    const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const reference = `FG-${safeUsername}-${today}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const d = new Date();
+    const month = d.toLocaleString("en-US", { month: "short" });
+    const day = d.getDate();
+    const year = String(d.getFullYear()).slice(-2);
+    const reference = `FG-WITHDRAW-${safeUsername}-${month} ${day}-${year}`;
 
     const { data: withdrawResult, error: withdrawError } = await supabaseAdmin.rpc(
       "request_withdrawal_atomic",
