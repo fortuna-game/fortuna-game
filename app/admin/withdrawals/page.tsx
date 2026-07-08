@@ -86,7 +86,13 @@ export default function AdminWithdrawalsPage() {
         return;
       }
 
-      if (user.email?.toLowerCase() !== "fortunaplay2025@outlook.com") {
+      const { data: role } = await supabase
+        .from("admin_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!role || !["super_admin", "admin"].includes(role.role)) {
         setAuthorized(false);
         setCheckingAdmin(false);
         return;
