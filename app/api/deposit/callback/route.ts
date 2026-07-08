@@ -59,35 +59,13 @@ export async function POST(req: Request) {
       normalizedStatus.includes("expired");
 
     if (isSuccessful) {
-      const { data: wallet } = await supabaseAdmin
-        .from("wallets")
-        .select("balance")
-        .eq("user_id", deposit.user_id)
-        .maybeSingle();
+      const { error: completeError } = await supabaseAdmin.rpc("complete_deposit_atomic", {
+        p_reference: reference,
+      });
 
-      const newBalance =
-        Number(wallet?.balance || 0) +
-        Number(deposit.amount || 0);
-
-      await supabaseAdmin
-        .from("wallets")
-        .update({ balance: newBalance })
-        .eq("user_id", deposit.user_id);
-
-      await supabaseAdmin
-        .from("deposits")
-        .update({ status: "completed" })
-        .eq("id", deposit.id);
-
-      await supabaseAdmin
-        .from("wallet_transactions")
-        .insert({
-          user_id: deposit.user_id,
-          type: "deposit",
-          amount: Number(deposit.amount),
-          status: "completed",
-          reference,
-        });
+      if (completeError) {
+        return NextResponse.json({ error: completeError.message }, { status: 500 });
+      }
     } else if (isFailed) {
       await supabaseAdmin
         .from("deposits")
