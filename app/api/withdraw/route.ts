@@ -57,14 +57,28 @@ export async function POST(req: Request) {
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
     const reference = `FG-${safeUsername}-${today}-${Math.floor(1000 + Math.random() * 9000)}`;
 
-    const { error: updateWalletError } = await supabaseAdmin
-      .from("wallets")
-      .update({ balance: balance - value })
-      .eq("user_id", user.id)
-      .gte("balance", value);
+    const { data: withdrawResult, error: withdrawError } = await supabaseAdmin.rpc(
+      "request_withdrawal_atomic",
+      {
+        p_user_id: user.id,
+        p_amount: value,
+        p_momo_number: momoNumber,
+        p_network: network,
+        p_reference: reference,
+      }
+    );
 
-    if (updateWalletError) {
-      return NextResponse.json({ error: updateWalletError.message }, { status: 500 });
+    if (withdrawError) {
+      return NextResponse.json({ error: withdrawError.message }, { status: 500 });
+    }
+
+    const row = Array.isArray(withdrawResult) ? withdrawResult[0] : null;
+
+    if (!row?.success) {
+      return NextResponse.json({ error: row?.message || "Withdrawal failed." }, { status: 400 });
+    }
+
+    return NextResponse.json({ error: updateWalletError.message }, { status: 500 });
     }
 
     const { error: withdrawalError } = await supabaseAdmin.from("withdrawals").insert({
