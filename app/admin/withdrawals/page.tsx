@@ -1,7 +1,6 @@
 "use client";
 
 import AdminNav from "@/components/AdminNav";
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -14,6 +13,7 @@ type Withdrawal = {
   status: string;
   reference: string | null;
   created_at: string;
+  refunded_at?: string | null;
 };
 
 type Profile = {
@@ -26,24 +26,32 @@ export default function AdminWithdrawalsPage() {
   const [profiles, setProfiles] = useState<Record<string, string>>({});
   const [message, setMessage] = useState("");
   const [busyId, setBusyId] = useState("");
-  const [authorized, setAuthorized] = useState(false);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [denied, setDenied] = useState(false);
+
+  async function getToken() {
+    const { data } = await supabase.auth.getSession();
+    return data.session?.access_token || "";
+  }
 
   async function loadWithdrawals() {
-    const { data: auth } = await supabase.auth.getSession();
-    const token = auth.session?.access_token;
+    const token = await getToken();
+
+    if (!token) {
+      setDenied(true);
+      return;
+    }
 
     const res = await fetch("/api/admin/withdrawals", {
       headers: { Authorization: `Bearer ${token}` },
     });
 
     if (!res.ok) {
-      setAuthorized(false);
+      setMessage("Could not refresh withdrawals. Please reload or login again.");
       return;
     }
 
     const data = await res.json();
-
     setWithdrawals(data.withdrawals || []);
 
     const map: Record<string, string> = {};
@@ -58,8 +66,7 @@ export default function AdminWithdrawalsPage() {
     setMessage("");
     setBusyId(id);
 
-    const { data: auth } = await supabase.auth.getSession();
-    const token = auth.session?.access_token;
+    const token = await getToken();
 
     const res = await fetch("/api/admin/withdrawals/update", {
       method: "POST",
@@ -78,32 +85,48 @@ export default function AdminWithdrawalsPage() {
   }
 
   useEffect(() => {
-    async function checkAdmin() {
-      const { data: { user } } = await supabase.auth.getUser();
+    async function start() {
+      const token = await getToken();
 
-      if (!user) {
-        window.location.href = "/login";
+      if (!token) {
+        setDenied(true);
+        setCheckingAdmin(false);
         return;
       }
 
-      setAuthorized(true);
+      const res = await fetch("/api/admin/withdrawals", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.ok) {
+        setDenied(true);
+        setCheckingAdmin(false);
+        return;
+      }
+
+      const data = await res.json();
+      setWithdrawals(data.withdrawals || []);
+
+      const map: Record<string, string> = {};
+      (data.profiles || []).forEach((p: Profile) => {
+        map[p.user_id] = p.username || "Player";
+      });
+      setProfiles(map);
+
+      setDenied(false);
       setCheckingAdmin(false);
-      await loadWithdrawals();
     }
 
-    void checkAdmin();
+    void start();
 
-    const timer = setInterval(() => {
-      if (authorized) void loadWithdrawals();
-    }, 4000);
-
+    const timer = setInterval(() => void loadWithdrawals(), 5000);
     return () => clearInterval(timer);
-  }, [authorized]);
+  }, []);
 
   function statusLabel(status: string) {
     if (status === "sending") return "Payment Pending";
     if (status === "paid") return "Paid";
-    if (status === "failed") return "Failed";
+    if (status === "failed") return "Failed / Refunded";
     return "Processing";
   }
 
@@ -115,12 +138,12 @@ export default function AdminWithdrawalsPage() {
     );
   }
 
-  if (!authorized) {
+  if (denied) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
         <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
-          <p className="mt-3 text-white/60">You are not allowed to view this admin page.</p>
+          <p className="mt-3 text-white/60">Please login through /admin/login again.</p>
         </div>
       </main>
     );
@@ -131,7 +154,7 @@ export default function AdminWithdrawalsPage() {
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <h1 className="text-4xl font-black text-yellow-400">Admin Withdrawals</h1>
-        <p className="mt-2 text-white/60">Live withdrawal requests. Updates every few seconds.</p>
+        <p className="mt-2 text-white/60">Live withdrawal requests.</p>
 
         {message && <p className="mt-5 rounded-xl bg-white/10 p-4">{message}</p>}
 
@@ -157,7 +180,7 @@ export default function AdminWithdrawalsPage() {
 
                 return (
                   <tr key={w.id} className="border-t border-white/10">
-                    <td className="p-4 font-bold">@{profiles[w.user_id] || "loading"}</td>
+                    <td className="p-4 font-bold">@{profiles[w.user_id] || "Player"}</td>
                     <td className="p-4 font-bold text-yellow-300">{w.reference}</td>
                     <td className="p-4">GH₵{Number(w.amount).toFixed(2)}</td>
                     <td className="p-4">{w.network}</td>
@@ -166,29 +189,37 @@ export default function AdminWithdrawalsPage() {
                     <td className="p-4">{new Date(w.created_at).toLocaleString()}</td>
 
                     <td className="flex flex-wrap gap-2 p-4">
-                      <button
-                        disabled={processed || pending || busyId === w.id}
-                        onClick={() => void updateStatus(w.id, "sending")}
-                        className="rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black disabled:opacity-40"
-                      >
-                        Send Payment
-                      </button>
+                      {processed ? (
+                        <span className="rounded-xl bg-white/10 px-4 py-2 font-bold text-white/60">
+                          Completed
+                        </span>
+                      ) : (
+                        <>
+                          <button
+                            disabled={pending || busyId === w.id}
+                            onClick={() => void updateStatus(w.id, "sending")}
+                            className="rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black disabled:opacity-40"
+                          >
+                            Send Payment
+                          </button>
 
-                      <button
-                        disabled={processed || busyId === w.id}
-                        onClick={() => void updateStatus(w.id, "paid")}
-                        className="rounded-xl bg-green-500 px-4 py-2 font-bold text-black disabled:opacity-40"
-                      >
-                        Mark Paid
-                      </button>
+                          <button
+                            disabled={busyId === w.id}
+                            onClick={() => void updateStatus(w.id, "paid")}
+                            className="rounded-xl bg-green-500 px-4 py-2 font-bold text-black disabled:opacity-40"
+                          >
+                            Mark Paid
+                          </button>
 
-                      <button
-                        disabled={processed || busyId === w.id}
-                        onClick={() => void updateStatus(w.id, "failed")}
-                        className="rounded-xl bg-red-500 px-4 py-2 font-bold text-white disabled:opacity-40"
-                      >
-                        Failed Payment
-                      </button>
+                          <button
+                            disabled={busyId === w.id}
+                            onClick={() => void updateStatus(w.id, "failed")}
+                            className="rounded-xl bg-red-500 px-4 py-2 font-bold text-white disabled:opacity-40"
+                          >
+                            Failed Payment
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 );
@@ -196,9 +227,7 @@ export default function AdminWithdrawalsPage() {
 
               {withdrawals.length === 0 && (
                 <tr>
-                  <td className="p-6 text-white/60" colSpan={8}>
-                    No withdrawals found.
-                  </td>
+                  <td className="p-6 text-white/60" colSpan={8}>No withdrawals found.</td>
                 </tr>
               )}
             </tbody>
