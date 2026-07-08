@@ -190,10 +190,10 @@ export default function QuestionGame({
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-yellow-400/20 bg-white/5 p-5 text-center shadow-2xl sm:p-7">
+      <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center shadow-2xl sm:p-7">
         <div className="text-5xl">{icon}</div>
 
-        <h1 className="mt-3 text-3xl font-black text-yellow-400">
+        <h1 className="mt-3 text-3xl font-black text-pink-500">
           {name}
         </h1>
 
@@ -216,11 +216,11 @@ export default function QuestionGame({
               value={stake}
               onChange={(event) => setStake(event.target.value)}
               placeholder="Enter stake amount"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-yellow-400"
+              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-pink-500"
             />
 
             {Number(stake) > 0 && (
-              <div className="mt-4 rounded-xl bg-green-500/10 p-3 font-bold text-green-300">
+              <div className="mt-4 rounded-xl bg-pink-500/10 p-3 font-bold text-green-300">
                 Stake GH₵{Number(stake).toFixed(2)} → Win GH₵
                 {payout.toFixed(2)}
               </div>
@@ -234,7 +234,7 @@ export default function QuestionGame({
                 Number(stake) < 1 ||
                 Number(stake) > 50
               }
-              className="mt-5 w-full rounded-xl bg-yellow-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : `Play ${name}`}
             </button>
@@ -254,7 +254,7 @@ export default function QuestionGame({
 
               <span
                 className={
-                  timeLeft <= 10 ? "text-red-400" : "text-yellow-400"
+                  timeLeft <= 10 ? "text-red-400" : "text-pink-500"
                 }
               >
                 ⏱ {timeLeft}s
@@ -263,7 +263,7 @@ export default function QuestionGame({
 
             <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
               <div
-                className="h-full bg-yellow-400 transition-all duration-300"
+                className="h-full bg-pink-500 transition-all duration-300"
                 style={{
                   width: `${((current + 1) / questions.length) * 100}%`,
                 }}
@@ -280,7 +280,7 @@ export default function QuestionGame({
                   key={option}
                   onClick={() => void chooseAnswer(option)}
                   disabled={loading}
-                  className="rounded-xl border border-white/10 bg-black/60 p-4 font-bold transition hover:border-yellow-400 hover:bg-yellow-400/10 active:scale-[0.98] disabled:opacity-50"
+                  className="rounded-xl border border-white/10 bg-black/60 p-4 font-bold transition hover:border-pink-500 hover:bg-pink-500/10 active:scale-[0.98] disabled:opacity-50"
                 >
                   {option}
                 </button>
@@ -288,7 +288,7 @@ export default function QuestionGame({
             </div>
 
             {loading && (
-              <p className="mt-4 text-sm font-bold text-yellow-300">
+              <p className="mt-4 text-sm font-bold text-pink-400">
                 Checking your result...
               </p>
             )}
@@ -298,10 +298,10 @@ export default function QuestionGame({
         {result && (
           <div className="mt-6">
             {result.won ? (
-              <div className="rounded-2xl border border-green-400/30 bg-green-500/10 p-6">
+              <div className="rounded-2xl border border-pink-400/30 bg-pink-500/10 p-6">
                 <div className="text-5xl">🏆</div>
 
-                <h2 className="mt-3 text-3xl font-black text-green-400">
+                <h2 className="mt-3 text-3xl font-black text-pink-400">
                   Excellent Performance!
                 </h2>
 
@@ -335,7 +335,7 @@ export default function QuestionGame({
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
                 onClick={resetGame}
-                className="rounded-xl bg-yellow-400 py-3 font-black text-black"
+                className="rounded-xl bg-pink-500 py-3 font-black text-black"
               >
                 Play Again
               </button>

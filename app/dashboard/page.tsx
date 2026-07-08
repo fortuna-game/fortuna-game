@@ -52,15 +52,15 @@ export default function Dashboard() {
     <main className="min-h-screen bg-black text-white">
       <div className="mx-auto max-w-7xl px-5 py-8">
 
-        <section className="rounded-3xl border border-yellow-400/20 bg-gradient-to-br from-yellow-500/15 via-black to-purple-950/30 p-6 md:p-8">
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-yellow-300">
+        <section className="rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-600/15 via-black to-purple-950/30 p-6 md:p-8">
+          <p className="text-xs font-bold uppercase tracking-[0.25em] text-pink-400">
             Fortuna Play Dashboard
           </p>
 
           <div className="mt-3 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="text-3xl font-black md:text-4xl">
-                Welcome, <span className="text-yellow-400">{name}</span>
+                Welcome, <span className="text-pink-500">{name}</span>
               </h1>
 
               <p className="mt-2 text-sm text-white/50">
@@ -68,10 +68,10 @@ export default function Dashboard() {
               </p>
             </div>
 
-            <div className="min-w-[220px] rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5">
+            <div className="min-w-[220px] rounded-2xl border border-pink-500/20 bg-pink-600/10 p-5">
               <p className="text-sm text-white/60">Wallet</p>
 
-              <p className="mt-1 text-3xl font-black text-yellow-400">
+              <p className="mt-1 text-3xl font-black text-pink-500">
                 ₵{balance}
               </p>
 
@@ -84,9 +84,9 @@ export default function Dashboard() {
 
           <Link
             href="/skill-games"
-            className="rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5 transition hover:border-yellow-400/50"
+            className="rounded-2xl border border-pink-500/20 bg-pink-600/10 p-5 transition hover:border-pink-500/50"
           >
-            <p className="text-xl font-black text-yellow-400">
+            <p className="text-xl font-black text-pink-500">
               Play Games
             </p>
 

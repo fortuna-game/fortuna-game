@@ -92,7 +92,7 @@ export default function AdminGamesPage() {
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">
+            <h1 className="text-4xl font-black text-pink-500">
               Game Management
             </h1>
 
@@ -103,7 +103,7 @@ export default function AdminGamesPage() {
 
           <Link
             href="/admin"
-            className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black"
+            className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black"
           >
             Back to Admin
           </Link>
@@ -141,7 +141,7 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
+          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
             <p className="text-sm text-white/60">
               Game Profit
             </p>
@@ -167,7 +167,7 @@ export default function AdminGamesPage() {
               onClick={() => setFilter(item)}
               className={`rounded-full px-5 py-2 font-bold ${
                 filter === item
-                  ? "bg-yellow-400 text-black"
+                  ? "bg-pink-500 text-black"
                   : "bg-white/10 text-white"
               }`}
             >
@@ -178,17 +178,17 @@ export default function AdminGamesPage() {
         </div>
 
         {message && (
-          <div className="mt-8 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
+          <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
             {message}
           </div>
         )}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-yellow-400/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
 
             <table className="w-full min-w-[1300px] text-left">
 
-              <thead className="bg-yellow-400 text-black">
+              <thead className="bg-pink-500 text-black">
                 <tr>
                   <th className="p-4">Player</th>
                   <th className="p-4">Game</th>
@@ -239,7 +239,7 @@ export default function AdminGamesPage() {
                             ? "font-black text-green-300"
                             : game.result === "lost"
                             ? "font-black text-red-300"
-                            : "font-black text-yellow-300"
+                            : "font-black text-pink-400"
                         }
                       >
                         {game.result.toUpperCase()}

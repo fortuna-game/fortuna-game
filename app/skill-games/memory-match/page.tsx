@@ -162,9 +162,9 @@ export default function MemoryMatchPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-yellow-400/20 bg-white/5 p-5 text-center">
+      <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center">
         <div className="text-5xl">🧠</div>
-        <h1 className="mt-3 text-3xl font-black text-yellow-400">Memory Match</h1>
+        <h1 className="mt-3 text-3xl font-black text-pink-500">Memory Match</h1>
         <p className="mt-2 text-sm text-white/60">
           Match all hidden pairs within {maxMoves} moves.
         </p>
@@ -186,7 +186,7 @@ export default function MemoryMatchPage() {
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 1}
-              className="mt-5 w-full rounded-xl bg-yellow-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Memory Match"}
             </button>
@@ -197,7 +197,7 @@ export default function MemoryMatchPage() {
           <div className="mt-6">
             <div className="flex justify-between text-sm text-white/60">
               <span>Moves: {moves.length}/{maxMoves}</span>
-              <span className={timeLeft <= 10 ? "text-red-400" : "text-yellow-400"}>
+              <span className={timeLeft <= 10 ? "text-red-400" : "text-pink-500"}>
                 ⏱ {timeLeft}s
               </span>
             </div>
@@ -209,7 +209,7 @@ export default function MemoryMatchPage() {
                   <button
                     key={card.id}
                     onClick={() => flipCard(card.id)}
-                    className="flex aspect-square items-center justify-center rounded-2xl border border-yellow-400/20 bg-black text-3xl font-black"
+                    className="flex aspect-square items-center justify-center rounded-2xl border border-pink-500/20 bg-black text-3xl font-black"
                   >
                     {open ? card.symbol : "?"}
                   </button>
@@ -225,7 +225,7 @@ export default function MemoryMatchPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
               <div className="text-5xl">{result.won ? "🏆" : "🎯"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "Excellent Memory!" : "Challenge Complete"}
@@ -235,7 +235,7 @@ export default function MemoryMatchPage() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-yellow-400 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-pink-500 py-3 font-black text-black">
                 Play Again
               </button>
               <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">

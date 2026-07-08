@@ -63,9 +63,9 @@ export default function DepositPage() {
     <main className="min-h-screen bg-black px-6 py-12 text-white">
       <form
         onSubmit={startDeposit}
-        className="mx-auto max-w-xl rounded-3xl border border-green-400/20 bg-green-500/10 p-8"
+        className="mx-auto max-w-xl rounded-3xl border border-pink-400/20 bg-pink-500/10 p-8"
       >
-        <h1 className="text-4xl font-black text-green-400">Deposit</h1>
+        <h1 className="text-4xl font-black text-pink-400">Deposit</h1>
         <p className="mt-3 text-white/60">Fund your Fortuna Play wallet.</p>
 
         <input
@@ -85,7 +85,7 @@ export default function DepositPage() {
 
         <button
           disabled={loading}
-          className="mt-5 w-full rounded-xl bg-green-500 py-4 font-black text-black disabled:opacity-60"
+          className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
         >
           {loading ? "Starting Payment..." : "Continue to Payment"}
         </button>

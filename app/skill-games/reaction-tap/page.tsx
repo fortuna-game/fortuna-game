@@ -124,9 +124,9 @@ export default function ReactionRushPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-green-400/20 bg-white/5 p-5 text-center">
+      <div className="w-full max-w-xl rounded-3xl border border-pink-400/20 bg-white/5 p-5 text-center">
         <div className="text-5xl">⚡</div>
-        <h1 className="mt-3 text-3xl font-black text-green-400">Reaction Rush</h1>
+        <h1 className="mt-3 text-3xl font-black text-pink-400">Reaction Rush</h1>
         <p className="mt-2 text-sm text-white/60">
           Wait for green, then tap as fast as possible. Beat {targetMs}ms to win.
         </p>
@@ -150,7 +150,7 @@ export default function ReactionRushPage() {
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 1}
-              className="mt-5 w-full rounded-xl bg-green-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-pink-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Reaction Rush"}
             </button>
@@ -163,7 +163,7 @@ export default function ReactionRushPage() {
             disabled={loading}
             className={`mt-8 flex h-72 w-full items-center justify-center rounded-3xl text-4xl font-black transition ${
               status === "ready"
-                ? "bg-green-500 text-black"
+                ? "bg-pink-500 text-black"
                 : "bg-red-500/20 text-red-300"
             }`}
           >
@@ -173,7 +173,7 @@ export default function ReactionRushPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
               <div className="text-5xl">{result.won ? "🏆" : "⚡"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "Lightning Fast!" : "Reaction Complete"}
@@ -191,7 +191,7 @@ export default function ReactionRushPage() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-green-400 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-pink-400 py-3 font-black text-black">
                 Play Again
               </button>
               <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">

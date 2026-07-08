@@ -57,11 +57,11 @@ export default function AdminTransactionsPage() {
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">Transactions</h1>
+            <h1 className="text-4xl font-black text-pink-500">Transactions</h1>
             <p className="mt-2 text-white/60">All wallet movements across the platform.</p>
           </div>
 
-          <Link href="/admin" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
+          <Link href="/admin" className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black">
             Back to Admin
           </Link>
         </div>
@@ -72,7 +72,7 @@ export default function AdminTransactionsPage() {
             <h2 className="mt-2 text-3xl font-black">{summary.totalTransactions}</h2>
           </div>
 
-          <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
+          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
             <p className="text-sm text-white/60">Credits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">GH₵{Number(summary.totalCredit || 0).toFixed(2)}</h2>
           </div>
@@ -82,9 +82,9 @@ export default function AdminTransactionsPage() {
             <h2 className="mt-2 text-3xl font-black text-red-500">GH₵{Number(summary.totalDebit || 0).toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
+          <div className="rounded-3xl border border-pink-500/20 bg-pink-600/10 p-6">
             <p className="text-sm text-white/60">Net Flow</p>
-            <h2 className="mt-2 text-3xl font-black text-yellow-300">GH₵{Number(summary.netFlow || 0).toFixed(2)}</h2>
+            <h2 className="mt-2 text-3xl font-black text-pink-400">GH₵{Number(summary.netFlow || 0).toFixed(2)}</h2>
           </div>
         </div>
 
@@ -94,7 +94,7 @@ export default function AdminTransactionsPage() {
               key={item}
               onClick={() => setFilter(item)}
               className={`rounded-full px-5 py-2 font-bold ${
-                filter === item ? "bg-yellow-400 text-black" : "bg-white/10 text-white"
+                filter === item ? "bg-pink-500 text-black" : "bg-white/10 text-white"
               }`}
             >
               {item.toUpperCase()}
@@ -102,12 +102,12 @@ export default function AdminTransactionsPage() {
           ))}
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">{message}</div>}
+        {message && <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-yellow-400/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
             <table className="w-full min-w-[1300px] text-left">
-              <thead className="bg-yellow-400 text-black">
+              <thead className="bg-pink-500 text-black">
                 <tr>
                   <th className="p-4">User</th>
                   <th className="p-4">Phone</th>
@@ -133,7 +133,7 @@ export default function AdminTransactionsPage() {
                       {Number(t.amount) >= 0 ? "+" : "-"}GH₵{Math.abs(Number(t.amount || 0)).toFixed(2)}
                     </td>
                     <td className="p-4">{String(t.status).toUpperCase()}</td>
-                    <td className="p-4 text-yellow-300">{t.reference || "-"}</td>
+                    <td className="p-4 text-pink-400">{t.reference || "-"}</td>
                     <td className="p-4">{t.description || "-"}</td>
                     <td className="p-4">{t.created_at ? new Date(t.created_at).toLocaleString() : "-"}</td>
                   </tr>

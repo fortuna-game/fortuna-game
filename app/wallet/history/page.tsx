@@ -114,7 +114,7 @@ export default function AccountHistoryPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-yellow-400">Account History</h1>
+        <h1 className="text-4xl font-black text-pink-500">Account History</h1>
         <p className="mt-2 text-white/60">
           Completed deposits, failed payments, withdrawals, refunds, wins and entry fees.
         </p>
@@ -134,7 +134,7 @@ export default function AccountHistoryPage() {
                 <div className="text-right">
                   <p className={
                     item.amount >= 0
-                      ? "text-2xl font-black text-green-400"
+                      ? "text-2xl font-black text-pink-400"
                       : "text-2xl font-black text-red-500"
                   }>
                     {item.amount >= 0 ? "+" : "-"}GH₵{Math.abs(item.amount).toFixed(2)}

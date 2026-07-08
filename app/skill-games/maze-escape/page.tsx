@@ -206,7 +206,7 @@ export default function MazeEscapePage() {
                       isWall
                         ? "border-white/10 bg-white/20"
                         : isExit
-                        ? "border-green-400 bg-green-500/20"
+                        ? "border-pink-400 bg-pink-500/20"
                         : "border-white/10 bg-black"
                     }`}
                   >
@@ -229,7 +229,7 @@ export default function MazeEscapePage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
               <div className="text-5xl">{result.won ? "🏆" : "🧭"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "You Escaped!" : "Maze Failed"}

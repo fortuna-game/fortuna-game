@@ -10,9 +10,9 @@ export default function AdminNav() {
   }
 
   return (
-    <div className="mb-8 rounded-3xl border border-yellow-400/20 bg-white/5 p-4">
+    <div className="mb-8 rounded-3xl border border-pink-500/20 bg-white/5 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/admin" className="text-2xl font-black text-yellow-400">
+        <Link href="/admin" className="text-2xl font-black text-pink-500">
           Fortuna Admin
         </Link>
 
@@ -21,8 +21,8 @@ export default function AdminNav() {
           <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-4 py-2">Deposits</Link>
           <Link href="/admin/games" className="rounded-xl bg-white/10 px-4 py-2">Games</Link>
           <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-4 py-2">Transactions</Link>
-          <Link href="/admin/withdrawals" className="rounded-xl bg-yellow-400 px-4 py-2 text-black">Withdrawals</Link>
-          <button onClick={logout} className="rounded-xl bg-red-600 px-4 py-2 text-white">
+          <Link href="/admin/withdrawals" className="rounded-xl bg-pink-500 px-4 py-2 text-black">Withdrawals</Link>
+          <button onClick={logout} className="rounded-xl bg-pink-600 px-4 py-2 text-white">
             Logout
           </button>
         </div>

@@ -62,9 +62,9 @@ export default function Navbar() {
   const name = profile?.username || profile?.first_name || "Player";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-yellow-500/20 bg-black/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-pink-600/20 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-        <Link href="/" className="text-3xl font-black tracking-wide text-yellow-400">
+        <Link href="/" className="text-3xl font-black tracking-wide text-pink-500">
           Fortuna <span className="text-white">Play</span>
         </Link>
 
@@ -80,7 +80,7 @@ export default function Navbar() {
           <div className="flex items-center gap-3">
             <Link
               href="/wallet"
-              className="rounded-full border border-yellow-400/30 px-4 py-2 text-sm font-bold text-yellow-300"
+              className="rounded-full border border-pink-500/30 px-4 py-2 text-sm font-bold text-pink-400"
             >
               ₵{balance}
             </Link>
@@ -94,7 +94,7 @@ export default function Navbar() {
 
             <button
               onClick={() => void handleLogout()}
-              className="rounded-full bg-red-600 px-4 py-2 text-sm font-bold text-white"
+              className="rounded-full bg-pink-600 px-4 py-2 text-sm font-bold text-white"
             >
               Logout
             </button>
@@ -103,14 +103,14 @@ export default function Navbar() {
           <div className="flex gap-3">
             <Link
               href="/login"
-              className="rounded-full border border-yellow-400 px-5 py-2 text-yellow-400"
+              className="rounded-full border border-pink-500 px-5 py-2 text-pink-500"
             >
               Login
             </Link>
 
             <Link
               href="/signup"
-              className="rounded-full bg-yellow-400 px-5 py-2 font-bold text-black"
+              className="rounded-full bg-pink-500 px-5 py-2 font-bold text-black"
             >
               Sign Up
             </Link>

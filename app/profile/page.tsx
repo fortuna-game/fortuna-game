@@ -54,10 +54,10 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-4xl">
-        <div className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6 md:p-8">
+        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-yellow-400">
+              <p className="text-sm font-bold uppercase tracking-widest text-pink-500">
                 Fortuna Play Account
               </p>
 
@@ -73,8 +73,8 @@ export default function ProfilePage() {
             <span
               className={`w-fit rounded-full px-4 py-2 text-sm font-bold ${
                 profile?.is_verified
-                  ? "bg-green-500/15 text-green-300"
-                  : "bg-yellow-500/15 text-yellow-300"
+                  ? "bg-pink-500/15 text-green-300"
+                  : "bg-pink-600/15 text-pink-400"
               }`}
             >
               {profile?.is_verified ? "Verified Account" : "Not Verified"}
@@ -116,7 +116,7 @@ export default function ProfilePage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <Link
               href="/dashboard"
-              className="rounded-xl bg-yellow-400 py-3 text-center font-black text-black"
+              className="rounded-xl bg-pink-500 py-3 text-center font-black text-black"
             >
               Dashboard
             </Link>

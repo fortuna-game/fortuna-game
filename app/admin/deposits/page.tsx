@@ -57,24 +57,24 @@ export default function AdminDepositsPage() {
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">Deposits Management</h1>
+            <h1 className="text-4xl font-black text-pink-500">Deposits Management</h1>
             <p className="mt-2 text-white/60">Track all wallet deposits and Hubtel references.</p>
           </div>
 
-          <Link href="/admin" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
+          <Link href="/admin" className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black">
             Back to Admin
           </Link>
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
+          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
             <p className="text-sm text-white/60">Completed Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">GH₵{totalCompleted.toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
+          <div className="rounded-3xl border border-pink-500/20 bg-pink-600/10 p-6">
             <p className="text-sm text-white/60">Pending Deposits</p>
-            <h2 className="mt-2 text-3xl font-black text-yellow-300">GH₵{totalPending.toFixed(2)}</h2>
+            <h2 className="mt-2 text-3xl font-black text-pink-400">GH₵{totalPending.toFixed(2)}</h2>
           </div>
 
           <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
@@ -89,7 +89,7 @@ export default function AdminDepositsPage() {
               key={item}
               onClick={() => setFilter(item)}
               className={`rounded-full px-5 py-2 font-bold ${
-                filter === item ? "bg-yellow-400 text-black" : "bg-white/10 text-white"
+                filter === item ? "bg-pink-500 text-black" : "bg-white/10 text-white"
               }`}
             >
               {item.toUpperCase()}
@@ -97,12 +97,12 @@ export default function AdminDepositsPage() {
           ))}
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">{message}</div>}
+        {message && <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-yellow-400/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
             <table className="w-full min-w-[1100px] text-left">
-              <thead className="bg-yellow-400 text-black">
+              <thead className="bg-pink-500 text-black">
                 <tr>
                   <th className="p-4">User</th>
                   <th className="p-4">Phone</th>
@@ -121,7 +121,7 @@ export default function AdminDepositsPage() {
                       <p className="text-sm text-white/50">{d.first_name}</p>
                     </td>
                     <td className="p-4">{d.phone || "-"}</td>
-                    <td className="p-4 font-bold text-yellow-300">{d.reference}</td>
+                    <td className="p-4 font-bold text-pink-400">{d.reference}</td>
                     <td className="p-4 font-bold">GH₵{Number(d.amount).toFixed(2)}</td>
                     <td className="p-4">{String(d.status).toUpperCase()}</td>
                     <td className="p-4">{d.created_at ? new Date(d.created_at).toLocaleString() : "-"}</td>

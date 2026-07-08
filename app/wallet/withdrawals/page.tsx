@@ -48,25 +48,25 @@ export default function WithdrawalHistoryPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-12 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-yellow-400">Withdrawal History</h1>
+        <h1 className="text-4xl font-black text-pink-500">Withdrawal History</h1>
         <p className="mt-2 text-white/60">Live status of your withdrawals.</p>
 
         <div className="mt-8 space-y-4">
           {withdrawals.map((w) => (
-            <div key={w.id} className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
+            <div key={w.id} className="rounded-3xl border border-pink-500/20 bg-white/5 p-6">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-bold text-yellow-300">{w.reference}</p>
+                  <p className="font-bold text-pink-400">{w.reference}</p>
                   <p className="mt-2 text-2xl font-black">GH₵{Number(w.amount).toFixed(2)}</p>
                   <p className="mt-1 text-white/60">{w.network} • {w.momo_number}</p>
                 </div>
 
                 <span className={`rounded-full px-4 py-2 text-sm font-bold ${
                   w.status === "paid"
-                    ? "bg-green-500/20 text-green-300"
+                    ? "bg-pink-500/20 text-green-300"
                     : w.status === "failed"
                     ? "bg-red-500/20 text-red-300"
-                    : "bg-yellow-500/20 text-yellow-300"
+                    : "bg-pink-600/20 text-pink-400"
                 }`}>
                   {label(w.status)}
                 </span>

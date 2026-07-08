@@ -216,7 +216,7 @@ export default function StackBalancePage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
               <div className="text-5xl">{result.won ? "🏆" : "📦"}</div>
               <h2 className="mt-3 text-2xl font-black">{result.won ? "Perfect Stack!" : "Stack Collapsed"}</h2>
               <p className="mt-3">Score: {result.score}/{result.total}</p>

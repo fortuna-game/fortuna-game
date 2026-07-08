@@ -20,7 +20,7 @@ export default function FeaturedGames() {
         {games.map((game) => (
           <div
             key={game.name}
-            className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6 transition hover:scale-105 hover:border-yellow-400"
+            className="rounded-3xl border border-pink-500/20 bg-white/5 p-6 transition hover:scale-105 hover:border-pink-500"
           >
             <div className="text-6xl">{game.icon}</div>
 
@@ -28,7 +28,7 @@ export default function FeaturedGames() {
               {game.name}
             </h3>
 
-            <button className="mt-6 w-full rounded-xl bg-yellow-400 py-3 font-bold text-black">
+            <button className="mt-6 w-full rounded-xl bg-pink-500 py-3 font-bold text-black">
               Play
             </button>
           </div>

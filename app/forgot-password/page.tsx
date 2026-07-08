@@ -32,8 +32,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-yellow-950 px-6">
-      <div className="w-full max-w-md rounded-3xl border border-yellow-500/20 bg-black/60 p-8 shadow-2xl backdrop-blur-xl">
-        <h1 className="text-center text-3xl font-black text-yellow-400">
+      <div className="w-full max-w-md rounded-3xl border border-pink-600/20 bg-black/60 p-8 shadow-2xl backdrop-blur-xl">
+        <h1 className="text-center text-3xl font-black text-pink-500">
           Forgot Password
         </h1>
 
@@ -48,12 +48,12 @@ export default function ForgotPasswordPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none focus:border-yellow-400"
+            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none focus:border-pink-500"
           />
 
           <button
             disabled={loading}
-            className="w-full rounded-xl bg-yellow-400 py-3 font-black text-black hover:bg-yellow-300 disabled:opacity-60"
+            className="w-full rounded-xl bg-pink-500 py-3 font-black text-black hover:bg-pink-400 disabled:opacity-60"
           >
             {loading ? "Sending..." : "Send Reset Instructions"}
           </button>
@@ -65,7 +65,7 @@ export default function ForgotPasswordPage() {
           )}
 
           <div className="text-center">
-            <Link href="/login" className="font-bold text-yellow-400">
+            <Link href="/login" className="font-bold text-pink-500">
               Back to Login
             </Link>
           </div>

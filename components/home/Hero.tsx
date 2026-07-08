@@ -6,7 +6,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#FFD70022,transparent_65%)]" />
 
       <div className="relative mx-auto max-w-7xl px-6 text-center">
-        <span className="rounded-full border border-yellow-400/30 bg-yellow-500/10 px-4 py-2 text-sm font-semibold text-yellow-300">
+        <span className="rounded-full border border-pink-500/30 bg-pink-600/10 px-4 py-2 text-sm font-semibold text-pink-400">
           Ghana's Premium Gaming Platform
         </span>
 
@@ -26,14 +26,14 @@ export default function Hero() {
         <div className="mt-10 flex flex-wrap justify-center gap-4">
           <Link
             href="/signup"
-            className="rounded-full bg-yellow-400 px-8 py-4 font-black text-black hover:bg-yellow-300"
+            className="rounded-full bg-pink-500 px-8 py-4 font-black text-black hover:bg-pink-400"
           >
             Start Playing
           </Link>
 
           <Link
             href="/skill-games"
-            className="rounded-full border border-yellow-400/30 px-8 py-4 font-bold"
+            className="rounded-full border border-pink-500/30 px-8 py-4 font-bold"
           >
             Explore Games
           </Link>

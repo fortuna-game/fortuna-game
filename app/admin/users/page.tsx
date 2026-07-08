@@ -39,21 +39,21 @@ export default function AdminUsersPage() {
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">Users Management</h1>
+            <h1 className="text-4xl font-black text-pink-500">Users Management</h1>
             <p className="mt-2 text-white/60">View users, wallet balances, deposits, withdrawals and game activity.</p>
           </div>
 
-          <Link href="/admin" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
+          <Link href="/admin" className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black">
             Back to Admin
           </Link>
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">{message}</div>}
+        {message && <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-yellow-400/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
             <table className="w-full min-w-[1200px] text-left">
-              <thead className="bg-yellow-400 text-black">
+              <thead className="bg-pink-500 text-black">
                 <tr>
                   <th className="p-4">User</th>
                   <th className="p-4">Phone</th>
@@ -71,7 +71,7 @@ export default function AdminUsersPage() {
                 {users.map((u) => (
                   <tr key={u.user_id} className="border-t border-white/10">
                     <td className="p-4">
-                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-yellow-300 hover:underline">@{u.username}</Link>
+                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-pink-400 hover:underline">@{u.username}</Link>
                       <p className="text-sm text-white/50">{u.first_name}</p>
                     </td>
                     <td className="p-4">{u.phone || "-"}</td>

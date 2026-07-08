@@ -63,8 +63,8 @@ export default function VerifyPage() {
 
   return (
     <main className="min-h-screen bg-black px-6 py-12 text-white">
-      <div className="mx-auto max-w-xl rounded-3xl border border-yellow-400/20 bg-white/5 p-8">
-        <h1 className="text-4xl font-black text-yellow-400">Verify Account</h1>
+      <div className="mx-auto max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-8">
+        <h1 className="text-4xl font-black text-pink-500">Verify Account</h1>
         <p className="mt-3 text-white/60">Verify your phone number before withdrawals.</p>
 
         <input
@@ -77,13 +77,13 @@ export default function VerifyPage() {
         <button
           onClick={sendCode}
           disabled={loading || !phone}
-          className="mt-4 w-full rounded-xl bg-yellow-400 py-4 font-black text-black disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
         >
           {loading ? "Please wait..." : "Send OTP"}
         </button>
 
         {prefix && (
-          <p className="mt-4 rounded-xl bg-yellow-400/10 p-3 text-yellow-300">
+          <p className="mt-4 rounded-xl bg-pink-500/10 p-3 text-pink-400">
             OTP Prefix: {prefix}
           </p>
         )}
@@ -98,7 +98,7 @@ export default function VerifyPage() {
         <button
           onClick={verifyCode}
           disabled={loading || !code || !requestId || !prefix}
-          className="mt-4 w-full rounded-xl bg-green-500 py-4 font-black text-black disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
         >
           Verify Account
         </button>

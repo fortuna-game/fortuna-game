@@ -60,11 +60,11 @@ export default function WalletPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-yellow-400">Wallet</h1>
+        <h1 className="text-4xl font-black text-pink-500">Wallet</h1>
         <p className="mt-2 text-white/60">@{username}</p>
 
         {verifying && (
-          <div className="mt-5 rounded-xl border border-green-400/30 bg-green-500/10 p-4 text-green-300">
+          <div className="mt-5 rounded-xl border border-pink-400/30 bg-pink-500/10 p-4 text-green-300">
             Deposit successful. Verifying payment... your wallet will update shortly.
           </div>
         )}
@@ -75,15 +75,15 @@ export default function WalletPage() {
           </div>
         )}
 
-        <section className="mt-6 rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
+        <section className="mt-6 rounded-3xl border border-pink-500/20 bg-pink-600/10 p-6">
           <p className="text-white/60">Available Balance</p>
-          <h2 className="mt-2 text-5xl font-black text-yellow-400">₵{balance}</h2>
+          <h2 className="mt-2 text-5xl font-black text-pink-500">₵{balance}</h2>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <Link href="/wallet/deposit" className="rounded-xl bg-green-500 py-3 text-center font-black text-black">
+            <Link href="/wallet/deposit" className="rounded-xl bg-pink-500 py-3 text-center font-black text-black">
               Deposit
             </Link>
-            <Link href="/wallet/withdraw" className="rounded-xl bg-green-500 py-3 text-center font-black text-black">
+            <Link href="/wallet/withdraw" className="rounded-xl bg-pink-500 py-3 text-center font-black text-black">
               Withdraw
             </Link>
             <Link href="/wallet/history" className="rounded-xl border border-white/10 bg-white/5 py-3 text-center font-bold">

@@ -41,7 +41,7 @@ export default function GameHistoryPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-yellow-400">Game History</h1>
+        <h1 className="text-4xl font-black text-pink-500">Game History</h1>
         <p className="mt-2 text-white/60">Your played games, scores, wins and losses.</p>
 
         <div className="mt-8 space-y-4">
@@ -63,7 +63,7 @@ export default function GameHistoryPage() {
                 </div>
 
                 <div className="text-right">
-                  <p className={r.won ? "text-2xl font-black text-green-400" : "text-2xl font-black text-red-300"}>
+                  <p className={r.won ? "text-2xl font-black text-pink-400" : "text-2xl font-black text-red-300"}>
                     {r.won ? "Won" : "Lost"}
                   </p>
 

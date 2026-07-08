@@ -24,8 +24,8 @@ export default function SkillGamesPage() {
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,#facc1530,transparent_35%),radial-gradient(circle_at_bottom_right,#7c3aed30,transparent_35%)]" />
 
       <div className="relative mx-auto max-w-7xl">
-        <section className="rounded-[2rem] border border-yellow-400/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-10">
-          <p className="text-xs font-black uppercase tracking-[0.35em] text-yellow-400">
+        <section className="rounded-[2rem] border border-pink-500/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-10">
+          <p className="text-xs font-black uppercase tracking-[0.35em] text-pink-500">
             Skill-Based Challenges
           </p>
 
@@ -44,12 +44,12 @@ export default function SkillGamesPage() {
             <Link
               key={slug}
               href={`/skill-games/${slug}`}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-black p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-yellow-400/60"
+              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-black p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-pink-500/60"
             >
-              <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-yellow-400/10 blur-2xl transition group-hover:bg-yellow-400/25" />
+              <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-pink-500/10 blur-2xl transition group-hover:bg-pink-500/25" />
 
               <div className="relative flex items-start justify-between gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-yellow-400/20 bg-black/60 text-4xl shadow-lg transition group-hover:scale-110">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/20 bg-black/60 text-4xl shadow-lg transition group-hover:scale-110">
                   {icon}
                 </div>
 
@@ -62,11 +62,11 @@ export default function SkillGamesPage() {
                 {name}
               </h2>
 
-              <p className="relative mt-2 text-sm text-yellow-300">
+              <p className="relative mt-2 text-sm text-pink-400">
                 {tag}
               </p>
 
-              <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-yellow-400 px-4 py-3 font-black text-black">
+              <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-pink-500 px-4 py-3 font-black text-black">
                 <span>Open Game</span>
                 <span className="transition group-hover:translate-x-1">→</span>
               </div>

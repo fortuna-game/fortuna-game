@@ -153,14 +153,14 @@ export default function AdminWithdrawalsPage() {
     <main className="min-h-screen bg-black px-6 py-12 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
-        <h1 className="text-4xl font-black text-yellow-400">Admin Withdrawals</h1>
+        <h1 className="text-4xl font-black text-pink-500">Admin Withdrawals</h1>
         <p className="mt-2 text-white/60">Live withdrawal requests.</p>
 
         {message && <p className="mt-5 rounded-xl bg-white/10 p-4">{message}</p>}
 
-        <div className="mt-8 overflow-x-auto rounded-3xl border border-yellow-400/20">
+        <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
           <table className="w-full min-w-[1100px] text-left">
-            <thead className="bg-yellow-400 text-black">
+            <thead className="bg-pink-500 text-black">
               <tr>
                 <th className="p-4">Username</th>
                 <th className="p-4">Reference</th>
@@ -181,7 +181,7 @@ export default function AdminWithdrawalsPage() {
                 return (
                   <tr key={w.id} className="border-t border-white/10">
                     <td className="p-4 font-bold">@{profiles[w.user_id] || "Player"}</td>
-                    <td className="p-4 font-bold text-yellow-300">{w.reference}</td>
+                    <td className="p-4 font-bold text-pink-400">{w.reference}</td>
                     <td className="p-4">GH₵{Number(w.amount).toFixed(2)}</td>
                     <td className="p-4">{w.network}</td>
                     <td className="p-4">{w.momo_number}</td>
@@ -198,7 +198,7 @@ export default function AdminWithdrawalsPage() {
                           <button
                             disabled={pending || busyId === w.id}
                             onClick={() => void updateStatus(w.id, "sending")}
-                            className="rounded-xl bg-yellow-400 px-4 py-2 font-bold text-black disabled:opacity-40"
+                            className="rounded-xl bg-pink-500 px-4 py-2 font-bold text-black disabled:opacity-40"
                           >
                             Send Payment
                           </button>
@@ -206,7 +206,7 @@ export default function AdminWithdrawalsPage() {
                           <button
                             disabled={busyId === w.id}
                             onClick={() => void updateStatus(w.id, "paid")}
-                            className="rounded-xl bg-green-500 px-4 py-2 font-bold text-black disabled:opacity-40"
+                            className="rounded-xl bg-pink-500 px-4 py-2 font-bold text-black disabled:opacity-40"
                           >
                             Mark Paid
                           </button>

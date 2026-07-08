@@ -62,13 +62,13 @@ export default function SignupPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-yellow-950 px-6 py-10">
-      <div className="w-full max-w-2xl rounded-3xl border border-yellow-500/20 bg-black/60 p-8 shadow-2xl backdrop-blur-xl">
+      <div className="w-full max-w-2xl rounded-3xl border border-pink-600/20 bg-black/60 p-8 shadow-2xl backdrop-blur-xl">
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-yellow-400 text-black">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-pink-500 text-black">
             <Trophy size={40} />
           </div>
 
-          <h1 className="mt-5 text-4xl font-black text-yellow-400">
+          <h1 className="mt-5 text-4xl font-black text-pink-500">
             Join Fortuna Play
           </h1>
 
@@ -83,7 +83,7 @@ export default function SignupPage() {
             onChange={(e) => setFirstName(e.target.value)}
             placeholder="First Name"
             required
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-yellow-400"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-pink-500"
           />
 
           <input
@@ -91,7 +91,7 @@ export default function SignupPage() {
             onChange={(e) => setLastName(e.target.value)}
             placeholder="Last Name"
             required
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-yellow-400"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-pink-500"
           />
 
           <input
@@ -99,7 +99,7 @@ export default function SignupPage() {
             onChange={(e) => setUsername(e.target.value.toLowerCase())}
             placeholder="Username"
             required
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-yellow-400"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-pink-500"
           />
 
           <input
@@ -107,7 +107,7 @@ export default function SignupPage() {
             onChange={(e) => setPhone(e.target.value)}
             placeholder="Phone Number"
             required
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-yellow-400"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-pink-500"
           />
 
           <input
@@ -116,7 +116,7 @@ export default function SignupPage() {
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email Address"
             required
-            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-yellow-400 md:col-span-2"
+            className="rounded-xl border border-white/10 bg-white/5 p-3 text-white outline-none focus:border-pink-500 md:col-span-2"
           />
 
           <div className="relative">
@@ -126,7 +126,7 @@ export default function SignupPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Password"
               required
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 pr-12 text-white outline-none focus:border-yellow-400"
+              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 pr-12 text-white outline-none focus:border-pink-500"
             />
 
             <button
@@ -145,7 +145,7 @@ export default function SignupPage() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm Password"
               required
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 pr-12 text-white outline-none focus:border-yellow-400"
+              className="w-full rounded-xl border border-white/10 bg-white/5 p-3 pr-12 text-white outline-none focus:border-pink-500"
             />
 
             <button
@@ -174,14 +174,14 @@ export default function SignupPage() {
 
           <button
             disabled={loading}
-            className="rounded-xl bg-yellow-400 py-3 font-black text-black hover:bg-yellow-300 disabled:opacity-60 md:col-span-2"
+            className="rounded-xl bg-pink-500 py-3 font-black text-black hover:bg-pink-400 disabled:opacity-60 md:col-span-2"
           >
             {loading ? "Creating Account..." : "Create Account"}
           </button>
 
           <div className="text-center text-white/60 md:col-span-2">
             Already have an account?{" "}
-            <Link href="/login" className="font-bold text-yellow-400">
+            <Link href="/login" className="font-bold text-pink-500">
               Login
             </Link>
           </div>

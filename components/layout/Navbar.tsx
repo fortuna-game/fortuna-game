@@ -66,9 +66,9 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-yellow-500/20 bg-black/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-pink-600/20 bg-black/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
-        <Link href="/" className="text-xl font-black tracking-wide text-yellow-400 sm:text-3xl">
+        <Link href="/" className="text-xl font-black tracking-wide text-pink-500 sm:text-3xl">
           Fortuna <span className="text-white">Play</span>
         </Link>
 
@@ -76,16 +76,16 @@ export default function Navbar() {
           <>
             <nav className="hidden items-center gap-4 text-sm font-bold lg:flex">
               {userLinks.map(([label, href]) => (
-                <Link key={href} href={href} className="text-white/80 hover:text-yellow-400">
+                <Link key={href} href={href} className="text-white/80 hover:text-pink-500">
                   {label}
                 </Link>
               ))}
 
-              <Link href="/wallet/deposit" className="rounded-full bg-green-500 px-5 py-2 font-black text-black">
+              <Link href="/wallet/deposit" className="rounded-full bg-pink-500 px-5 py-2 font-black text-black">
                 Deposit
               </Link>
 
-              <Link href="/wallet/withdraw" className="rounded-full bg-green-500 px-5 py-2 font-black text-black">
+              <Link href="/wallet/withdraw" className="rounded-full bg-pink-500 px-5 py-2 font-black text-black">
                 Withdraw
               </Link>
 
@@ -93,24 +93,24 @@ export default function Navbar() {
                 @{name}
               </Link>
 
-              <button onClick={() => void handleLogout()} className="rounded-full bg-red-600 px-4 py-2 font-bold text-white">
+              <button onClick={() => void handleLogout()} className="rounded-full bg-pink-600 px-4 py-2 font-bold text-white">
                 Logout
               </button>
             </nav>
 
             <button
               onClick={() => setOpen(!open)}
-              className="rounded-xl border border-yellow-400/30 px-4 py-2 font-black text-yellow-400 lg:hidden"
+              className="rounded-xl border border-pink-500/30 px-4 py-2 font-black text-pink-500 lg:hidden"
             >
               Menu
             </button>
           </>
         ) : (
           <div className="flex items-center gap-2 text-xs sm:text-sm">
-            <Link href="/login" className="rounded-full border border-yellow-400 px-4 py-2 font-bold text-yellow-400">
+            <Link href="/login" className="rounded-full border border-pink-500 px-4 py-2 font-bold text-pink-500">
               Login
             </Link>
-            <Link href="/signup" className="rounded-full bg-yellow-400 px-4 py-2 font-black text-black">
+            <Link href="/signup" className="rounded-full bg-pink-500 px-4 py-2 font-black text-black">
               Sign Up
             </Link>
           </div>
@@ -132,11 +132,11 @@ export default function Navbar() {
             ))}
 
             <div className="grid grid-cols-2 gap-2">
-              <Link href="/wallet/deposit" onClick={() => setOpen(false)} className="rounded-xl bg-green-500 px-4 py-3 text-center font-black text-black">
+              <Link href="/wallet/deposit" onClick={() => setOpen(false)} className="rounded-xl bg-pink-500 px-4 py-3 text-center font-black text-black">
                 Deposit
               </Link>
 
-              <Link href="/wallet/withdraw" onClick={() => setOpen(false)} className="rounded-xl bg-green-500 px-4 py-3 text-center font-black text-black">
+              <Link href="/wallet/withdraw" onClick={() => setOpen(false)} className="rounded-xl bg-pink-500 px-4 py-3 text-center font-black text-black">
                 Withdraw
               </Link>
             </div>
@@ -145,7 +145,7 @@ export default function Navbar() {
               @{name}
             </Link>
 
-            <button onClick={() => void handleLogout()} className="rounded-xl bg-red-600 px-4 py-3 font-bold text-white">
+            <button onClick={() => void handleLogout()} className="rounded-xl bg-pink-600 px-4 py-3 font-bold text-white">
               Logout
             </button>
           </div>

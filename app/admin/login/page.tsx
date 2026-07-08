@@ -27,15 +27,15 @@ export default function AdminLoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-      <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-yellow-400/20 bg-white/5 p-8">
+      <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-pink-500/20 bg-white/5 p-8">
         <div className="text-center">
           <div className="text-5xl">🛡️</div>
-          <h1 className="mt-4 text-3xl font-black text-yellow-400">Fortuna Admin Login</h1>
+          <h1 className="mt-4 text-3xl font-black text-pink-500">Fortuna Admin Login</h1>
           <p className="mt-2 text-sm text-white/60">Super admin access only.</p>
         </div>
 
         <input
-          className="mt-6 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-yellow-400"
+          className="mt-6 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Admin email"
@@ -43,16 +43,16 @@ export default function AdminLoginPage() {
         />
 
         <input
-          className="mt-4 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-yellow-400"
+          className="mt-4 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Admin password"
           type="password"
         />
 
-        {message && <p className="mt-4 text-center text-sm text-yellow-300">{message}</p>}
+        {message && <p className="mt-4 text-center text-sm text-pink-400">{message}</p>}
 
-        <button className="mt-6 w-full rounded-xl bg-yellow-400 py-4 font-black text-black">
+        <button className="mt-6 w-full rounded-xl bg-pink-500 py-4 font-black text-black">
           Login to Admin
         </button>
       </form>

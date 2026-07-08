@@ -39,7 +39,7 @@ export default function AdminUserDetailsPage() {
   if (!data) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-        <div className="rounded-3xl border border-yellow-400/20 bg-white/5 p-8">{message}</div>
+        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-8">{message}</div>
       </main>
     );
   }
@@ -51,17 +51,17 @@ export default function AdminUserDetailsPage() {
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
-        <Link href="/admin/users" className="text-yellow-400">← Back to Users</Link>
+        <Link href="/admin/users" className="text-pink-500">← Back to Users</Link>
 
-        <h1 className="mt-6 text-4xl font-black text-yellow-400">@{profile.username || "Player"}</h1>
+        <h1 className="mt-6 text-4xl font-black text-pink-500">@{profile.username || "Player"}</h1>
         <p className="mt-2 text-white/60">{profile.first_name || ""} {profile.last_name || ""}</p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
+          <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-6">
             <p className="text-sm text-white/60">Wallet Balance</p>
             <h2 className="mt-2 text-3xl font-black">GH₵{Number(wallet.balance || 0).toFixed(2)}</h2>
           </div>
-          <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
+          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
             <p className="text-sm text-white/60">Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">{data.deposits.length}</h2>
           </div>
@@ -76,11 +76,11 @@ export default function AdminUserDetailsPage() {
         </div>
 
         <section className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-2xl font-black text-yellow-400">Profile</h2>
+          <h2 className="text-2xl font-black text-pink-500">Profile</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <div><p className="text-white/50">Phone</p><p className="font-bold">{profile.phone || "-"}</p></div>
             <div><p className="text-white/50">Verified</p><p className="font-bold">{profile.is_verified ? "Yes" : "No"}</p></div>
-            <div><p className="text-white/50">Username</p><p className="font-bold text-yellow-300">@{profile.username || "Player"}</p></div>
+            <div><p className="text-white/50">Username</p><p className="font-bold text-pink-400">@{profile.username || "Player"}</p></div>
           </div>
         </section>
       </div>

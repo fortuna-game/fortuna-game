@@ -220,7 +220,7 @@ export default function ArrowTargetPage() {
                     key={zone}
                     className={`flex items-center justify-center border-r border-white/10 text-4xl font-black ${
                       zone === targetNumber
-                        ? "bg-green-500/20 text-green-300"
+                        ? "bg-pink-500/20 text-green-300"
                         : "bg-black text-white"
                     }`}
                   >
@@ -242,7 +242,7 @@ export default function ArrowTargetPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-green-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
               <div className="text-5xl">{result.won ? "🏆" : "🏹"}</div>
               <h2 className="mt-3 text-2xl font-black">{result.won ? "Perfect Shot!" : "Missed Target"}</h2>
               <p className="mt-3">Target: {result.targetNumber} | Landed: {result.landedNumber}</p>

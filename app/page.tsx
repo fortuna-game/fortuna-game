@@ -21,7 +21,7 @@ export default function Home() {
       <FeaturedGames />
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="rounded-[40px] border border-yellow-400/20 bg-gradient-to-r from-yellow-500/10 via-black to-purple-900/20 p-10 text-center">
+        <div className="rounded-[40px] border border-pink-500/20 bg-gradient-to-r from-pink-600/10 via-black to-purple-900/20 p-10 text-center">
 
           <h2 className="text-5xl font-black">
             Ready to Play?
@@ -36,14 +36,14 @@ export default function Home() {
 
             <a
               href="/signup"
-              className="rounded-full bg-yellow-400 px-8 py-4 font-black text-black"
+              className="rounded-full bg-pink-500 px-8 py-4 font-black text-black"
             >
               Create Account
             </a>
 
             <a
               href="/skill-games"
-              className="rounded-full border border-yellow-400 px-8 py-4 font-bold"
+              className="rounded-full border border-pink-500 px-8 py-4 font-bold"
             >
               Browse Games
             </a>

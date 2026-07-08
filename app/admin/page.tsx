@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
   if (!data) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-        <div className="rounded-3xl border border-yellow-400/20 bg-white/5 p-8 text-center">
+        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-8 text-center">
           {message}
         </div>
       </main>
@@ -61,7 +61,7 @@ export default function AdminDashboardPage() {
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">Fortuna Admin</h1>
+            <h1 className="text-4xl font-black text-pink-500">Fortuna Admin</h1>
             <p className="mt-2 text-white/60">Business overview and money flow dashboard.</p>
           </div>
 
@@ -69,20 +69,20 @@ export default function AdminDashboardPage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
+            <div key={label} className="rounded-3xl border border-pink-500/20 bg-white/5 p-6">
               <p className="text-sm text-white/50">{label}</p>
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
-          <h2 className="text-2xl font-black text-yellow-400">Profit Overview</h2>
+        <div className="mt-10 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
+          <h2 className="text-2xl font-black text-pink-500">Profit Overview</h2>
           <p className="mt-2 text-white/60">Today, 7 days, 30 days and all-time business movement.</p>
 
           <div className="mt-6 overflow-x-auto">
             <table className="w-full min-w-[900px] text-left">
-              <thead className="bg-yellow-400 text-black">
+              <thead className="bg-pink-500 text-black">
                 <tr>
                   <th className="p-4">Period</th>
                   <th className="p-4">Deposits</th>
@@ -118,7 +118,7 @@ export default function AdminDashboardPage() {
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
           <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-black text-yellow-400">Recent Transactions</h2>
+            <h2 className="text-2xl font-black text-pink-500">Recent Transactions</h2>
             <div className="mt-4 space-y-3">
               {data.recentTransactions.map((t: any) => (
                 <div key={t.id} className="rounded-2xl bg-black/50 p-4">
@@ -130,7 +130,7 @@ export default function AdminDashboardPage() {
           </section>
 
           <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-black text-yellow-400">Recent Skill Games</h2>
+            <h2 className="text-2xl font-black text-pink-500">Recent Skill Games</h2>
             <div className="mt-4 space-y-3">
               {data.recentGames.map((g: any) => (
                 <div key={g.id} className="rounded-2xl bg-black/50 p-4">
