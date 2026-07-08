@@ -83,7 +83,7 @@ export default function Dashboard() {
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
           <Link
-            href="/games"
+            href="/skill-games"
             className="rounded-2xl border border-yellow-400/20 bg-yellow-500/10 p-5 transition hover:border-yellow-400/50"
           >
             <p className="text-xl font-black text-yellow-400">

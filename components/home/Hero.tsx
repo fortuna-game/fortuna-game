@@ -32,7 +32,7 @@ export default function Hero() {
           </Link>
 
           <Link
-            href="/games"
+            href="/skill-games"
             className="rounded-full border border-yellow-400/30 px-8 py-4 font-bold"
           >
             Explore Games

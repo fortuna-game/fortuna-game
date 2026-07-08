@@ -42,7 +42,7 @@ export default function Home() {
             </a>
 
             <a
-              href="/games"
+              href="/skill-games"
               className="rounded-full border border-yellow-400 px-8 py-4 font-bold"
             >
               Browse Games
