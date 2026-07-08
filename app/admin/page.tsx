@@ -51,6 +51,8 @@ export default function AdminDashboardPage() {
     ["Paid Withdrawals", `GH₵${Number(data.totalWithdrawalsPaid).toFixed(2)}`],
     ["Pending Withdrawals", `${data.pendingWithdrawalsCount} / GH₵${Number(data.pendingWithdrawalsAmount).toFixed(2)}`],
     ["Game Profit", `GH₵${Number(data.estimatedGameProfit).toFixed(2)}`],
+    ["Active Players 7 Days", data.activePlayers7Days],
+    ["Top Game", data.topGame ? String(data.topGame.slug).replaceAll("-", " ") : "No games yet"],
   ];
 
   return (
@@ -72,6 +74,46 @@ export default function AdminDashboardPage() {
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
             </div>
           ))}
+        </div>
+
+        <div className="mt-10 rounded-3xl border border-yellow-400/20 bg-white/5 p-6">
+          <h2 className="text-2xl font-black text-yellow-400">Profit Overview</h2>
+          <p className="mt-2 text-white/60">Today, 7 days, 30 days and all-time business movement.</p>
+
+          <div className="mt-6 overflow-x-auto">
+            <table className="w-full min-w-[900px] text-left">
+              <thead className="bg-yellow-400 text-black">
+                <tr>
+                  <th className="p-4">Period</th>
+                  <th className="p-4">Deposits</th>
+                  <th className="p-4">Withdrawals</th>
+                  <th className="p-4">Games</th>
+                  <th className="p-4">Stakes</th>
+                  <th className="p-4">Payouts</th>
+                  <th className="p-4">Game Profit</th>
+                  <th className="p-4">Net Cash</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(data.ranges || []).map((r: any) => (
+                  <tr key={r.label} className="border-t border-white/10">
+                    <td className="p-4 font-black">{r.label}</td>
+                    <td className="p-4 text-green-300">GH₵{Number(r.deposits).toFixed(2)}</td>
+                    <td className="p-4 text-red-300">GH₵{Number(r.withdrawals).toFixed(2)}</td>
+                    <td className="p-4">{r.games}</td>
+                    <td className="p-4">GH₵{Number(r.stakes).toFixed(2)}</td>
+                    <td className="p-4">GH₵{Number(r.payouts).toFixed(2)}</td>
+                    <td className={Number(r.gameProfit) >= 0 ? "p-4 font-black text-green-300" : "p-4 font-black text-red-300"}>
+                      GH₵{Number(r.gameProfit).toFixed(2)}
+                    </td>
+                    <td className={Number(r.netCash) >= 0 ? "p-4 font-black text-green-300" : "p-4 font-black text-red-300"}>
+                      GH₵{Number(r.netCash).toFixed(2)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
