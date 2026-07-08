@@ -80,6 +80,15 @@ export default function LoginPage() {
             </button>
           </div>
 
+          <div className="text-right">
+            <Link
+              href="/forgot-password"
+              className="text-sm font-bold text-yellow-400 hover:text-yellow-300"
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
           {message && (
             <p className="text-center text-red-400">{message}</p>
           )}
