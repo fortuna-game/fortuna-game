@@ -69,6 +69,14 @@ export default function AdminDashboardPage() {
               Deposits
             </Link>
 
+            <Link href="/admin/games" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
+              Games
+            </Link>
+
+            <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
+              Transactions
+            </Link>
+
             <Link href="/admin/withdrawals" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
               Manage Withdrawals
             </Link>
