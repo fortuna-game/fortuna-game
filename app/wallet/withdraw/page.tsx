@@ -23,17 +23,21 @@ export default function WithdrawPage() {
     setLoading(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: auth } = await supabase.auth.getSession();
+      const token = auth.session?.access_token;
 
-      if (!user) {
-        setMessage("Please login first.");
+      if (!token) {
+        setMessage("Please log in before withdrawing.");
         return;
       }
 
       const res = await fetch("/api/withdraw", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id, amount, momoNumber, network }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ amount, momoNumber, network }),
       });
 
       const text = await res.text();
