@@ -9,6 +9,12 @@ export default function WalletPage() {
     typeof window !== "undefined" &&
     window.location.search.includes("payment=success");
 
+  useEffect(() => {
+    if (paymentSuccess) {
+      window.history.replaceState({}, "", "/wallet");
+    }
+  }, [paymentSuccess]);
+
   const paymentFailed =
     typeof window !== "undefined" &&
     window.location.search.includes("payment=failed");
