@@ -1,5 +1,7 @@
 "use client";
 
+import AdminNav from "@/components/AdminNav";
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -133,6 +135,7 @@ export default function AdminWithdrawalsPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-12 text-white">
       <div className="mx-auto max-w-7xl">
+        <AdminNav />
         <h1 className="text-4xl font-black text-yellow-400">Admin Withdrawals</h1>
         <p className="mt-2 text-white/60">Live withdrawal requests. Updates every few seconds.</p>
 

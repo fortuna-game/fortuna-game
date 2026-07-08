@@ -1,5 +1,7 @@
 "use client";
 
+import AdminNav from "@/components/AdminNav";
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -48,6 +50,7 @@ export default function AdminUserDetailsPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
+        <AdminNav />
         <Link href="/admin/users" className="text-yellow-400">← Back to Users</Link>
 
         <h1 className="mt-6 text-4xl font-black text-yellow-400">@{profile.username || "Player"}</h1>

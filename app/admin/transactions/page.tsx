@@ -1,5 +1,7 @@
 "use client";
 
+import AdminNav from "@/components/AdminNav";
+
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -52,6 +54,7 @@ export default function AdminTransactionsPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
+        <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h1 className="text-4xl font-black text-yellow-400">Transactions</h1>
