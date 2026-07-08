@@ -3,18 +3,34 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
   try {
-    const { userId, amount, momoNumber, network } = await req.json();
+    const token = req.headers.get("authorization")?.replace("Bearer ", "");
 
-    if (!userId || !amount || !momoNumber || !network) {
+    if (!token) {
+      return NextResponse.json({ error: "Please log in before withdrawing." }, { status: 401 });
+    }
+
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token);
+
+    if (userError || !user) {
+      return NextResponse.json({ error: "Invalid user session." }, { status: 401 });
+    }
+
+    const { amount, momoNumber, network } = await req.json();
+
+    if (!amount || !momoNumber || !network) {
       return NextResponse.json({ error: "Missing withdrawal details" }, { status: 400 });
     }
 
     const value = Number(amount);
 
+    if (!Number.isFinite(value) || value < 1) {
+      return NextResponse.json({ error: "Invalid withdrawal amount." }, { status: 400 });
+    }
+
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("is_verified, username")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (profileError) return NextResponse.json({ error: profileError.message }, { status: 500 });
@@ -26,22 +42,33 @@ export async function POST(req: Request) {
     const { data: wallet, error: walletError } = await supabaseAdmin
       .from("wallets")
       .select("balance")
-      .eq("user_id", userId)
+      .eq("user_id", user.id)
       .maybeSingle();
 
     if (walletError) return NextResponse.json({ error: walletError.message }, { status: 500 });
 
     const balance = Number(wallet?.balance || 0);
+
     if (balance < value) {
       return NextResponse.json({ error: "Insufficient wallet balance." }, { status: 400 });
     }
 
     const safeUsername = String(profile?.username || "PLAYER").toUpperCase().replace(/[^A-Z0-9]/g, "");
     const today = new Date().toISOString().slice(0, 10).replace(/-/g, "");
-    const reference = `FP-${safeUsername}-${today}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const reference = `FG-${safeUsername}-${today}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const { error: updateWalletError } = await supabaseAdmin
+      .from("wallets")
+      .update({ balance: balance - value })
+      .eq("user_id", user.id)
+      .gte("balance", value);
+
+    if (updateWalletError) {
+      return NextResponse.json({ error: updateWalletError.message }, { status: 500 });
+    }
 
     const { error: withdrawalError } = await supabaseAdmin.from("withdrawals").insert({
-      user_id: userId,
+      user_id: user.id,
       amount: value,
       momo_number: momoNumber,
       network,
@@ -50,20 +77,16 @@ export async function POST(req: Request) {
     });
 
     if (withdrawalError) {
+      await supabaseAdmin
+        .from("wallets")
+        .update({ balance })
+        .eq("user_id", user.id);
+
       return NextResponse.json({ error: withdrawalError.message }, { status: 500 });
     }
 
-    const { error: updateWalletError } = await supabaseAdmin
-      .from("wallets")
-      .update({ balance: balance - value })
-      .eq("user_id", userId);
-
-    if (updateWalletError) {
-      return NextResponse.json({ error: updateWalletError.message }, { status: 500 });
-    }
-
     await supabaseAdmin.from("wallet_transactions").insert({
-      user_id: userId,
+      user_id: user.id,
       type: "withdrawal",
       amount: -value,
       status: "processing",
