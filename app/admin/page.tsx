@@ -65,6 +65,10 @@ export default function AdminDashboardPage() {
               Users
             </Link>
 
+            <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
+              Deposits
+            </Link>
+
             <Link href="/admin/withdrawals" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
               Manage Withdrawals
             </Link>
