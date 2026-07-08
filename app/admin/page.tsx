@@ -63,27 +63,6 @@ export default function AdminDashboardPage() {
             <p className="mt-2 text-white/60">Business overview and money flow dashboard.</p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Link href="/admin/users" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
-              Users
-            </Link>
-
-            <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
-              Deposits
-            </Link>
-
-            <Link href="/admin/games" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
-              Games
-            </Link>
-
-            <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-5 py-3 font-black text-white">
-              Transactions
-            </Link>
-
-            <Link href="/admin/withdrawals" className="rounded-xl bg-yellow-400 px-5 py-3 font-black text-black">
-              Manage Withdrawals
-            </Link>
-          </div>
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
