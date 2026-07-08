@@ -135,14 +135,14 @@ export default function AccountHistoryPage() {
                   <p className={
                     item.amount >= 0
                       ? "text-2xl font-black text-green-400"
-                      : "text-2xl font-black text-red-300"
+                      : "text-2xl font-black text-red-500"
                   }>
                     {item.amount >= 0 ? "+" : "-"}GH₵{Math.abs(item.amount).toFixed(2)}
                   </p>
 
                   <p className={
                     item.status === "failed"
-                      ? "mt-1 text-sm capitalize text-red-300"
+                      ? "mt-1 text-sm capitalize text-red-500"
                       : "mt-1 text-sm capitalize text-green-300"
                   }>
                     {item.status}

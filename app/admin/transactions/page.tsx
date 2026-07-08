@@ -79,7 +79,7 @@ export default function AdminTransactionsPage() {
 
           <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
             <p className="text-sm text-white/60">Debits</p>
-            <h2 className="mt-2 text-3xl font-black text-red-300">GH₵{Number(summary.totalDebit || 0).toFixed(2)}</h2>
+            <h2 className="mt-2 text-3xl font-black text-red-500">GH₵{Number(summary.totalDebit || 0).toFixed(2)}</h2>
           </div>
 
           <div className="rounded-3xl border border-yellow-400/20 bg-yellow-500/10 p-6">
@@ -129,7 +129,7 @@ export default function AdminTransactionsPage() {
                     </td>
                     <td className="p-4">{t.phone || "-"}</td>
                     <td className="p-4 font-bold capitalize">{String(t.type).replaceAll("_", " ")}</td>
-                    <td className={Number(t.amount) >= 0 ? "p-4 font-black text-green-300" : "p-4 font-black text-red-300"}>
+                    <td className={Number(t.amount) >= 0 ? "p-4 font-black text-green-300" : "p-4 font-black text-red-500"}>
                       {Number(t.amount) >= 0 ? "+" : "-"}GH₵{Math.abs(Number(t.amount || 0)).toFixed(2)}
                     </td>
                     <td className="p-4">{String(t.status).toUpperCase()}</td>
