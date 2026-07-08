@@ -77,7 +77,7 @@ export default function AdminUserDetailsPage() {
           <div className="mt-4 grid gap-4 md:grid-cols-3">
             <div><p className="text-white/50">Phone</p><p className="font-bold">{profile.phone || "-"}</p></div>
             <div><p className="text-white/50">Verified</p><p className="font-bold">{profile.is_verified ? "Yes" : "No"}</p></div>
-            <div><p className="text-white/50">User ID</p><p className="break-all text-sm font-bold">{profile.user_id}</p></div>
+            <div><p className="text-white/50">Username</p><p className="font-bold text-yellow-300">@{profile.username || "Player"}</p></div>
           </div>
         </section>
       </div>
