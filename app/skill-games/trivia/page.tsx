@@ -172,7 +172,7 @@ export default function TriviaSprintPage() {
         </h1>
 
         <p className="mt-2 text-sm text-white/60">
-          Answer at least 8 out of 10 questions correctly to win a 2x prize.
+          Answer at least 17 out of 20 questions correctly to win a 2x prize.
         </p>
 
         {message && (
@@ -189,7 +189,7 @@ export default function TriviaSprintPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Answer the trivia questions before time runs out. Get at least 8 answers correct to win.
+                Answer the trivia questions before time runs out. Get at least 17 out of 20 answers correct to win.
               </p>
             </div>
 
