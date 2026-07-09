@@ -129,8 +129,18 @@ export default function AdminTransactionsPage() {
                     </td>
                     <td className="p-4">{t.phone || "-"}</td>
                     <td className="p-4 font-bold capitalize">{String(t.type).replaceAll("_", " ")}</td>
-                    <td className={Number(t.amount) >= 0 ? "p-4 font-black text-green-300" : "p-4 font-black text-red-500"}>
-                      {Number(t.amount) >= 0 ? "+" : "-"}GH₵{Math.abs(Number(t.amount || 0)).toFixed(2)}
+                    <td className={
+                      ["game_entry", "skill_game_entry", "lucky_draw_ticket"].includes(String(t.type))
+                        ? "p-4 font-black text-red-500"
+                        : Number(t.amount) >= 0
+                        ? "p-4 font-black text-green-300"
+                        : "p-4 font-black text-red-500"
+                    }>
+                      {["game_entry", "skill_game_entry", "lucky_draw_ticket"].includes(String(t.type))
+                        ? "-"
+                        : Number(t.amount) >= 0
+                        ? "+"
+                        : "-"}GH₵{Math.abs(Number(t.amount || 0)).toFixed(2)}
                     </td>
                     <td className="p-4">{String(t.status).toUpperCase()}</td>
                     <td className="p-4 text-pink-400">{t.reference || "-"}</td>
