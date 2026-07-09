@@ -9,6 +9,8 @@ export default function GamePage() {
       name="Logic Lock"
       icon="🧩"
       description="Solve logic challenges under pressure and reach the winning score."
+      minScore={17}
+      total={20}
       seconds={45}
     />
   );

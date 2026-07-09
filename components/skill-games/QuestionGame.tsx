@@ -24,6 +24,8 @@ type Props = {
   name: string;
   icon: string;
   description: string;
+  minScore: number;
+  total: number;
   seconds?: number;
 };
 
@@ -32,6 +34,8 @@ export default function QuestionGame({
   name,
   icon,
   description,
+  minScore,
+  total,
   seconds = 30,
 }: Props) {
   const [stake, setStake] = useState("");
@@ -39,7 +43,6 @@ export default function QuestionGame({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<{ id: string; answer: string }[]>([]);
   const [current, setCurrent] = useState(0);
-  const [minScore, setMinScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(seconds);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
@@ -83,7 +86,6 @@ export default function QuestionGame({
 
     setSessionId(data.sessionId);
     setQuestions(data.questions || []);
-    setMinScore(data.minScore);
     setAnswers([]);
     setCurrent(0);
     setResult(null);
@@ -220,11 +222,11 @@ export default function QuestionGame({
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Answer the questions before time runs out. Get at least{" "}
+                Complete the challenge before time runs out. Get at least{" "}
                 <span className="font-black text-pink-400">
-                  {minScore}
+                  {minScore} out of {total}
                 </span>{" "}
-                answers correct to win.
+                correct to win.
               </p>
             </div>
 

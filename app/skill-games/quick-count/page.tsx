@@ -9,6 +9,8 @@ export default function QuickCountPage() {
       name="Quick Count"
       icon="👁️"
       description="Count the objects quickly and reach the target score before time runs out."
+      minScore={17}
+      total={20}
       seconds={30}
     />
   );

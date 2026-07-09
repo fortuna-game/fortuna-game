@@ -1,8 +1,8 @@
 export const QUESTION_GAMES = {
   "word-puzzle": {
     name: "Word Puzzle",
-    minScore: 8,
-    total: 10,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "w1", question: "Unscramble: HNAGA", options: ["GHANA", "HANG", "AGHAN", "NAGHA"], answer: "GHANA" },
       { id: "w2", question: "Unscramble: ONMEY", options: ["MONEY", "YEMON", "ENMOY", "NOMEY"], answer: "MONEY" },
@@ -21,8 +21,8 @@ export const QUESTION_GAMES = {
 
   "pattern-sequence": {
     name: "Pattern Sequence",
-    minScore: 8,
-    total: 10,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "p1", question: "2, 4, 6, 8, ?", options: ["9", "10", "11", "12"], answer: "10" },
       { id: "p2", question: "3, 6, 12, 24, ?", options: ["30", "36", "48", "50"], answer: "48" },
@@ -41,8 +41,8 @@ export const QUESTION_GAMES = {
 
   "code-breaker": {
     name: "Code Breaker",
-    minScore: 4,
-    total: 5,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "c1", question: "Clues: 427 is correct. 472 has same numbers but wrong order. Choose the code.", options: ["427", "472", "247", "724"], answer: "427" },
       { id: "c2", question: "Clues: 618 is correct. 681 has two misplaced. Choose the code.", options: ["618", "681", "168", "816"], answer: "618" },
@@ -55,8 +55,8 @@ export const QUESTION_GAMES = {
 
   "color-clash": {
     name: "Color Clash",
-    minScore: 8,
-    total: 10,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "cc1", question: "The word RED is displayed in BLUE. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "BLUE" },
       { id: "cc2", question: "The word GREEN is displayed in RED. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "RED" },
@@ -75,8 +75,8 @@ export const QUESTION_GAMES = {
 
   "number-hunt": {
     name: "Number Hunt",
-    minScore: 8,
-    total: 10,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "n1", question: "Find number 37", options: ["17", "73", "37", "47"], answer: "37" },
       { id: "n2", question: "Find number 64", options: ["46", "66", "64", "84"], answer: "64" },
@@ -95,8 +95,8 @@ export const QUESTION_GAMES = {
 
   "logic-lock": {
     name: "Logic Lock",
-    minScore: 8,
-    total: 10,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "l1", question: "All Zips are Lops. All Lops are Meks. Is every Zip a Mek?", options: ["Yes", "No", "Cannot Know", "Sometimes"], answer: "Yes" },
       { id: "l2", question: "Ama is older than Kojo. Kojo is older than Yaw. Who is youngest?", options: ["Ama", "Kojo", "Yaw", "Cannot Know"], answer: "Yaw" },
@@ -115,8 +115,8 @@ export const QUESTION_GAMES = {
 
   "speed-sort": {
     name: "Speed Sort",
-    minScore: 7,
-    total: 8,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "ss1", question: "🍎 belongs to which group?", options: ["Food", "Animal"], answer: "Food" },
       { id: "ss2", question: "🐘 belongs to which group?", options: ["Animal", "Food"], answer: "Animal" },
@@ -131,8 +131,8 @@ export const QUESTION_GAMES = {
 
   "quick-count": {
     name: "Quick Count",
-    minScore: 5,
-    total: 6,
+    minScore: 17,
+    total: 20,
     questions: [
       { id: "qc1", question: "Count quickly: ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐", options: ["5", "7", "8", "9"], answer: "7" },
       { id: "qc2", question: "Count quickly: 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵", options: ["9", "10", "11", "13"], answer: "11" },
