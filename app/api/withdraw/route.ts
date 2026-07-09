@@ -29,16 +29,12 @@ export async function POST(req: Request) {
 
     const { data: profile, error: profileError } = await supabaseAdmin
       .from("profiles")
-      .select("is_verified, username")
+      .select("username")
       .eq("user_id", user.id)
       .maybeSingle();
 
     if (profileError) {
       return NextResponse.json({ error: profileError.message }, { status: 500 });
-    }
-
-    if (!profile?.is_verified) {
-      return NextResponse.json({ error: "Please verify your account before withdrawing." }, { status: 403 });
     }
 
     const safeUsername = String(profile?.username || "PLAYER")
