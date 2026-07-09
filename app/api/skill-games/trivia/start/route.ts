@@ -1,98 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-const QUESTION_BANK = [
-  {
-    id: "t1",
-    question: "What is the capital city of Ghana?",
-    options: ["Kumasi", "Accra", "Takoradi", "Tamale"],
-    answer: "Accra",
-  },
-  {
-    id: "t2",
-    question: "Which planet is known as the Red Planet?",
-    options: ["Earth", "Venus", "Mars", "Jupiter"],
-    answer: "Mars",
-  },
-  {
-    id: "t3",
-    question: "What is 12 × 5?",
-    options: ["50", "55", "60", "65"],
-    answer: "60",
-  },
-  {
-    id: "t4",
-    question: "Which ocean is the largest?",
-    options: ["Atlantic", "Indian", "Pacific", "Arctic"],
-    answer: "Pacific",
-  },
-  {
-    id: "t5",
-    question: "How many sides does a hexagon have?",
-    options: ["5", "6", "7", "8"],
-    answer: "6",
-  },
-  {
-    id: "t6",
-    question: "Which gas do plants absorb from the atmosphere?",
-    options: ["Oxygen", "Hydrogen", "Carbon Dioxide", "Nitrogen"],
-    answer: "Carbon Dioxide",
-  },
-  {
-    id: "t7",
-    question: "What is the largest continent?",
-    options: ["Africa", "Europe", "Asia", "Australia"],
-    answer: "Asia",
-  },
-  {
-    id: "t8",
-    question: "How many minutes are in two hours?",
-    options: ["60", "90", "120", "180"],
-    answer: "120",
-  },
-  {
-    id: "t9",
-    question: "Which organ pumps blood around the human body?",
-    options: ["Brain", "Heart", "Lungs", "Kidney"],
-    answer: "Heart",
-  },
-  {
-    id: "t10",
-    question: "What is 15 + 27?",
-    options: ["32", "42", "52", "62"],
-    answer: "42",
-  },
-  {
-    id: "t11",
-    question: "Which country is home to the pyramids of Giza?",
-    options: ["Ghana", "Egypt", "Kenya", "Morocco"],
-    answer: "Egypt",
-  },
-  {
-    id: "t12",
-    question: "How many months are in one year?",
-    options: ["10", "11", "12", "13"],
-    answer: "12",
-  },
-  {
-    id: "t13",
-    question: "What is the freezing point of water in Celsius?",
-    options: ["0", "10", "32", "100"],
-    answer: "0",
-  },
-  {
-    id: "t14",
-    question: "Which animal is the largest land animal?",
-    options: ["Lion", "Giraffe", "Elephant", "Rhino"],
-    answer: "Elephant",
-  },
-  {
-    id: "t15",
-    question: "What is 9 × 8?",
-    options: ["63", "72", "81", "88"],
-    answer: "72",
-  },
-];
+import { TRIVIA_QUESTIONS } from "@/lib/triviaQuestions";
 
 function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
@@ -135,7 +44,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
+    const selectedQuestions = shuffle(TRIVIA_QUESTIONS).slice(0, 20);
 
     const { data: sessionId, error: startError } =
       await supabaseAdmin.rpc("start_skill_game_atomic", {
@@ -159,6 +68,8 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       sessionId: sessionId,
+      minScore: 17,
+      total: 20,
       questions: selectedQuestions.map(({ answer, ...question }) => ({
         ...question,
         options: shuffle(question.options),

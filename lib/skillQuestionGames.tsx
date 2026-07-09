@@ -1,217 +1,146 @@
+type Question = {
+  id: string;
+  question: string;
+  options: string[];
+  answer: string;
+};
+
+function shuffle<T>(items: T[]) {
+  return [...items].sort(() => Math.random() - 0.5);
+}
+
+function makeOptions(answer: string, wrong: string[]) {
+  return shuffle([answer, ...wrong.slice(0, 3)]);
+}
+
+const words = [
+  "GHANA","MONEY","FOCUS","BRAIN","LOGIC","QUICK","VAULT","SKILL","POWER","SMART",
+  "LEVEL","PRIZE","TARGET","MEMORY","NUMBER","PUZZLE","WINNER","PLAYER","ACTION","RESULT",
+  "VISION","MASTER","HUSTLE","BRIGHT","STRONG","CHANCE","ENERGY","CREATE","SYSTEM","FORTUNA",
+  "REWARD","BALANCE","ACTIVE","WINNING","GROWTH","MOBILE","SCREEN","SECURE","ANSWER","CHALLENGE",
+  "INSIGHT","VICTORY","SUCCESS","COURAGE","CONTROL","PATTERN","REACTION","COUNTING","SEQUENCE","ACCURACY",
+  "TIMING","COMPETE","PERFORM","SHARP","THINK","SOLVE","BATTLE","GIFT","PHONE","CASH",
+  "BONUS","SPEED","SORT","COLOR","CLASH","CODE","LOCK","FIND","HUNT","FAST",
+  "GAME","PLAY","POINT","TASK","RULE","ROUND","ENTRY","FEE","DOUBLE","PAYOUT",
+  "MIND","FOCUSING","QUESTION","OPTION","CORRECT","WRONG","FAIR","TRUST","USER","WALLET",
+  "DEPOSIT","WITHDRAW","MARKET","VALUE","SMARTER","RANDOM","FRESH","WINRATE","SESSION","FORTUNE"
+];
+
+function scramble(word: string) {
+  return word.split("").sort(() => Math.random() - 0.5).join("");
+}
+
+const wordPuzzle: Question[] = words.map((word, i) => ({
+  id: `w${i + 1}`,
+  question: `Unscramble: ${scramble(word)}`,
+  options: makeOptions(word, [scramble(word), scramble(word), scramble(word)]),
+  answer: word,
+}));
+
+const patternSequence: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const start = 2 + (i % 9);
+  const step = 2 + (i % 7);
+  const answer = start + step * 5;
+  const seq = [start, start + step, start + step * 2, start + step * 3, start + step * 4];
+  return {
+    id: `p${i + 1}`,
+    question: `${seq.join(", ")}, ?`,
+    options: makeOptions(String(answer), [String(answer + step), String(answer - step), String(answer + 2)]),
+    answer: String(answer),
+  };
+});
+
+const codeBreaker: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const code = String(100 + ((i * 37 + 247) % 899));
+  const a = code[0], b = code[1], c = code[2];
+  return {
+    id: `c${i + 1}`,
+    question: `Clues: ${code} is correct. ${b}${c}${a} has the same digits but wrong order. Choose the code.`,
+    options: shuffle([code, `${b}${c}${a}`, `${c}${a}${b}`, `${a}${c}${b}`]),
+    answer: code,
+  };
+});
+
+const colors = ["RED", "BLUE", "GREEN", "YELLOW", "PURPLE", "ORANGE", "PINK", "BLACK"];
+const colorClash: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const word = colors[i % colors.length];
+  const display = colors[(i * 3 + 1) % colors.length];
+  return {
+    id: `cc${i + 1}`,
+    question: `The word ${word} is displayed in ${display}. Choose the display color.`,
+    options: shuffle([display, word, colors[(i + 2) % colors.length], colors[(i + 4) % colors.length]]),
+    answer: display,
+  };
+});
+
+const numberHunt: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const answer = String(10 + ((i * 17 + 27) % 89));
+  const reversed = answer.split("").reverse().join("");
+  return {
+    id: `n${i + 1}`,
+    question: `Find number ${answer}`,
+    options: shuffle([answer, reversed, String(Number(answer) + 1), String(Number(answer) - 1)]),
+    answer,
+  };
+});
+
+const logicLock: Question[] = [
+  ...Array.from({ length: 50 }, (_, i) => {
+    const a = 2 + i;
+    return {
+      id: `l${i + 1}`,
+      question: `${a}, ${a + 3}, ${a + 6}, ${a + 9}, ?`,
+      options: makeOptions(String(a + 12), [String(a + 10), String(a + 11), String(a + 15)]),
+      answer: String(a + 12),
+    };
+  }),
+  ...Array.from({ length: 50 }, (_, i) => {
+    const names = ["Ama", "Kojo", "Yaw", "Esi"];
+    return {
+      id: `l${i + 51}`,
+      question: `${names[0]} is older than ${names[1]}. ${names[1]} is older than ${names[2]}. Who is youngest?`,
+      options: names,
+      answer: names[2],
+    };
+  }),
+];
+
+const categories = [
+  ["🍎", "Fruit"], ["🍌", "Fruit"], ["🍇", "Fruit"], ["🍉", "Fruit"],
+  ["🐶", "Animal"], ["🐘", "Animal"], ["🦁", "Animal"], ["🐱", "Animal"],
+  ["🚗", "Vehicle"], ["✈️", "Vehicle"], ["🚲", "Vehicle"], ["🚕", "Vehicle"],
+  ["🍕", "Food"], ["🍔", "Food"], ["🍟", "Food"], ["🥪", "Food"],
+];
+
+const speedSort: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const [item, answer] = categories[i % categories.length];
+  return {
+    id: `ss${i + 1}`,
+    question: `${item} belongs to which group?`,
+    options: shuffle([answer, "Animal", "Fruit", "Vehicle", "Food"].filter((v, idx, arr) => arr.indexOf(v) === idx).slice(0, 4)),
+    answer,
+  };
+});
+
+const symbols = ["⭐", "🔵", "🍎", "💎", "🔥", "⚽", "🟢", "🟡", "🔴", "🧩"];
+const quickCount: Question[] = Array.from({ length: 100 }, (_, i) => {
+  const count = 6 + (i % 15);
+  const symbol = symbols[i % symbols.length];
+  return {
+    id: `qc${i + 1}`,
+    question: `Count quickly: ${Array(count).fill(symbol).join(" ")}`,
+    options: makeOptions(String(count), [String(count - 1), String(count + 1), String(count + 2)]),
+    answer: String(count),
+  };
+});
+
 export const QUESTION_GAMES = {
-  "word-puzzle": {
-    name: "Word Puzzle",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "w1", question: "Unscramble: HNAGA", options: ["GHANA", "HANG", "AGHAN", "NAGHA"], answer: "GHANA" },
-      { id: "w2", question: "Unscramble: ONMEY", options: ["MONEY", "YEMON", "ENMOY", "NOMEY"], answer: "MONEY" },
-      { id: "w3", question: "Unscramble: EAMG", options: ["MEGA", "GAME", "MAGE", "GEMA"], answer: "GAME" },
-      { id: "w4", question: "Unscramble: LILKS", options: ["SKILL", "KILLS", "SILKL", "LIKLS"], answer: "SKILL" },
-      { id: "w5", question: "Unscramble: NIW", options: ["WIN", "WON", "NOW", "OWN"], answer: "WIN" },
-      { id: "w6", question: "Unscramble: AMLER", options: ["REALM", "LEARM", "ALMER", "LAMER"], answer: "REALM" },
-      { id: "w7", question: "Unscramble: CUSFO", options: ["FOCUS", "COFUS", "SCOFU", "CUFOS"], answer: "FOCUS" },
-      { id: "w8", question: "Unscramble: RBAIN", options: ["BRAIN", "BRIAN", "RABIN", "BAIRN"], answer: "BRAIN" },
-      { id: "w9", question: "Unscramble: OLIGC", options: ["LOGIC", "GLOIC", "COLIG", "LOCIG"], answer: "LOGIC" },
-      { id: "w10", question: "Unscramble: TSEFA", options: ["FEAST", "FAST", "FATES", "SAFET"], answer: "FEAST" },
-      { id: "w11", question: "Unscramble: UQCIK", options: ["QUICK", "QUICKY", "KIQUC", "QCIUK"], answer: "QUICK" },
-      { id: "w12", question: "Unscramble: VUATL", options: ["VAULT", "VALUET", "VUALT", "TULAV"], answer: "VAULT" },
-    ],
-  },
-
-  "pattern-sequence": {
-    name: "Pattern Sequence",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "p1", question: "2, 4, 6, 8, ?", options: ["9", "10", "11", "12"], answer: "10" },
-      { id: "p2", question: "3, 6, 12, 24, ?", options: ["30", "36", "48", "50"], answer: "48" },
-      { id: "p3", question: "1, 4, 9, 16, ?", options: ["20", "24", "25", "30"], answer: "25" },
-      { id: "p4", question: "5, 10, 20, 40, ?", options: ["50", "60", "70", "80"], answer: "80" },
-      { id: "p5", question: "🔴 🔵 🔴 🔵 🔴 ?", options: ["🔴", "🔵", "🟢", "🟡"], answer: "🔵" },
-      { id: "p6", question: "▲ ● ▲ ● ▲ ?", options: ["▲", "●", "■", "◆"], answer: "●" },
-      { id: "p7", question: "10, 20, 30, 40, ?", options: ["45", "50", "55", "60"], answer: "50" },
-      { id: "p8", question: "100, 90, 80, 70, ?", options: ["50", "55", "60", "65"], answer: "60" },
-      { id: "p9", question: "2, 3, 5, 8, 13, ?", options: ["18", "20", "21", "24"], answer: "21" },
-      { id: "p10", question: "4, 8, 16, 32, ?", options: ["48", "56", "64", "72"], answer: "64" },
-      { id: "p11", question: "A, C, E, G, ?", options: ["H", "I", "J", "K"], answer: "I" },
-      { id: "p12", question: "1, 2, 4, 7, 11, ?", options: ["14", "15", "16", "17"], answer: "16" },
-    ],
-  },
-
-  "code-breaker": {
-    name: "Code Breaker",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "c1", question: "Clues: 427 is correct. 472 has same numbers but wrong order. Choose the code.", options: ["427", "472", "247", "724"], answer: "427" },
-      { id: "c2", question: "Clues: 618 is correct. 681 has two misplaced. Choose the code.", options: ["618", "681", "168", "816"], answer: "618" },
-      { id: "c3", question: "Clues: 395 is correct. 359 has two misplaced. Choose the code.", options: ["395", "359", "935", "593"], answer: "395" },
-      { id: "c4", question: "Clues: 741 is correct. 714 has two misplaced. Choose the code.", options: ["741", "714", "471", "147"], answer: "741" },
-      { id: "c5", question: "Clues: 836 is correct. 863 has two misplaced. Choose the code.", options: ["836", "863", "638", "386"], answer: "836" },
-      { id: "c6", question: "Clues: 529 is correct. 592 has two misplaced. Choose the code.", options: ["529", "592", "295", "925"], answer: "529" },
-    ],
-  },
-
-  "color-clash": {
-    name: "Color Clash",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "cc1", question: "The word RED is displayed in BLUE. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "BLUE" },
-      { id: "cc2", question: "The word GREEN is displayed in RED. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "RED" },
-      { id: "cc3", question: "The word BLUE is displayed in YELLOW. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "YELLOW" },
-      { id: "cc4", question: "The word YELLOW is displayed in GREEN. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "GREEN" },
-      { id: "cc5", question: "The word PURPLE is displayed in RED. Choose the display color.", options: ["RED", "PURPLE", "GREEN", "YELLOW"], answer: "RED" },
-      { id: "cc6", question: "The word RED is displayed in YELLOW. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "YELLOW" },
-      { id: "cc7", question: "The word GREEN is displayed in BLUE. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "BLUE" },
-      { id: "cc8", question: "The word BLUE is displayed in GREEN. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "GREEN" },
-      { id: "cc9", question: "The word YELLOW is displayed in RED. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "RED" },
-      { id: "cc10", question: "The word RED is displayed in GREEN. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "GREEN" },
-      { id: "cc11", question: "The word GREEN is displayed in YELLOW. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "YELLOW" },
-      { id: "cc12", question: "The word BLUE is displayed in RED. Choose the display color.", options: ["RED", "BLUE", "GREEN", "YELLOW"], answer: "RED" },
-    ],
-  },
-
-  "number-hunt": {
-    name: "Number Hunt",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "n1", question: "Find number 37", options: ["17", "73", "37", "47"], answer: "37" },
-      { id: "n2", question: "Find number 64", options: ["46", "66", "64", "84"], answer: "64" },
-      { id: "n3", question: "Find number 82", options: ["28", "82", "72", "92"], answer: "82" },
-      { id: "n4", question: "Find number 19", options: ["91", "18", "19", "29"], answer: "19" },
-      { id: "n5", question: "Find number 55", options: ["50", "55", "65", "45"], answer: "55" },
-      { id: "n6", question: "Find number 71", options: ["17", "71", "77", "81"], answer: "71" },
-      { id: "n7", question: "Find number 43", options: ["34", "42", "43", "53"], answer: "43" },
-      { id: "n8", question: "Find number 96", options: ["69", "86", "96", "99"], answer: "96" },
-      { id: "n9", question: "Find number 24", options: ["42", "34", "24", "20"], answer: "24" },
-      { id: "n10", question: "Find number 88", options: ["80", "83", "88", "98"], answer: "88" },
-      { id: "n11", question: "Find number 12", options: ["21", "12", "22", "10"], answer: "12" },
-      { id: "n12", question: "Find number 59", options: ["95", "49", "59", "69"], answer: "59" },
-    ],
-  },
-
-  "logic-lock": {
-    name: "Logic Lock",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "l1", question: "All Zips are Lops. All Lops are Meks. Is every Zip a Mek?", options: ["Yes", "No", "Cannot Know", "Sometimes"], answer: "Yes" },
-      { id: "l2", question: "Ama is older than Kojo. Kojo is older than Yaw. Who is youngest?", options: ["Ama", "Kojo", "Yaw", "Cannot Know"], answer: "Yaw" },
-      { id: "l3", question: "A farmer has 17 sheep. All but 9 run away. How many remain?", options: ["8", "9", "17", "26"], answer: "9" },
-      { id: "l4", question: "2, 6, 12, 20, 30, ?", options: ["36", "40", "42", "44"], answer: "42" },
-      { id: "l5", question: "Kofi faces north. He turns right, then right again. Which direction?", options: ["North", "South", "East", "West"], answer: "South" },
-      { id: "l6", question: "If 2 cats catch 2 mice in 2 minutes, how many cats catch 6 mice in 2 minutes?", options: ["2", "3", "6", "12"], answer: "6" },
-      { id: "l7", question: "Which is the odd one out: Apple, Banana, Mango, Car", options: ["Apple", "Banana", "Mango", "Car"], answer: "Car" },
-      { id: "l8", question: "If today is Monday, what day is 3 days after tomorrow?", options: ["Tuesday", "Wednesday", "Thursday", "Friday"], answer: "Friday" },
-      { id: "l9", question: "Which number is missing: 4, 8, 12, ?, 20", options: ["14", "15", "16", "18"], answer: "16" },
-      { id: "l10", question: "A is taller than B. B is taller than C. Who is shortest?", options: ["A", "B", "C", "Cannot Know"], answer: "C" },
-      { id: "l11", question: "If all birds can fly is false, what does that mean?", options: ["No birds fly", "Some birds may not fly", "All birds swim", "Birds are fish"], answer: "Some birds may not fly" },
-      { id: "l12", question: "Complete: 1, 1, 2, 3, 5, ?", options: ["6", "7", "8", "9"], answer: "8" },
-    ],
-  },
-
-  "speed-sort": {
-    name: "Speed Sort",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "ss1", question: "🍎 belongs to which group?", options: ["Food", "Animal"], answer: "Food" },
-      { id: "ss2", question: "🐘 belongs to which group?", options: ["Animal", "Food"], answer: "Animal" },
-      { id: "ss3", question: "🚗 belongs to which group?", options: ["Vehicle", "Fruit"], answer: "Vehicle" },
-      { id: "ss4", question: "🍌 belongs to which group?", options: ["Animal", "Fruit"], answer: "Fruit" },
-      { id: "ss5", question: "✈️ belongs to which group?", options: ["Vehicle", "Food"], answer: "Vehicle" },
-      { id: "ss6", question: "🐶 belongs to which group?", options: ["Fruit", "Animal"], answer: "Animal" },
-      { id: "ss7", question: "🍕 belongs to which group?", options: ["Food", "Vehicle"], answer: "Food" },
-      { id: "ss8", question: "🚲 belongs to which group?", options: ["Animal", "Vehicle"], answer: "Vehicle" },
-    ],
-  },
-
-  "quick-count": {
-    name: "Quick Count",
-    minScore: 17,
-    total: 20,
-    questions: [
-      { id: "qc1", question: "Count quickly: ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐", options: ["5", "7", "8", "9"], answer: "7" },
-      { id: "qc2", question: "Count quickly: 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵 🔵", options: ["9", "10", "11", "13"], answer: "11" },
-      { id: "qc3", question: "How many? 🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎 🍎", options: ["7", "8", "9", "11"], answer: "9" },
-      { id: "qc4", question: "How many? 💎 💎 💎 💎 💎 💎 💎 💎", options: ["6", "7", "8", "10"], answer: "8" },
-      { id: "qc5", question: "Count quickly: 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥 🔥", options: ["8", "9", "10", "12"], answer: "10" },
-      { id: "qc6", question: "How many? ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽ ⚽", options: ["10", "11", "12", "14"], answer: "12" },
-    ],
-  },
-
-  "memory-match": {
-    name: "Memory Match",
-    minScore: 8,
-    total: 8,
-    questions: [
-      { id: "mm1", question: "Find the pair for 🍎", options: ["🍎", "⭐", "💎", "🔥"], answer: "🍎" },
-      { id: "mm2", question: "Find the pair for ⭐", options: ["🍎", "⭐", "💎", "��"], answer: "⭐" },
-      { id: "mm3", question: "Find the pair for 💎", options: ["🍎", "⭐", "💎", "🔥"], answer: "💎" },
-      { id: "mm4", question: "Find the pair for 🔥", options: ["🍎", "⭐", "💎", "🔥"], answer: "🔥" },
-      { id: "mm5", question: "Remember: 🟢 🔴 🟡. What was first?", options: ["🟢", "🔴", "🟡", "🔵"], answer: "🟢" },
-      { id: "mm6", question: "Remember: 🐶 🐱 🐵. What was second?", options: ["🐶", "🐱", "🐵", "🦁"], answer: "🐱" },
-      { id: "mm7", question: "Remember: A B C D. What came after B?", options: ["A", "C", "D", "B"], answer: "C" },
-      { id: "mm8", question: "Remember: 7 4 9. What was last?", options: ["7", "4", "9", "1"], answer: "9" },
-    ],
-  },
-  "maze-escape": {
-    name: "Maze Escape",
-    minScore: 8,
-    total: 8,
-    questions: [
-      { id: "mz1", question: "From Start, move Right then Down. Where are you?", options: ["A2", "B2", "C1", "B1"], answer: "B2" },
-      { id: "mz2", question: "Which direction moves you closer to the exit on the right?", options: ["Left", "Right", "Up", "Back"], answer: "Right" },
-      { id: "mz3", question: "A wall blocks Up. Which move is impossible?", options: ["Up", "Down", "Left", "Right"], answer: "Up" },
-      { id: "mz4", question: "You are at B2. Exit is at B4. Best direction?", options: ["Up", "Down", "Left", "Right"], answer: "Right" },
-      { id: "mz5", question: "If you hit a wall, what should you do?", options: ["Repeat move", "Choose another route", "Stop", "Go through wall"], answer: "Choose another route" },
-      { id: "mz6", question: "Shortest path means using what?", options: ["More moves", "Fewer moves", "Random moves", "No moves"], answer: "Fewer moves" },
-      { id: "mz7", question: "Exit is below you. Which direction?", options: ["Up", "Down", "Left", "Right"], answer: "Down" },
-      { id: "mz8", question: "A maze tests which skill most?", options: ["Navigation", "Cooking", "Singing", "Sleeping"], answer: "Navigation" },
-    ],
-  }
-,
-  "stack-balance": {
-    name: "Stack Balance",
-    minScore: 5,
-    total: 6,
-    questions: [
-      { id: "sb1", question: "A block is moving left and right. What should you focus on?", options: ["Timing", "Color", "Sound", "Name"], answer: "Timing" },
-      { id: "sb2", question: "To keep a stack balanced, where should the next block land?", options: ["Far left", "Far right", "Near the center", "Outside"], answer: "Near the center" },
-      { id: "sb3", question: "If a block is placed too far from the previous block, what happens?", options: ["Stack improves", "Stack collapses", "Nothing", "Prize doubles"], answer: "Stack collapses" },
-      { id: "sb4", question: "A stable stack needs good?", options: ["Balance", "Luck", "Noise", "Delay"], answer: "Balance" },
-      { id: "sb5", question: "If the block speed increases, what skill is tested?", options: ["Reaction", "Sleeping", "Guessing", "Reading"], answer: "Reaction" },
-      { id: "sb6", question: "Best time to drop a block is when it is?", options: ["Aligned", "Far away", "Hidden", "Gone"], answer: "Aligned" },
-    ],
-  },
-
-  "target-challenge": {
-    name: "Arrow Target",
-    minScore: 5,
-    total: 6,
-    questions: [
-      { id: "at1", question: "If your chosen number is 3, what should the arrow hit?", options: ["1", "2", "3", "4"], answer: "3" },
-      { id: "at2", question: "The target number moves. What should you track?", options: ["The number", "The background", "The border", "The title"], answer: "The number" },
-      { id: "at3", question: "Accuracy means hitting the?", options: ["Wrong zone", "Chosen target", "Menu", "Wallet"], answer: "Chosen target" },
-      { id: "at4", question: "When the arrow is moving fast, you need good?", options: ["Timing", "Luck", "Silence", "Color"], answer: "Timing" },
-      { id: "at5", question: "If the arrow lands on the wrong number, the result is?", options: ["Win", "Miss", "Bonus", "Deposit"], answer: "Miss" },
-      { id: "at6", question: "Best action before shooting is to?", options: ["Aim", "Close eyes", "Reload", "Logout"], answer: "Aim" },
-    ],
-  },
-  "reaction-tap": {
-    name: "Reaction Rush",
-    minScore: 5,
-    total: 6,
-    questions: [
-      { id: "rr1", question: "When the screen says TAP NOW, what should you do?", options: ["Tap fast", "Wait", "Logout", "Refresh"], answer: "Tap fast" },
-      { id: "rr2", question: "If you tap before the signal, what happens?", options: ["Win", "Too early", "Bonus", "Deposit"], answer: "Too early" },
-      { id: "rr3", question: "Reaction games test your?", options: ["Speed", "Sleep", "Luck", "Name"], answer: "Speed" },
-      { id: "rr4", question: "Best reaction means tapping?", options: ["Late", "Fast", "Never", "Wrong"], answer: "Fast" },
-      { id: "rr5", question: "If the target appears quickly, you need?", options: ["Focus", "Delay", "Guessing", "Scrolling"], answer: "Focus" },
-      { id: "rr6", question: "Reaction Rush is mainly about?", options: ["Fast response", "Long reading", "Random chance", "Wallet only"], answer: "Fast response" },
-    ],
-  },
+  "word-puzzle": { name: "Word Puzzle", minScore: 17, total: 20, questions: wordPuzzle },
+  "pattern-sequence": { name: "Pattern Sequence", minScore: 17, total: 20, questions: patternSequence },
+  "code-breaker": { name: "Code Breaker", minScore: 17, total: 20, questions: codeBreaker },
+  "color-clash": { name: "Color Clash", minScore: 17, total: 20, questions: colorClash },
+  "number-hunt": { name: "Number Hunt", minScore: 17, total: 20, questions: numberHunt },
+  "logic-lock": { name: "Logic Lock", minScore: 17, total: 20, questions: logicLock },
+  "speed-sort": { name: "Speed Sort", minScore: 17, total: 20, questions: speedSort },
+  "quick-count": { name: "Quick Count", minScore: 17, total: 20, questions: quickCount },
 };

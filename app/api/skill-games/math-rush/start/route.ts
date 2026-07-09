@@ -1,26 +1,97 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-const QUESTION_BANK = [
-  { id: "m1", question: "12 + 8", options: ["18", "20", "22", "24"], answer: "20" },
-  { id: "m2", question: "7 × 6", options: ["36", "40", "42", "48"], answer: "42" },
-  { id: "m3", question: "50 - 17", options: ["31", "32", "33", "34"], answer: "33" },
-  { id: "m4", question: "81 ÷ 9", options: ["7", "8", "9", "10"], answer: "9" },
-  { id: "m5", question: "15 + 18", options: ["31", "32", "33", "35"], answer: "33" },
-  { id: "m6", question: "9 × 9", options: ["72", "81", "90", "99"], answer: "81" },
-  { id: "m7", question: "100 - 44", options: ["46", "54", "56", "64"], answer: "56" },
-  { id: "m8", question: "6 × 8", options: ["42", "46", "48", "54"], answer: "48" },
-  { id: "m9", question: "72 ÷ 8", options: ["7", "8", "9", "10"], answer: "9" },
-  { id: "m10", question: "25 + 37", options: ["52", "60", "62", "72"], answer: "62" },
-  { id: "m11", question: "14 × 3", options: ["32", "38", "42", "48"], answer: "42" },
-  { id: "m12", question: "90 - 27", options: ["53", "63", "67", "73"], answer: "63" },
-  { id: "m13", question: "11 × 5", options: ["45", "50", "55", "60"], answer: "55" },
-  { id: "m14", question: "64 ÷ 4", options: ["12", "14", "16", "18"], answer: "16" },
-  { id: "m15", question: "19 + 26", options: ["35", "45", "46", "55"], answer: "45" },
-];
+type MathQuestion = {
+  id: string;
+  question: string;
+  options: string[];
+  answer: string;
+};
 
 function shuffle<T>(items: T[]) {
-  return [...items].sort(() => Math.random() - 0.5);
+  const result = [...items];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+
+  return result;
+}
+
+function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function createOptions(answer: number) {
+  const answers = new Set<number>();
+  answers.add(answer);
+
+  while (answers.size < 4) {
+    const difference = randomInt(1, Math.max(5, Math.floor(Math.abs(answer) * 0.15)));
+    const wrongAnswer =
+      Math.random() < 0.5 ? answer + difference : answer - difference;
+
+    if (wrongAnswer >= 0) {
+      answers.add(wrongAnswer);
+    }
+  }
+
+  return shuffle([...answers].map(String));
+}
+
+function generateQuestion(index: number): MathQuestion {
+  const difficulty = index % 4;
+
+  let first: number;
+  let second: number;
+  let answer: number;
+  let question: string;
+
+  if (difficulty === 0) {
+    first = randomInt(25, 250);
+    second = randomInt(15, 180);
+    answer = first + second;
+    question = `${first} + ${second}`;
+  } else if (difficulty === 1) {
+    first = randomInt(80, 350);
+    second = randomInt(20, first - 1);
+    answer = first - second;
+    question = `${first} - ${second}`;
+  } else if (difficulty === 2) {
+    first = randomInt(7, 25);
+    second = randomInt(6, 20);
+    answer = first * second;
+    question = `${first} × ${second}`;
+  } else {
+    second = randomInt(3, 18);
+    answer = randomInt(5, 30);
+    first = second * answer;
+    question = `${first} ÷ ${second}`;
+  }
+
+  return {
+    id: `math-${Date.now()}-${index}-${randomInt(1000, 9999)}`,
+    question,
+    options: createOptions(answer),
+    answer: String(answer),
+  };
+}
+
+function generateMathSession() {
+  const questions: MathQuestion[] = [];
+  const usedQuestions = new Set<string>();
+
+  while (questions.length < 20) {
+    const question = generateQuestion(questions.length);
+
+    if (!usedQuestions.has(question.question)) {
+      usedQuestions.add(question.question);
+      questions.push(question);
+    }
+  }
+
+  return shuffle(questions);
 }
 
 export async function POST(req: Request) {
@@ -50,17 +121,14 @@ export async function POST(req: Request) {
     const { stake } = await req.json();
     const stakeAmount = Number(stake);
 
-    if (
-      !Number.isFinite(stakeAmount) ||
-      stakeAmount < 7
-    ) {
+    if (!Number.isFinite(stakeAmount) || stakeAmount < 7) {
       return NextResponse.json(
         { error: "Entry fee must be GH₵7 or above." },
         { status: 400 }
       );
     }
 
-    const selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
+    const selectedQuestions = generateMathSession();
 
     const { data: sessionId, error: startError } =
       await supabaseAdmin.rpc("start_skill_game_atomic", {
@@ -83,11 +151,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      sessionId: sessionId,
-      questions: selectedQuestions.map(({ answer, ...question }) => ({
-        ...question,
-        options: shuffle(question.options),
-      })),
+      sessionId,
+      minScore: 17,
+      total: 20,
+      questions: selectedQuestions.map(({ answer, ...question }) => question),
     });
   } catch (error) {
     console.error("MATH RUSH START ERROR:", error);
