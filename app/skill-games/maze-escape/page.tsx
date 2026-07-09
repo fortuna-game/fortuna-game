@@ -200,6 +200,14 @@ export default function MazeEscapePage() {
               className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
             />
 
+            {Number(stake) > 0 && (
+              <div className="rounded-xl border border-green-400/20 bg-green-500/10 p-3 text-center font-black text-green-300">
+                Entry Fee GH₵{Number(stake).toFixed(2)} → Possible Win GH₵{(
+                  Number(stake) * 2
+                ).toFixed(2)}
+              </div>
+            )}
+
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 7}

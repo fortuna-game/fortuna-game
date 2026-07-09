@@ -216,7 +216,7 @@ export default function MathRushPage() {
 
             {Number(stake) > 0 && (
               <div className="mt-4 rounded-xl bg-pink-500/10 p-3 text-green-300">
-                Entry Fee GH₵{Number(stake).toFixed(2)} → Prize GH₵{payout.toFixed(2)}
+                Entry Fee GH₵{Number(stake).toFixed(2)} → Possible Win GH₵{payout.toFixed(2)}
               </div>
             )}
 
