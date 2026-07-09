@@ -225,7 +225,7 @@ export default function TriviaSprintPage() {
               disabled={loading || !stake || Number(stake) < 7}
               className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
             >
-              {loading ? "Starting..." : "Start Real Game"}
+              {loading ? "Starting..." : "Start Now"}
             </button>
 
             <p className="mt-3 text-xs text-white/40">
