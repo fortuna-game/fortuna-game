@@ -95,7 +95,7 @@ export default function ArrowTargetPage() {
     setTargetNumber(null);
     setAim(50);
     setDirection(1);
-    setZones([1, 2, 3, 4, 5]);
+    setZones([1, 2, 3, 4, 5, 6, 7]);
     setResult(null);
     setMessage("");
     setTimeLeft(60);
@@ -240,7 +240,7 @@ export default function ArrowTargetPage() {
                 style={{ left: `${aim}%` }}
               />
 
-              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-5 overflow-hidden rounded-2xl border border-white/10">
+              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-7 overflow-hidden rounded-2xl border border-white/10">
                 {zones.map((zone) => (
                   <div
                     key={zone}

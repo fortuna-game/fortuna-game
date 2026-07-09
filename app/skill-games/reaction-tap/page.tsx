@@ -50,7 +50,7 @@ export default function ReactionRushPage() {
 
     setSessionId(data.sessionId);
     setDelayMs(Number(data.delayMs));
-    setTargetMs(Number(data.targetMs || 450));
+    setTargetMs(Number(data.targetMs || 360));
     setResult(null);
     setStatus("waiting");
     setMessage("Wait for green...");

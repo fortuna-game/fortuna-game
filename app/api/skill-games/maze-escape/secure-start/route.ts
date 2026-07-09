@@ -14,11 +14,11 @@ export async function POST(req: Request) {
   const stakeAmount = Number(stake);
 
   const maze = {
-    size: 5,
+    size: 6,
     walls,
     start: { x: 0, y: 0 },
-    exit: { x: 4, y: 4 },
-    maxMoves: 12,
+    exit: { x: 5, y: 5 },
+    maxMoves: 14,
     timeLimit: 60,
   };
 

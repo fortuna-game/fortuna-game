@@ -11,11 +11,11 @@ export async function POST(req: Request) {
   const { stake } = await req.json();
   const stakeAmount = Number(stake);
 
-  const targetNumber = Math.floor(Math.random() * 5) + 1;
+  const targetNumber = Math.floor(Math.random() * 7) + 1;
 
   const challenge = {
     targetNumber,
-    zones: [1, 2, 3, 4, 5],
+    zones: [1, 2, 3, 4, 5, 6, 7],
     timeLimit: 60,
   };
 

@@ -21,8 +21,8 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: "Session not found." }, { status: 404 });
   if (session.status !== "started") return NextResponse.json({ error: "Game already completed." }, { status: 400 });
 
-  const targetBlocks = Number(session.answers?.targetBlocks || 8);
-  const tolerance = Number(session.answers?.tolerance || 16);
+  const targetBlocks = Number(session.answers?.targetBlocks || 10);
+  const tolerance = Number(session.answers?.tolerance || 11);
   const drops = Array.isArray(placements) ? placements.map(Number) : [];
 
   let score = 0;

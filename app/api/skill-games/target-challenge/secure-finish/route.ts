@@ -23,9 +23,9 @@ export async function POST(req: Request) {
   if (session.status !== "started") return NextResponse.json({ error: "Game already completed." }, { status: 400 });
 
   const targetNumber = Number(session.answers?.targetNumber);
-  const zones = session.answers?.zones || [1, 2, 3, 4, 5];
+  const zones = session.answers?.zones || [1, 2, 3, 4, 5, 6, 7];
 
-  const landedZoneIndex = Math.min(4, Math.max(0, Math.floor(shotValue / 20)));
+  const landedZoneIndex = Math.min(zones.length - 1, Math.max(0, Math.floor(shotValue / (100 / zones.length))));
   const landedNumber = Number(zones[landedZoneIndex]);
   const won = Number.isFinite(shotValue) && landedNumber === targetNumber;
 

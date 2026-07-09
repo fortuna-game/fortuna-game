@@ -24,7 +24,7 @@ export async function POST(req: Request) {
   if (session.status !== "started") return NextResponse.json({ error: "Game already completed." }, { status: 400 });
 
   const cards = session.answers?.cards || [];
-  const maxMoves = Number(session.answers?.maxMoves || 10);
+  const maxMoves = Number(session.answers?.maxMoves || 18);
   const submittedMoves = Array.isArray(moves) ? moves as Move[] : [];
 
   const matched = new Set<string>();
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const won = score >= 6 && submittedMoves.length <= maxMoves;
+  const won = score >= 8 && submittedMoves.length <= maxMoves;
 
   const { data: settlement, error } = await supabaseAdmin.rpc("settle_skill_game_atomic", {
     p_session_id: session.id,
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     score,
-    total: 6,
+    total: 8,
     won,
     payout: Number(settled?.payout || 0),
   });

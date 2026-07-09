@@ -21,13 +21,13 @@ export async function POST(req: Request) {
   if (!session) return NextResponse.json({ error: "Session not found." }, { status: 404 });
   if (session.status !== "started") return NextResponse.json({ error: "Game already completed." }, { status: 400 });
 
-  const targetMs = Number(session.answers?.targetMs || 450);
+  const targetMs = Number(session.answers?.targetMs || 360);
   const reaction = Number(reactionMs);
 
   const won =
     !tooEarly &&
     Number.isFinite(reaction) &&
-    reaction > 80 &&
+    reaction > 90 &&
     reaction <= targetMs;
 
   const { data: settlement, error } = await supabaseAdmin.rpc("settle_skill_game_atomic", {

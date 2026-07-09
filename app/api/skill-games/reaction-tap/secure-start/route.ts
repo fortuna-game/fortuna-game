@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const delayMs = Math.floor(1800 + Math.random() * 2200);
   const challenge = {
     delayMs,
-    targetMs: 450,
+    targetMs: 360,
     timeLimit: 8,
     createdAt: Date.now(),
   };

@@ -14,7 +14,7 @@ export default function StackBalancePage() {
   const [position, setPosition] = useState(50);
   const [direction, setDirection] = useState(1);
   const [placements, setPlacements] = useState<number[]>([]);
-  const [targetBlocks, setTargetBlocks] = useState(8);
+  const [targetBlocks, setTargetBlocks] = useState(10);
   const [timeLeft, setTimeLeft] = useState(60);
   const [result, setResult] = useState<Result | null>(null);
   const [message, setMessage] = useState("");
@@ -44,7 +44,7 @@ export default function StackBalancePage() {
     }
 
     setSessionId(data.sessionId);
-    setTargetBlocks(data.challenge?.targetBlocks || 8);
+    setTargetBlocks(data.challenge?.targetBlocks || 10);
     setTimeLeft(data.challenge?.timeLimit || 45);
     setPlacements([]);
     setPosition(50);
@@ -171,7 +171,7 @@ export default function StackBalancePage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Drop each moving block carefully and keep the stack balanced. Successfully stack all 8 blocks to win.
+                Drop each moving block carefully and keep the stack balanced. Successfully stack all 10 blocks to win.
               </p>
             </div>
 

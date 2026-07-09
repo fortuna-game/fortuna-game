@@ -12,8 +12,8 @@ export async function POST(req: Request) {
   const stakeAmount = Number(stake);
 
   const challenge = {
-    targetBlocks: 8,
-    tolerance: 16,
+    targetBlocks: 10,
+    tolerance: 11,
     timeLimit: 60,
   };
 

@@ -184,7 +184,7 @@ export default function MemoryMatchPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Flip the cards and find all 6 matching pairs. Complete the challenge within the allowed number of moves to win.
+                Flip the cards and find all 8 matching pairs. Complete the challenge within 18 moves to win.
               </p>
             </div>
 

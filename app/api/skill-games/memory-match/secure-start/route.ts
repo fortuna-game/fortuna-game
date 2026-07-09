@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-const symbols = ["🍎", "⭐", "💎", "🔥", "⚽", "🎯"];
+const symbols = ["🍎", "⭐", "💎", "🔥", "⚽", "🎯", "🚀", "🧠", "💰", "🏆", "🦁", "⚡"];
 
 function shuffle<T>(items: T[]) {
   return [...items].sort(() => Math.random() - 0.5);
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const { stake } = await req.json();
   const stakeAmount = Number(stake);
 
-  const selected = shuffle(symbols).slice(0, 6);
+  const selected = shuffle(symbols).slice(0, 8);
   const cards = shuffle([...selected, ...selected]).map((symbol, index) => ({
     id: String(index),
     symbol,
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     p_payout: stakeAmount * 2,
     p_answers: {
       cards,
-      maxMoves: 10,
+      maxMoves: 18,
     },
   });
 
@@ -39,6 +39,6 @@ export async function POST(req: Request) {
   return NextResponse.json({
     sessionId,
     cards,
-    maxMoves: 10,
+    maxMoves: 18,
   });
 }
