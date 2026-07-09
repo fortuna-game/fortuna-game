@@ -7,7 +7,7 @@ export default function Hero() {
 
       <div className="relative mx-auto max-w-7xl px-6 text-center">
         <span className="rounded-full border border-pink-500/30 bg-pink-600/10 px-4 py-2 text-sm font-semibold text-pink-400">
-          Ghana's Premium Gaming Platform
+          Ghana's Skill Gaming Platform
         </span>
 
         <h1 className="mt-8 text-6xl font-black leading-tight md:text-8xl">

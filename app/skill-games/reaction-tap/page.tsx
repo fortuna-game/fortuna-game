@@ -143,13 +143,13 @@ export default function ReactionRushPage() {
               max="50"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
-              placeholder="Enter stake amount"
+              placeholder="Enter entry fee (minimum GH₵7)"
               className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
             />
 
             <button
               onClick={() => void startGame()}
-              disabled={loading || !stake || Number(stake) < 1}
+              disabled={loading || !stake || Number(stake) < 7}
               className="mt-5 w-full rounded-xl bg-pink-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Reaction Rush"}
@@ -202,7 +202,7 @@ export default function ReactionRushPage() {
         )}
 
         <p className="mt-5 text-xs text-white/30">
-          Secure mode — stake is handled through wallet.
+          Secure mode — your entry fee is handled through your wallet.
         </p>
       </div>
     </main>

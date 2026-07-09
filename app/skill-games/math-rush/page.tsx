@@ -167,7 +167,7 @@ export default function MathRushPage() {
         </h1>
 
         <p className="mt-2 text-sm text-white/60">
-          Solve at least 8 out of 10 math challenges correctly to win 2x payout.
+          Solve at least 8 out of 10 math challenges correctly to win a 2x prize.
         </p>
 
         {message && (
@@ -184,26 +184,26 @@ export default function MathRushPage() {
               max="50"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
-              placeholder="Enter stake amount"
+              placeholder="Enter entry fee (minimum GH₵7)"
               className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-blue-400"
             />
 
             {Number(stake) > 0 && (
               <div className="mt-4 rounded-xl bg-pink-500/10 p-3 text-green-300">
-                Stake GH₵{Number(stake).toFixed(2)} → Win GH₵{payout.toFixed(2)}
+                Entry Fee GH₵{Number(stake).toFixed(2)} → Prize GH₵{payout.toFixed(2)}
               </div>
             )}
 
             <button
               onClick={() => void startGame()}
-              disabled={loading || !stake || Number(stake) < 1 || Number(stake) > 50}
+              disabled={loading || !stake || Number(stake) < 7 || Number(stake) > 50}
               className="mt-5 w-full rounded-xl bg-blue-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Real Game"}
             </button>
 
             <p className="mt-3 text-xs text-white/40">
-              Stake is deducted from your wallet when the game starts.
+              Your entry fee is deducted from your wallet when the game starts.
             </p>
           </div>
         )}

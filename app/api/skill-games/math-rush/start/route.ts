@@ -52,11 +52,11 @@ export async function POST(req: Request) {
 
     if (
       !Number.isFinite(stakeAmount) ||
-      stakeAmount < 1 ||
+      stakeAmount < 7 ||
       stakeAmount > 50
     ) {
       return NextResponse.json(
-        { error: "Stake must be between GH₵1 and GH₵50." },
+        { error: "Entry fee must be between GH₵7 and GH₵50." },
         { status: 400 }
       );
     }

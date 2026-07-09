@@ -1,7 +1,7 @@
 export default function Stats() {
   const stats = [
     { value: "13", label: "Games" },
-    { value: "₵250K", label: "Jackpot" },
+    { value: "2X", label: "Prize Potential" },
     { value: "24/7", label: "Support" },
     { value: "100%", label: "Secure Payments" },
   ];

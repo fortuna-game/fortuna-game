@@ -30,8 +30,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Game not found." }, { status: 404 });
     }
 
-    if (!Number.isFinite(stakeAmount) || stakeAmount < 1 || stakeAmount > 50) {
-      return NextResponse.json({ error: "Stake must be between GH₵1 and GH₵50." }, { status: 400 });
+    if (!Number.isFinite(stakeAmount) || stakeAmount < 7 || stakeAmount > 50) {
+      return NextResponse.json({ error: "Entry fee must be between GH₵7 and GH₵50." }, { status: 400 });
     }
 
     const selectedQuestions = shuffle(game.questions).slice(0, game.total) as any[];
