@@ -16,7 +16,7 @@ export default function MemoryMatchPage() {
   const [flipped, setFlipped] = useState<string[]>([]);
   const [matched, setMatched] = useState<string[]>([]);
   const [moves, setMoves] = useState<[string, string][]>([]);
-  const [maxMoves, setMaxMoves] = useState(10);
+  const [maxMoves, setMaxMoves] = useState(18);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
