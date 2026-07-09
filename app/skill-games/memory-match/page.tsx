@@ -178,9 +178,31 @@ export default function MemoryMatchPage() {
 
         {!cards.length && !result && (
           <div className="mt-6">
+            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+              <p className="font-black text-white">
+                📋 How to Play
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-white/70">
+                Flip the cards and find all 6 matching pairs. Complete the challenge within the allowed number of moves to win.
+              </p>
+            </div>
+
+            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
+              <p className="font-black text-pink-400">
+                🏆 Prize Information
+              </p>
+
+              <p className="mt-2 text-sm leading-6 text-white/70">
+                Choose an entry fee from GH₵7 to GH₵50. Complete the
+                challenge successfully to win a prize equal to 2x your
+                entry fee.
+              </p>
+            </div>
+
             <input
               type="number"
-              min="1"
+              min="7"
               max="50"
               value={stake}
               onChange={(e) => setStake(e.target.value)}
@@ -193,7 +215,7 @@ export default function MemoryMatchPage() {
               disabled={loading || !stake || Number(stake) < 7}
               className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
             >
-              {loading ? "Starting..." : "Start Memory Match"}
+              {loading ? "Starting..." : "Play Now"}
             </button>
           </div>
         )}
