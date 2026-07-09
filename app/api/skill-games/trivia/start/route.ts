@@ -127,11 +127,10 @@ export async function POST(req: Request) {
 
     if (
       !Number.isFinite(stakeAmount) ||
-      stakeAmount < 7 ||
-      stakeAmount > 50
+      stakeAmount < 7
     ) {
       return NextResponse.json(
-        { error: "Entry fee must be between GH₵7 and GH₵50." },
+        { error: "Entry fee must be GH₵7 or above." },
         { status: 400 }
       );
     }

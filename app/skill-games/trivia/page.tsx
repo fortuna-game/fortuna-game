@@ -199,19 +199,18 @@ export default function TriviaSprintPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Choose an entry fee from GH₵7 to GH₵50. Complete the
-                challenge successfully to win a prize equal to 2x your
-                entry fee.
+                A minimum entry fee of GH₵7 is required to play. You may enter
+                GH₵7 or any higher amount. Complete the challenge successfully
+                to win a prize equal to 2x your entry fee.
               </p>
             </div>
 
             <input
               type="number"
               min="7"
-              max="50"
-              value={stake}
+                            value={stake}
               onChange={(e) => setStake(e.target.value)}
-              placeholder="Enter entry fee (minimum GH₵7)"
+              placeholder="Enter entry fee GH₵7 or above"
               className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-pink-500"
             />
 
@@ -223,7 +222,7 @@ export default function TriviaSprintPage() {
 
             <button
               onClick={() => void startGame()}
-              disabled={loading || !stake || Number(stake) < 7 || Number(stake) > 50}
+              disabled={loading || !stake || Number(stake) < 7}
               className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Real Game"}
