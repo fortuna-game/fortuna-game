@@ -201,7 +201,7 @@ export default function StackBalancePage() {
               disabled={loading || !stake || Number(stake) < 7}
               className="mt-5 w-full rounded-xl bg-amber-400 py-4 font-black text-black disabled:opacity-40"
             >
-              {loading ? "Starting..." : "Play Now"}
+              {loading ? "Starting..." : "Start Now"}
             </button>
           </div>
         )}
