@@ -20,6 +20,7 @@ export default function AdminNav() {
           <Link href="/admin/users" className="rounded-xl bg-white/10 px-4 py-2">Users</Link>
           <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-4 py-2">Deposits</Link>
           <Link href="/admin/games" className="rounded-xl bg-white/10 px-4 py-2">Games</Link>
+          <Link href="/admin/lucky-draw" className="rounded-xl bg-yellow-400/20 px-4 py-2 text-yellow-300">🎟️ Lucky Draw</Link>
           <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-4 py-2">Transactions</Link>
           <Link href="/admin/support" className="rounded-xl bg-white/10 px-4 py-2">Support</Link>
           <Link href="/admin/withdrawals" className="rounded-xl bg-pink-500 px-4 py-2 text-black">Withdrawals</Link>
