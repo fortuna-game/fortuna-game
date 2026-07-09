@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 const games = [
-  { icon: "⚡", name: "Reaction Tap", href: "/skill-games/reaction-tap" },
+  { icon: "🎟️", name: "Lucky Draw", href: "/lucky-draw" },
   { icon: "🧠", name: "Memory Match", href: "/skill-games/memory-match" },
   { icon: "🔢", name: "Math Rush", href: "/skill-games/math-rush" },
   { icon: "🏹", name: "Target Challenge", href: "/skill-games/target-challenge" },

@@ -6,7 +6,7 @@ const games = [
   ["math-rush", "➗", "Math Rush", "Fast calculations"],
   ["word-puzzle", "🔤", "Word Puzzle", "Word mastery"],
   ["memory-match", "🧩", "Memory Match", "Memory challenge"],
-  ["reaction-tap", "⚡", "Reaction Rush", "Reflex test"],
+  ["lucky-draw", "🎟️", "Lucky Draw", "GH₵20 ticket • Win GH₵500"],
   ["target-challenge", "🏹", "Arrow Target", "Accuracy challenge"],
   ["pattern-sequence", "🧬", "Pattern Sequence", "Logic patterns"],
   ["speed-sort", "⚡", "Speed Sort", "Fast decisions"],
