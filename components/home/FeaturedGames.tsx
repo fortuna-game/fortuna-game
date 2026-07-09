@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const games = [
   { icon: "⚡", name: "Reaction Tap", href: "/skill-games/reaction-tap" },
@@ -12,6 +15,21 @@ const games = [
 ];
 
 export default function FeaturedGames() {
+  const router = useRouter();
+
+  async function startGame(href: string) {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      router.push("/login");
+      return;
+    }
+
+    router.push(href);
+  }
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-24">
       <h2 className="text-center text-5xl font-black text-white">
@@ -30,12 +48,13 @@ export default function FeaturedGames() {
               {game.name}
             </h3>
 
-            <Link
-              href={game.href}
-              className="mt-6 block rounded-xl bg-pink-500 py-4 text-center font-black text-black hover:bg-pink-400"
+            <button
+              type="button"
+              onClick={() => startGame(game.href)}
+              className="mt-6 block w-full rounded-xl bg-pink-500 py-4 text-center font-black text-black hover:bg-pink-400"
             >
-              Play
-            </Link>
+              Start Now
+            </button>
           </div>
         ))}
       </div>
