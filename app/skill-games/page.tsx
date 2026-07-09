@@ -2,11 +2,11 @@ import Link from "next/link";
 import RewardsCard from "@/components/RewardsCard";
 
 const games = [
+  ["lucky-draw", "🎟️", "Lucky Draw", "Limited entries • Win exciting prizes"],
   ["trivia", "🧠", "Trivia Sprint", "Knowledge challenge"],
   ["math-rush", "➗", "Math Rush", "Fast calculations"],
   ["word-puzzle", "🔤", "Word Puzzle", "Word mastery"],
   ["memory-match", "🧩", "Memory Match", "Memory challenge"],
-  ["lucky-draw", "🎟️", "Lucky Draw", "GH₵20 ticket • Win GH₵500"],
   ["target-challenge", "🏹", "Arrow Target", "Accuracy challenge"],
   ["pattern-sequence", "🧬", "Pattern Sequence", "Logic patterns"],
   ["speed-sort", "⚡", "Speed Sort", "Fast decisions"],
