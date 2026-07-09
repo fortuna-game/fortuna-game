@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RewardsCard from "@/components/RewardsCard";
 
 const games = [
   ["trivia", "🧠", "Trivia Sprint", "Knowledge challenge"],
@@ -24,6 +25,10 @@ export default function SkillGamesPage() {
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,#facc1530,transparent_35%),radial-gradient(circle_at_bottom_right,#7c3aed30,transparent_35%)]" />
 
       <div className="relative mx-auto max-w-7xl">
+
+        <div className="mb-8">
+          <RewardsCard />
+        </div>
         <section className="rounded-[2rem] border border-pink-500/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-10">
           <p className="text-xs font-black uppercase tracking-[0.35em] text-pink-500">
             Skill-Based Challenges

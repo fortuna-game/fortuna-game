@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import RewardsCard from "@/components/RewardsCard";
 
 type Question = {
   id: string;
@@ -189,6 +190,10 @@ export default function QuestionGame({
   const payout = Number(stake || 0) * 2;
 
   return (
+    <>
+      <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6">
+        <RewardsCard />
+      </div>
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
       <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center shadow-2xl sm:p-7">
         <div className="text-5xl">{icon}</div>
@@ -351,5 +356,6 @@ export default function QuestionGame({
         )}
       </div>
     </main>
+    </>
   );
 }

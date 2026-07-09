@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import RewardsCard from "@/components/RewardsCard";
 
 type Profile = {
   first_name: string | null;
@@ -51,6 +52,10 @@ export default function Dashboard() {
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="mx-auto max-w-7xl px-5 py-8">
+
+        <div className="mb-6">
+          <RewardsCard />
+        </div>
 
         <section className="rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-600/15 via-black to-purple-950/30 p-6 md:p-8">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-pink-400">

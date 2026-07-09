@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import RewardsCard from "@/components/RewardsCard";
 
 type Status = "idle" | "waiting" | "ready" | "done";
 type Result = {
@@ -125,6 +126,10 @@ export default function ReactionRushPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
       <div className="w-full max-w-xl rounded-3xl border border-pink-400/20 bg-white/5 p-5 text-center">
+
+        <div className="mb-6">
+          <RewardsCard />
+        </div>
         <div className="text-5xl">⚡</div>
         <h1 className="mt-3 text-3xl font-black text-pink-400">Reaction Rush</h1>
         <p className="mt-2 text-sm text-white/60">

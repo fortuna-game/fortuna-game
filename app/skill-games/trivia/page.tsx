@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import RewardsCard from "@/components/RewardsCard";
 
 type Question = {
   id: string;
@@ -160,6 +161,10 @@ export default function TriviaSprintPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
       <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center shadow-2xl sm:p-6">
+
+        <div className="mb-6">
+          <RewardsCard />
+        </div>
         <div className="text-5xl">🧠</div>
 
         <h1 className="mt-3 text-3xl font-black text-pink-500">
