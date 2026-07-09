@@ -42,13 +42,14 @@ export async function GET(req: Request) {
     const ok = await requireAdmin(req);
     if (!ok) return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
 
-    const [profiles, wallets, deposits, withdrawals, transactions, sessions] = await Promise.all([
+    const [profiles, wallets, deposits, withdrawals, transactions, sessions, visitors] = await Promise.all([
       supabaseAdmin.from("profiles").select("*"),
       supabaseAdmin.from("wallets").select("*"),
       supabaseAdmin.from("deposits").select("*").order("created_at", { ascending: false }),
       supabaseAdmin.from("withdrawals").select("*").order("created_at", { ascending: false }),
       supabaseAdmin.from("wallet_transactions").select("*").order("created_at", { ascending: false }).limit(20),
       supabaseAdmin.from("skill_game_sessions").select("*").order("created_at", { ascending: false }),
+      supabaseAdmin.from("visitor_logs").select("*").order("created_at", { ascending: false }),
     ]);
 
     const profileRows = profiles.data || [];
@@ -57,7 +58,29 @@ export async function GET(req: Request) {
     const withdrawalRows = withdrawals.data || [];
     const sessionRows = sessions.data || [];
     const transactionRows = transactions.data || [];
+    const visitorRows = visitors.data || [];
 
+    const uniqueVisitors = new Set(
+      visitorRows.map((v: any) => v.visitor_id)
+    ).size;
+
+    const visitorsToday = new Set(
+      visitorRows
+        .filter((v: any) => isToday(v.created_at))
+        .map((v: any) => v.visitor_id)
+    ).size;
+
+    const visitors7Days = new Set(
+      visitorRows
+        .filter((v: any) => inDays(v.created_at, 7))
+        .map((v: any) => v.visitor_id)
+    ).size;
+
+    const visitors30Days = new Set(
+      visitorRows
+        .filter((v: any) => inDays(v.created_at, 30))
+        .map((v: any) => v.visitor_id)
+    ).size;
     const completedDeposits = depositRows.filter((d: any) =>
       ["completed", "paid", "success"].includes(String(d.status).toLowerCase())
     );
@@ -118,6 +141,11 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       totalUsers: profileRows.length,
+      totalVisitors: uniqueVisitors,
+      visitorsToday,
+      visitors7Days,
+      visitors30Days,
+      totalPageViews: visitorRows.length,
       totalWalletBalance: sum(walletRows, "balance"),
       totalDeposits: sum(completedDeposits, "amount"),
       totalWithdrawalsPaid: sum(paidWithdrawals, "amount"),

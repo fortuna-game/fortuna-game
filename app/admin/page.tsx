@@ -45,7 +45,12 @@ export default function AdminDashboardPage() {
   }
 
   const cards = [
-    ["Users", data.totalUsers],
+    ["Signed Up Users", data.totalUsers],
+    ["Total Visitors", data.totalVisitors],
+    ["Visitors Today", data.visitorsToday],
+    ["Visitors — 7 Days", data.visitors7Days],
+    ["Visitors — 30 Days", data.visitors30Days],
+    ["Total Page Views", data.totalPageViews],
     ["Wallet Balance", `GH₵${Number(data.totalWalletBalance).toFixed(2)}`],
     ["Deposits", `GH₵${Number(data.totalDeposits).toFixed(2)}`],
     ["Paid Withdrawals", `GH₵${Number(data.totalWithdrawalsPaid).toFixed(2)}`],
