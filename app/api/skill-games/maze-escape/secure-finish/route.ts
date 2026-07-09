@@ -30,7 +30,7 @@ export async function POST(req: Request) {
   let x = Number(maze.start?.x || 0);
   let y = Number(maze.start?.y || 0);
   const size = Number(maze.size || 5);
-  const maxMoves = Number(maze.maxMoves || 12);
+  const maxMoves = Number(maze.maxMoves || 14);
 
   for (const move of submittedMoves.slice(0, maxMoves)) {
     let nx = x;

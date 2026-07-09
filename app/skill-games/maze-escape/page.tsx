@@ -175,7 +175,7 @@ export default function MazeEscapePage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Move through the maze and reach the exit. Escape within the allowed number of moves to win.
+                Move through the maze and reach the exit within 14 moves and 60 seconds to win.
               </p>
             </div>
 
