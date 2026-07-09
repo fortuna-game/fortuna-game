@@ -47,6 +47,61 @@ export default function AdminLuckyDrawPage() {
   }, []);
 
   const openDraw = draws.find((draw) => draw.status === "open");
+  const [completing, setCompleting] = useState(false);
+
+  async function completeDraw() {
+    if (!openDraw) {
+      setMessage("No open Lucky Draw found.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Select a random winner, close this draw, and pay the GH₵500 prize?"
+    );
+
+    if (!confirmed) return;
+
+    setCompleting(true);
+    setMessage("");
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      setMessage("Admin login required.");
+      setCompleting(false);
+      return;
+    }
+
+    const res = await fetch("/api/admin/lucky-draw/complete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({
+        drawId: openDraw.id,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setMessage(data.error || "Could not complete Lucky Draw.");
+      setCompleting(false);
+      return;
+    }
+
+    setMessage(
+      `🏆 Winner selected! Ticket ${data.result.ticket_number} won GH₵${Number(
+        data.result.prize_amount
+      ).toFixed(2)}.`
+    );
+
+    setCompleting(false);
+    await loadData();
+  }
 
   return (
     <main className="min-h-screen bg-black px-6 py-10 text-white">
@@ -68,6 +123,31 @@ export default function AdminLuckyDrawPage() {
             Back to Admin
           </Link>
         </div>
+
+        {openDraw && (
+          <div className="mt-8 rounded-3xl border border-yellow-400/30 bg-yellow-400/10 p-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-black text-yellow-400">
+                  Current Draw Is Open
+                </h2>
+                <p className="mt-2 text-sm text-white/60">
+                  Closing the draw will randomly select one ticket and pay the winner.
+                </p>
+              </div>
+
+              <button
+                onClick={completeDraw}
+                disabled={completing || tickets.length === 0}
+                className="rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {completing
+                  ? "Selecting Winner..."
+                  : "🏆 Select Winner & Close Draw"}
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-yellow-400/20 bg-yellow-400/10 p-6">
