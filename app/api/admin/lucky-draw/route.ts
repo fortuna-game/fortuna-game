@@ -46,10 +46,23 @@ export async function GET(req: Request) {
       );
     }
 
-    const { data: tickets, error: ticketsError } = await supabaseAdmin
-      .from("lucky_draw_tickets")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const openDraw = (draws || []).find(
+      (draw) => draw.status === "open"
+    );
+
+    let tickets: any[] = [];
+    let ticketsError: any = null;
+
+    if (openDraw) {
+      const result = await supabaseAdmin
+        .from("lucky_draw_tickets")
+        .select("*")
+        .eq("draw_id", openDraw.id)
+        .order("created_at", { ascending: false });
+
+      tickets = result.data || [];
+      ticketsError = result.error;
+    }
 
     if (ticketsError) {
       return NextResponse.json(
