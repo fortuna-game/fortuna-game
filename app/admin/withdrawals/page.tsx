@@ -42,8 +42,9 @@ export default function AdminWithdrawalsPage() {
       return;
     }
 
-    const res = await fetch("/api/admin/withdrawals", {
+    const res = await fetch(`/api/admin/withdrawals?t=${Date.now()}`, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
     });
 
     if (!res.ok) {

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 async function requireAdmin(req: Request) {
   const token = req.headers.get("authorization")?.replace("Bearer ", "");
   if (!token) return false;
@@ -34,5 +37,12 @@ export async function GET(req: Request) {
     ? await supabaseAdmin.from("profiles").select("user_id, username").in("user_id", userIds)
     : { data: [] as any[] };
 
-  return NextResponse.json({ withdrawals: withdrawals || [], profiles: profiles || [] });
+  return NextResponse.json(
+    { withdrawals: withdrawals || [], profiles: profiles || [] },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate",
+      },
+    }
+  );
 }
