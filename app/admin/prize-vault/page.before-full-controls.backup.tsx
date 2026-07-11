@@ -23,7 +23,6 @@ type Prize = {
   win_weight: number;
   is_active: boolean;
   fulfillment_type?: string;
-  description?: string | null;
 };
 
 type Play = {
@@ -59,21 +58,6 @@ export default function AdminPrizeVaultPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [actionLoading, setActionLoading] = useState("");
   const [adminNotes, setAdminNotes] = useState<Record<string, string>>({});
-  const [showPrizeForm, setShowPrizeForm] = useState(false);
-  const [editingPrizeId, setEditingPrizeId] = useState("");
-  const [prizeSaving, setPrizeSaving] = useState(false);
-
-  const [prizeForm, setPrizeForm] = useState({
-    name: "",
-    emoji: "🎁",
-    description: "",
-    prizeType: "physical",
-    fulfillmentType: "delivery",
-    prizeValue: "",
-    remainingStock: "",
-    winWeight: "",
-    isActive: true,
-  });
 
   async function getToken() {
     const { data } = await supabase.auth.getSession();
@@ -162,132 +146,6 @@ export default function AdminPrizeVaultPage() {
     } catch {
       setMessage("Could not connect to Prize Vault admin.");
       setActionLoading("");
-    }
-  }
-
-  function resetPrizeForm() {
-    setEditingPrizeId("");
-    setPrizeForm({
-      name: "",
-      emoji: "🎁",
-      description: "",
-      prizeType: "physical",
-      fulfillmentType: "delivery",
-      prizeValue: "",
-      remainingStock: "",
-      winWeight: "",
-      isActive: true,
-    });
-    setShowPrizeForm(false);
-  }
-
-  function startAddPrize() {
-    setMessage("");
-    setSuccessMessage("");
-    setEditingPrizeId("");
-    setPrizeForm({
-      name: "",
-      emoji: "🎁",
-      description: "",
-      prizeType: "physical",
-      fulfillmentType: "delivery",
-      prizeValue: "",
-      remainingStock: "",
-      winWeight: "",
-      isActive: true,
-    });
-    setShowPrizeForm(true);
-  }
-
-  function startEditPrize(prize: Prize) {
-    setMessage("");
-    setSuccessMessage("");
-    setEditingPrizeId(prize.id);
-    setPrizeForm({
-      name: prize.name || "",
-      emoji: prize.emoji || "🎁",
-      description: prize.description || "",
-      prizeType: prize.prize_type || "physical",
-      fulfillmentType: prize.fulfillment_type || "delivery",
-      prizeValue: String(prize.prize_value ?? ""),
-      remainingStock: String(prize.remaining_stock ?? ""),
-      winWeight: String(prize.win_weight ?? ""),
-      isActive: Boolean(prize.is_active),
-    });
-    setShowPrizeForm(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  async function savePrize() {
-    setMessage("");
-    setSuccessMessage("");
-
-    if (!prizeForm.name.trim()) {
-      setMessage("Prize name is required.");
-      return;
-    }
-
-    setPrizeSaving(true);
-
-    const token = await getToken();
-
-    if (!token) {
-      setMessage("Admin session expired. Please login again.");
-      setPrizeSaving(false);
-      return;
-    }
-
-    try {
-      const editing = Boolean(editingPrizeId);
-
-      const res = await fetch("/api/admin/prize-vault", {
-        method: editing ? "PUT" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(
-          editing
-            ? {
-                prizeId: editingPrizeId,
-                name: prizeForm.name,
-                emoji: prizeForm.emoji,
-                description: prizeForm.description,
-                prizeType: prizeForm.prizeType,
-                fulfillmentType: prizeForm.fulfillmentType,
-                prizeValue: Number(prizeForm.prizeValue),
-                remainingStock: Number(prizeForm.remainingStock),
-                winWeight: Number(prizeForm.winWeight),
-                isActive: prizeForm.isActive,
-              }
-            : {
-                name: prizeForm.name,
-                emoji: prizeForm.emoji,
-                description: prizeForm.description,
-                prizeType: prizeForm.prizeType,
-                fulfillmentType: prizeForm.fulfillmentType,
-                prizeValue: Number(prizeForm.prizeValue),
-                stock: Number(prizeForm.remainingStock),
-                winWeight: Number(prizeForm.winWeight),
-              }
-        ),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setMessage(data.error || "Could not save prize.");
-        setPrizeSaving(false);
-        return;
-      }
-
-      setSuccessMessage(data.message || "Prize saved successfully.");
-      setPrizeSaving(false);
-      resetPrizeForm();
-      await loadData();
-    } catch {
-      setMessage("Could not connect to Prize Vault admin.");
-      setPrizeSaving(false);
     }
   }
 
@@ -382,187 +240,6 @@ export default function AdminPrizeVaultPage() {
         </div>
 
         <section className="mt-10">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h2 className="text-2xl font-black text-pink-500">
-                Prize Management
-              </h2>
-
-              <p className="mt-1 text-sm text-white/50">
-                Add new prizes and control existing Prize Vault rewards.
-              </p>
-            </div>
-
-            <button
-              onClick={startAddPrize}
-              className="rounded-xl bg-pink-500 px-6 py-3 font-black text-black"
-            >
-              + Add New Prize
-            </button>
-          </div>
-
-          {showPrizeForm && (
-            <div className="mt-5 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
-              <h3 className="text-xl font-black">
-                {editingPrizeId ? "Edit Prize" : "Add New Prize"}
-              </h3>
-
-              <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <input
-                  value={prizeForm.name}
-                  onChange={(e) =>
-                    setPrizeForm({ ...prizeForm, name: e.target.value })
-                  }
-                  placeholder="Prize name"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                />
-
-                <input
-                  value={prizeForm.emoji}
-                  onChange={(e) =>
-                    setPrizeForm({ ...prizeForm, emoji: e.target.value })
-                  }
-                  placeholder="Emoji"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                />
-
-                <input
-                  type="number"
-                  min="0"
-                  value={prizeForm.prizeValue}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      prizeValue: e.target.value,
-                    })
-                  }
-                  placeholder="Prize value GH₵"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                />
-
-                <select
-                  value={prizeForm.prizeType}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      prizeType: e.target.value,
-                    })
-                  }
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                >
-                  <option value="cash">Cash</option>
-                  <option value="digital">Digital</option>
-                  <option value="voucher">Voucher</option>
-                  <option value="physical">Physical</option>
-                </select>
-
-                <select
-                  value={prizeForm.fulfillmentType}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      fulfillmentType: e.target.value,
-                    })
-                  }
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                >
-                  <option value="wallet">Wallet</option>
-                  <option value="airtime">Airtime</option>
-                  <option value="data">Data</option>
-                  <option value="food_delivery">Food Delivery</option>
-                  <option value="voucher">Voucher</option>
-                  <option value="delivery">Physical Delivery</option>
-                </select>
-
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={prizeForm.remainingStock}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      remainingStock: e.target.value,
-                    })
-                  }
-                  placeholder="Stock"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                />
-
-                <input
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={prizeForm.winWeight}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      winWeight: e.target.value,
-                    })
-                  }
-                  placeholder="Win weight"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
-                />
-
-                <textarea
-                  value={prizeForm.description}
-                  onChange={(e) =>
-                    setPrizeForm({
-                      ...prizeForm,
-                      description: e.target.value,
-                    })
-                  }
-                  placeholder="Prize description"
-                  rows={3}
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500 md:col-span-2"
-                />
-
-                {editingPrizeId && (
-                  <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-black p-4">
-                    <input
-                      type="checkbox"
-                      checked={prizeForm.isActive}
-                      onChange={(e) =>
-                        setPrizeForm({
-                          ...prizeForm,
-                          isActive: e.target.checked,
-                        })
-                      }
-                    />
-
-                    <span className="font-bold">
-                      Prize Active
-                    </span>
-                  </label>
-                )}
-              </div>
-
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                <button
-                  onClick={() => void savePrize()}
-                  disabled={prizeSaving}
-                  className="rounded-xl bg-green-500 px-6 py-3 font-black text-black disabled:opacity-40"
-                >
-                  {prizeSaving
-                    ? "Saving..."
-                    : editingPrizeId
-                    ? "Save Prize Changes"
-                    : "Create Prize"}
-                </button>
-
-                <button
-                  onClick={resetPrizeForm}
-                  disabled={prizeSaving}
-                  className="rounded-xl border border-white/20 px-6 py-3 font-black"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
-        </section>
-
-        <section className="mt-10">
           <h2 className="text-2xl font-black text-pink-500">
             Prize Inventory
           </h2>
@@ -578,7 +255,6 @@ export default function AdminPrizeVaultPage() {
                   <th className="p-4">Stock</th>
                   <th className="p-4">Win Weight</th>
                   <th className="p-4">Status</th>
-                  <th className="p-4">Actions</th>
                 </tr>
               </thead>
 
@@ -626,22 +302,13 @@ export default function AdminPrizeVaultPage() {
                         </span>
                       )}
                     </td>
-
-                    <td className="p-4">
-                      <button
-                        onClick={() => startEditPrize(prize)}
-                        className="rounded-lg bg-pink-500 px-4 py-2 font-black text-black"
-                      >
-                        Edit
-                      </button>
-                    </td>
                   </tr>
                 ))}
 
                 {prizes.length === 0 && (
                   <tr>
                     <td
-                      colSpan={8}
+                      colSpan={7}
                       className="p-8 text-center text-white/50"
                     >
                       No prizes found.
