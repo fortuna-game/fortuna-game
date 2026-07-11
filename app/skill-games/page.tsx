@@ -3,6 +3,7 @@ import RewardsCard from "@/components/RewardsCard";
 
 const games = [
   ["lucky-draw", "🎟️", "Lucky Draw", "Limited entries • Win exciting prizes"],
+  ["prize-vault", "🎁", "Prize Vault", "GH₵20 entry • Open a vault and reveal your prize"],
   ["trivia", "🧠", "Trivia Sprint", "Knowledge challenge"],
   ["math-rush", "➗", "Math Rush", "Fast calculations"],
   ["word-puzzle", "🔤", "Word Puzzle", "Word mastery"],
