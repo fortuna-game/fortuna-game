@@ -152,7 +152,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       sessionId,
-      minScore: 17,
+      minScore: 13,
       total: 20,
       questions: selectedQuestions.map(({ answer, ...question }) => question),
     });

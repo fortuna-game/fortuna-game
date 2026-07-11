@@ -66,7 +66,7 @@ export async function POST(req: Request) {
       }
     }
 
-    const won = score >= 17;
+    const won = score >= 13;
 
     const { data: settlement, error: settleError } =
       await supabaseAdmin.rpc("settle_skill_game_atomic", {

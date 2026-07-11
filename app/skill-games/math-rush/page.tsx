@@ -172,7 +172,7 @@ export default function MathRushPage() {
         </h1>
 
         <p className="mt-2 text-sm text-white/60">
-          Solve at least 8 out of 10 math challenges correctly to win a 2x prize.
+          Solve at least 13 out of 20 math challenges correctly to win a 2x prize.
         </p>
 
         {message && (
@@ -189,7 +189,7 @@ export default function MathRushPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Solve the math questions before time runs out. Get at least 8 answers correct to win.
+                Solve the math questions before time runs out. Get at least 13 out of 20 answers correct to win.
               </p>
             </div>
 
@@ -300,7 +300,7 @@ export default function MathRushPage() {
                   You scored {result.score}/{result.total}.
                 </p>
                 <p className="mt-2 text-white/50">
-                  You needed 8 correct answers to win. Sharpen your speed and try again.
+                  You needed 13 correct answers to win. Sharpen your speed and try again.
                 </p>
               </div>
             )}
