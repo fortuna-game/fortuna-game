@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 type Affiliate = {
@@ -24,8 +23,6 @@ type Referral = {
 };
 
 export default function AffiliatePage() {
-  const router = useRouter();
-
   const [affiliate, setAffiliate] =
     useState<Affiliate | null>(null);
 
@@ -118,12 +115,6 @@ export default function AffiliatePage() {
     await loadAffiliate();
   }
 
-  async function logoutAffiliate() {
-    await supabase.auth.signOut();
-    router.replace("/affiliate/login");
-    router.refresh();
-  }
-
   async function copyLink() {
     if (!affiliate) return;
 
@@ -157,10 +148,10 @@ export default function AffiliatePage() {
         <div className="mx-auto max-w-xl">
 
           <Link
-            href="/affiliate"
+            href="/dashboard"
             className="text-sm font-bold text-pink-400"
           >
-            ← Affiliate Home
+            ← Back to Dashboard
           </Link>
 
           <div className="mt-6 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
@@ -255,30 +246,12 @@ export default function AffiliatePage() {
     <main className="min-h-screen bg-black px-5 py-8 text-white">
       <div className="mx-auto max-w-6xl">
 
-        <header className="flex flex-col gap-4 rounded-2xl border border-green-500/20 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <Link
-            href="/affiliate/dashboard"
-            className="text-2xl font-black text-green-400"
-          >
-            Fortuna Affiliate
-          </Link>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/affiliate/dashboard"
-              className="rounded-xl border border-green-500/20 px-4 py-2 font-bold text-green-400"
-            >
-              Dashboard
-            </Link>
-
-            <button
-              onClick={() => void logoutAffiliate()}
-              className="rounded-xl bg-green-500 px-5 py-2 font-black text-black"
-            >
-              Logout
-            </button>
-          </div>
-        </header>
+        <Link
+          href="/dashboard"
+          className="text-sm font-bold text-pink-400"
+        >
+          ← Back to Dashboard
+        </Link>
 
         <section className="mt-6 rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-600/15 via-black to-purple-950/30 p-6">
 

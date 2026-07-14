@@ -23,33 +23,16 @@ export async function GET(req: Request) {
     const admin = await requireAdmin(req);
     if (!admin) return NextResponse.json({ error: "Admin access denied." }, { status: 403 });
 
-    const [
-      profiles,
-      wallets,
-      deposits,
-      withdrawals,
-      transactions,
-      sessions,
-      affiliates,
-    ] = await Promise.all([
+    const [profiles, wallets, deposits, withdrawals, transactions, sessions] = await Promise.all([
       supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false }),
       supabaseAdmin.from("wallets").select("*"),
       supabaseAdmin.from("deposits").select("*"),
       supabaseAdmin.from("withdrawals").select("*"),
       supabaseAdmin.from("wallet_transactions").select("*"),
       supabaseAdmin.from("skill_game_sessions").select("*"),
-      supabaseAdmin.from("affiliate_profiles").select("user_id"),
     ]);
 
-    const affiliateUserIds = new Set(
-      (affiliates.data || []).map((affiliate: any) => affiliate.user_id)
-    );
-
-    const playerProfiles = (profiles.data || []).filter(
-      (profile: any) => !affiliateUserIds.has(profile.user_id)
-    );
-
-    const rows = playerProfiles.map((p: any) => {
+    const rows = (profiles.data || []).map((p: any) => {
       const userWallet = (wallets.data || []).find((w: any) => w.user_id === p.user_id);
       const userDeposits = (deposits.data || []).filter((d: any) => d.user_id === p.user_id);
       const userWithdrawals = (withdrawals.data || []).filter((w: any) => w.user_id === p.user_id);

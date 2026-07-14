@@ -139,6 +139,18 @@ export default function Dashboard() {
             </p>
           </Link>
 
+          <Link
+            href="/affiliate"
+            className="rounded-2xl border border-green-500/20 bg-green-500/10 p-5 transition hover:border-green-500/50"
+          >
+            <p className="text-xl font-black text-green-400">
+              🤝 Affiliate Program
+            </p>
+
+            <p className="mt-2 text-sm text-white/50">
+              Share your referral link and earn GH₵1 per qualified player.
+            </p>
+          </Link>
 
         </section>
       </div>
