@@ -1,34 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Trophy } from "lucide-react";
 import { signUp } from "@/lib/auth";
-import { supabase } from "@/lib/supabase";
 
 export default function SignupPage() {
   const router = useRouter();
-  const [referralCode, setReferralCode] = useState("");
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = String(params.get("ref") || "")
-      .trim()
-      .toUpperCase();
-
-    setReferralCode(code);
-
-    if (code) {
-      localStorage.setItem("fortuna_referral_code", code);
-    } else {
-      const savedCode = localStorage.getItem("fortuna_referral_code");
-
-      if (savedCode) {
-        setReferralCode(savedCode);
-      }
-    }
-  }, []);
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -78,28 +57,6 @@ export default function SignupPage() {
       return;
     }
 
-    if (referralCode) {
-      const { data: auth } = await supabase.auth.getSession();
-      const token = auth.session?.access_token;
-
-      if (token) {
-        try {
-          await fetch("/api/referrals/register", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              referralCode,
-            }),
-          });
-        } catch (referralError) {
-          console.error("REFERRAL REGISTRATION ERROR:", referralError);
-        }
-      }
-    }
-
     router.push("/dashboard");
   }
 
@@ -118,18 +75,6 @@ export default function SignupPage() {
           <p className="mt-2 text-white/60">
             Create your account and start playing your favourite games.
           </p>
-
-          {referralCode && (
-            <div className="mt-4 rounded-xl border border-green-400/20 bg-green-500/10 p-3">
-              <p className="text-sm font-bold text-green-300">
-                🎉 You were invited to Fortuna Play
-              </p>
-
-              <p className="mt-1 text-xs text-white/50">
-                Referral code: {referralCode}
-              </p>
-            </div>
-          )}
         </div>
 
         <form onSubmit={handleSignup} className="grid gap-5 md:grid-cols-2">
