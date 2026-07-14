@@ -27,6 +27,7 @@ export default function AffiliateRegisterPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [agree, setAgree] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -46,7 +47,7 @@ export default function AffiliateRegisterPage() {
     }
 
     if (paymentMethod === "momo" && !momoNumber.trim()) {
-      setMessage("Enter your Mobile Money number.");
+      setMessage("Please enter your Mobile Money number.");
       return;
     }
 
@@ -56,7 +57,7 @@ export default function AffiliateRegisterPage() {
         !bankAccountName.trim() ||
         !bankAccountNumber.trim())
     ) {
-      setMessage("Complete all bank account details.");
+      setMessage("Please complete all bank account details.");
       return;
     }
 
@@ -80,7 +81,9 @@ export default function AffiliateRegisterPage() {
           data: {
             first_name: fullName.split(" ")[0] || fullName,
             last_name: fullName.split(" ").slice(1).join(" "),
-            username: `${usernameBase}_${Date.now().toString().slice(-5)}`,
+            username: `${usernameBase}_${Date.now()
+              .toString()
+              .slice(-5)}`,
             phone,
             account_type: "affiliate",
           },
@@ -123,20 +126,30 @@ export default function AffiliateRegisterPage() {
         fullName,
         phone,
         paymentMethod,
-        momoNetwork: paymentMethod === "momo" ? momoNetwork : "",
-        momoNumber: paymentMethod === "momo" ? momoNumber : "",
-        bankName: paymentMethod === "bank" ? bankName : "",
+
+        momoNumber:
+          paymentMethod === "momo" ? momoNumber : null,
+
+        momoNetwork:
+          paymentMethod === "momo" ? momoNetwork : null,
+
+        bankName:
+          paymentMethod === "bank" ? bankName : null,
+
         bankAccountName:
-          paymentMethod === "bank" ? bankAccountName : "",
+          paymentMethod === "bank" ? bankAccountName : null,
+
         bankAccountNumber:
-          paymentMethod === "bank" ? bankAccountNumber : "",
+          paymentMethod === "bank" ? bankAccountNumber : null,
       }),
     });
 
     const data = await res.json();
 
     if (!res.ok) {
-      setMessage(data.error || "Could not create affiliate account.");
+      setMessage(
+        data.error || "Could not create affiliate account."
+      );
       setLoading(false);
       return;
     }
@@ -155,14 +168,15 @@ export default function AffiliateRegisterPage() {
           </h1>
 
           <p className="mt-3 text-white/60">
-            Create your affiliate account, receive your unique referral link
-            and earn GH₵1 for every qualified player.
+            Create your affiliate account, receive your unique
+            referral link and earn GH₵1 for every qualified player.
           </p>
         </div>
 
         <div className="mt-6 rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm leading-7 text-white/70">
-          A qualified player must register through your link, make a successful
-          deposit and play at least GH₵20 worth of games.
+          A qualified player must register through your link,
+          make a successful deposit and play at least GH₵20
+          worth of games.
         </div>
 
         {message && (
@@ -177,7 +191,9 @@ export default function AffiliateRegisterPage() {
         >
           <input
             value={fullName}
-            onChange={(event) => setFullName(event.target.value)}
+            onChange={(event) =>
+              setFullName(event.target.value)
+            }
             placeholder="Full Name"
             required
             className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500 md:col-span-2"
@@ -185,7 +201,9 @@ export default function AffiliateRegisterPage() {
 
           <input
             value={phone}
-            onChange={(event) => setPhone(event.target.value)}
+            onChange={(event) =>
+              setPhone(event.target.value)
+            }
             placeholder="Phone Number"
             required
             className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
@@ -194,40 +212,54 @@ export default function AffiliateRegisterPage() {
           <input
             type="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
+            onChange={(event) =>
+              setEmail(event.target.value)
+            }
             placeholder="Email Address"
             required
             className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
           />
 
           <div className="md:col-span-2">
-            <p className="mb-3 font-black text-green-400">
-              Choose How You Want To Receive Payments
+            <p className="mb-3 font-bold text-white">
+              How would you like to receive your payments?
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
               <button
                 type="button"
                 onClick={() => setPaymentMethod("momo")}
-                className={`rounded-xl border p-4 font-black ${
+                className={`rounded-xl border p-4 text-left ${
                   paymentMethod === "momo"
-                    ? "border-green-500 bg-green-500 text-black"
-                    : "border-white/10 bg-black text-white"
+                    ? "border-green-500 bg-green-500/10 text-green-400"
+                    : "border-white/10 bg-black text-white/60"
                 }`}
               >
-                📱 Mobile Money
+                <div className="font-black">
+                  📱 Mobile Money
+                </div>
+
+                <div className="mt-1 text-sm opacity-70">
+                  Receive payments through MoMo
+                </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPaymentMethod("bank")}
-                className={`rounded-xl border p-4 font-black ${
+                className={`rounded-xl border p-4 text-left ${
                   paymentMethod === "bank"
-                    ? "border-green-500 bg-green-500 text-black"
-                    : "border-white/10 bg-black text-white"
+                    ? "border-green-500 bg-green-500/10 text-green-400"
+                    : "border-white/10 bg-black text-white/60"
                 }`}
               >
-                🏦 Bank Account
+                <div className="font-black">
+                  🏦 Bank Account
+                </div>
+
+                <div className="mt-1 text-sm opacity-70">
+                  Receive payments into your bank
+                </div>
               </button>
             </div>
           </div>
@@ -236,17 +268,25 @@ export default function AffiliateRegisterPage() {
             <>
               <select
                 value={momoNetwork}
-                onChange={(event) => setMomoNetwork(event.target.value)}
+                onChange={(event) =>
+                  setMomoNetwork(event.target.value)
+                }
                 className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
               >
-                <option value="MTN">MTN Mobile Money</option>
-                <option value="Telecel">Telecel Cash</option>
-                <option value="AT">AT Money</option>
+                <option value="MTN">MTN MoMo</option>
+                <option value="Telecel">
+                  Telecel Cash
+                </option>
+                <option value="AT">
+                  AirtelTigo Money
+                </option>
               </select>
 
               <input
                 value={momoNumber}
-                onChange={(event) => setMomoNumber(event.target.value)}
+                onChange={(event) =>
+                  setMomoNumber(event.target.value)
+                }
                 placeholder="Mobile Money Number"
                 required={paymentMethod === "momo"}
                 className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
@@ -258,7 +298,9 @@ export default function AffiliateRegisterPage() {
             <>
               <input
                 value={bankName}
-                onChange={(event) => setBankName(event.target.value)}
+                onChange={(event) =>
+                  setBankName(event.target.value)
+                }
                 placeholder="Bank Name"
                 required={paymentMethod === "bank"}
                 className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
@@ -266,15 +308,19 @@ export default function AffiliateRegisterPage() {
 
               <input
                 value={bankAccountName}
-                onChange={(event) => setBankAccountName(event.target.value)}
-                placeholder="Account Holder Name"
+                onChange={(event) =>
+                  setBankAccountName(event.target.value)
+                }
+                placeholder="Bank Account Name"
                 required={paymentMethod === "bank"}
                 className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
               />
 
               <input
                 value={bankAccountNumber}
-                onChange={(event) => setBankAccountNumber(event.target.value)}
+                onChange={(event) =>
+                  setBankAccountNumber(event.target.value)
+                }
                 placeholder="Bank Account Number"
                 required={paymentMethod === "bank"}
                 className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500 md:col-span-2"
@@ -286,7 +332,9 @@ export default function AffiliateRegisterPage() {
             <input
               type={showPassword ? "text" : "password"}
               value={password}
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={(event) =>
+                setPassword(event.target.value)
+              }
               placeholder="Password"
               required
               className="w-full rounded-xl border border-white/10 bg-black p-4 pr-12 outline-none focus:border-green-500"
@@ -294,18 +342,28 @@ export default function AffiliateRegisterPage() {
 
             <button
               type="button"
-              onClick={() => setShowPassword((value) => !value)}
+              onClick={() =>
+                setShowPassword((value) => !value)
+              }
               className="absolute right-4 top-4 text-white/50"
             >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              {showPassword ? (
+                <EyeOff size={20} />
+              ) : (
+                <Eye size={20} />
+              )}
             </button>
           </div>
 
           <div className="relative">
             <input
-              type={showConfirmPassword ? "text" : "password"}
+              type={
+                showConfirmPassword ? "text" : "password"
+              }
               value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
+              onChange={(event) =>
+                setConfirmPassword(event.target.value)
+              }
               placeholder="Confirm Password"
               required
               className="w-full rounded-xl border border-white/10 bg-black p-4 pr-12 outline-none focus:border-green-500"
@@ -313,7 +371,9 @@ export default function AffiliateRegisterPage() {
 
             <button
               type="button"
-              onClick={() => setShowConfirmPassword((value) => !value)}
+              onClick={() =>
+                setShowConfirmPassword((value) => !value)
+              }
               className="absolute right-4 top-4 text-white/50"
             >
               {showConfirmPassword ? (
@@ -328,14 +388,16 @@ export default function AffiliateRegisterPage() {
             <input
               type="checkbox"
               checked={agree}
-              onChange={(event) => setAgree(event.target.checked)}
+              onChange={(event) =>
+                setAgree(event.target.checked)
+              }
               className="mt-1"
             />
 
             <span>
-              I agree that only genuine players who deposit and play at least
-              GH₵20 qualify for commission. Fake accounts and self-referrals are
-              prohibited.
+              I agree that only genuine players who deposit and
+              play at least GH₵20 qualify for commission. Fake
+              accounts and self-referrals are prohibited.
             </span>
           </label>
 
@@ -360,7 +422,10 @@ export default function AffiliateRegisterPage() {
         </div>
 
         <div className="mt-3 text-center">
-          <Link href="/" className="text-sm text-white/40">
+          <Link
+            href="/"
+            className="text-sm text-white/40"
+          >
             ← Back to Fortuna Play
           </Link>
         </div>

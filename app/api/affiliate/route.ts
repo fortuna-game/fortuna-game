@@ -115,10 +115,46 @@ export async function POST(req: Request) {
 
     const momoNumber = String(body.momoNumber || "").trim();
     const momoNetwork = String(body.momoNetwork || "").trim();
+    const bankName = String(body.bankName || "").trim();
+    const bankAccountName = String(body.bankAccountName || "").trim();
+    const bankAccountNumber = String(body.bankAccountNumber || "").trim();
 
     if (!fullName || !phone) {
       return NextResponse.json(
         { error: "Full name and phone number are required." },
+        { status: 400 }
+      );
+    }
+
+    if (!["momo", "bank"].includes(paymentMethod)) {
+      return NextResponse.json(
+        { error: "Select Mobile Money or Bank Account." },
+        { status: 400 }
+      );
+    }
+
+    if (paymentMethod === "momo") {
+      if (!["MTN", "Telecel", "AT"].includes(momoNetwork)) {
+        return NextResponse.json(
+          { error: "Select MTN, Telecel or AirtelTigo." },
+          { status: 400 }
+        );
+      }
+
+      if (!momoNumber) {
+        return NextResponse.json(
+          { error: "Mobile Money number is required." },
+          { status: 400 }
+        );
+      }
+    }
+
+    if (
+      paymentMethod === "bank" &&
+      (!bankName || !bankAccountName || !bankAccountNumber)
+    ) {
+      return NextResponse.json(
+        { error: "Complete all bank account details." },
         { status: 400 }
       );
     }
@@ -169,8 +205,22 @@ export async function POST(req: Request) {
         email: user.email || null,
         referral_code: referralCode,
         payment_method: paymentMethod,
-        momo_number: momoNumber || phone,
-        momo_network: momoNetwork || null,
+
+        momo_number:
+          paymentMethod === "momo" ? momoNumber : null,
+
+        momo_network:
+          paymentMethod === "momo" ? momoNetwork : null,
+
+        bank_name:
+          paymentMethod === "bank" ? bankName : null,
+
+        bank_account_name:
+          paymentMethod === "bank" ? bankAccountName : null,
+
+        bank_account_number:
+          paymentMethod === "bank" ? bankAccountNumber : null,
+
         status: "active",
       })
       .select("*")
