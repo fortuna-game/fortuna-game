@@ -17,12 +17,6 @@ export default function AdminNav() {
         </Link>
 
         <div className="flex flex-wrap gap-2 text-sm font-bold">
-          <Link
-            href="/admin/affiliates"
-            className="rounded-xl bg-green-500/20 px-4 py-2 text-green-300"
-          >
-            🤝 Affiliates
-          </Link>
           <Link href="/admin/users" className="rounded-xl bg-white/10 px-4 py-2">Users</Link>
           <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-4 py-2">Deposits</Link>
           <Link href="/admin/games" className="rounded-xl bg-white/10 px-4 py-2">Games</Link>

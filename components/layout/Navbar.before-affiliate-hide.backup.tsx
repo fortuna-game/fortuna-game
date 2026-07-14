@@ -14,10 +14,7 @@ type Profile = {
 export default function Navbar() {
   const pathname = usePathname();
 
-  if (
-    pathname.startsWith("/admin") ||
-    pathname.startsWith("/affiliate")
-  ) {
+  if (pathname.startsWith("/admin")) {
     return null;
   }
 
