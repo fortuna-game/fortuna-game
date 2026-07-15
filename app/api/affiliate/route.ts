@@ -54,7 +54,13 @@ export async function GET(req: Request) {
 
     const { data: referrals } = await supabaseAdmin
       .from("affiliate_referrals")
-      .select("*")
+      .select(`
+        *,
+        profiles:referred_user_id (
+          username,
+          first_name
+        )
+      `)
       .eq("affiliate_id", affiliate.id)
       .order("created_at", { ascending: false });
 
