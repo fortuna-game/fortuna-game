@@ -46,7 +46,116 @@ export async function GET(
     return NextResponse.json({ error: "Ticket not found." }, { status: 404 });
   }
 
-  return NextResponse.json({ ticket: data });
+  const isAffiliateTicket =
+    typeof data.issue_type === "string" &&
+    data.issue_type.startsWith("Affiliate —");
+
+  if (!isAffiliateTicket) {
+    return NextResponse.json({
+      ticket: data,
+      affiliate: null,
+      affiliateStats: null,
+    });
+  }
+
+  const { data: affiliate } = await supabaseAdmin
+    .from("affiliate_profiles")
+    .select("*")
+    .eq("user_id", data.user_id)
+    .maybeSingle();
+
+  if (!affiliate) {
+    return NextResponse.json({
+      ticket: data,
+      affiliate: null,
+      affiliateStats: null,
+    });
+  }
+
+  const [
+    referralsResult,
+    earningsResult,
+    payoutsResult,
+  ] = await Promise.all([
+    supabaseAdmin
+      .from("affiliate_referrals")
+      .select("*")
+      .eq("affiliate_id", affiliate.id),
+
+    supabaseAdmin
+      .from("affiliate_earnings")
+      .select("*")
+      .eq("affiliate_id", affiliate.id),
+
+    supabaseAdmin
+      .from("affiliate_payouts")
+      .select("*")
+      .eq("affiliate_id", affiliate.id),
+  ]);
+
+  const referrals = referralsResult.data || [];
+  const earnings = earningsResult.data || [];
+  const payouts = payoutsResult.data || [];
+
+  const qualifiedReferrals = referrals.filter((referral: any) =>
+    referral.qualified === true ||
+    referral.is_qualified === true ||
+    referral.status === "qualified" ||
+    referral.reward_paid === true
+  ).length;
+
+  const totalEarnings = earnings.reduce(
+    (total: number, earning: any) =>
+      total + Number(
+        earning.amount ??
+        earning.earning_amount ??
+        earning.commission_amount ??
+        0
+      ),
+    0
+  );
+
+  const pendingWithdrawals = payouts
+    .filter((payout: any) =>
+      ["pending", "processing", "requested"].includes(
+        String(payout.status || "").toLowerCase()
+      )
+    )
+    .reduce(
+      (total: number, payout: any) =>
+        total + Number(payout.amount ?? payout.payout_amount ?? 0),
+      0
+    );
+
+  const paidWithdrawals = payouts
+    .filter((payout: any) =>
+      ["paid", "completed", "approved", "successful"].includes(
+        String(payout.status || "").toLowerCase()
+      )
+    )
+    .reduce(
+      (total: number, payout: any) =>
+        total + Number(payout.amount ?? payout.payout_amount ?? 0),
+      0
+    );
+
+  const availableBalance = Number(
+    affiliate.available_balance ??
+    affiliate.balance ??
+    Math.max(totalEarnings - paidWithdrawals - pendingWithdrawals, 0)
+  );
+
+  return NextResponse.json({
+    ticket: data,
+    affiliate,
+    affiliateStats: {
+      totalReferrals: referrals.length,
+      qualifiedReferrals,
+      totalEarnings,
+      availableBalance,
+      pendingWithdrawals,
+    },
+  });
 }
 
 export async function PATCH(

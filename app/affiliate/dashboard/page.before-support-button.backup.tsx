@@ -957,32 +957,6 @@ export default function AffiliatePage() {
           </p>
         </section>
       </div>
-    
-        <section className="mt-8 rounded-3xl border border-green-500/20 bg-green-500/10 p-6">
-          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
-            <div>
-              <p className="text-sm font-black uppercase tracking-widest text-green-400">
-                Affiliate Support
-              </p>
-
-              <h2 className="mt-2 text-2xl font-black text-white">
-                Need help with your affiliate account?
-              </h2>
-
-              <p className="mt-2 text-white/60">
-                Contact us about referrals, commissions, withdrawals, payment details or account issues.
-              </p>
-            </div>
-
-            <Link
-              href="/affiliate/support"
-              className="inline-flex shrink-0 items-center justify-center rounded-2xl bg-green-500 px-6 py-4 font-black text-black transition hover:bg-green-400"
-            >
-              Contact Affiliate Support
-            </Link>
-          </div>
-        </section>
-
-</main>
+    </main>
   );
 }

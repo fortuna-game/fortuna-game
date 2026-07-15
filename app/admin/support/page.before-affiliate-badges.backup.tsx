@@ -105,7 +105,7 @@ export default function AdminSupportPage() {
 
         <h1 className="text-4xl font-black text-pink-500">Support Tickets</h1>
         <p className="mt-2 text-white/60">
-          View and manage player and affiliate support requests.
+          View and manage player support requests.
         </p>
 
         {message && (
@@ -120,26 +120,12 @@ export default function AdminSupportPage() {
             >
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                 <div>
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest ${
-                        ticket.issue_type.startsWith("Affiliate —")
-                          ? "bg-green-500/20 text-green-300"
-                          : "bg-pink-500/20 text-pink-300"
-                      }`}
-                    >
-                      {ticket.issue_type.startsWith("Affiliate —")
-                        ? "Affiliate"
-                        : "Player"}
-                    </span>
-
-                    <p className="text-sm font-bold uppercase tracking-widest text-pink-400">
-                      {ticket.issue_type.replace("Affiliate — ", "")}
-                    </p>
-                  </div>
+                  <p className="text-sm font-bold uppercase tracking-widest text-pink-400">
+                    {ticket.issue_type}
+                  </p>
 
                   <Link href={`/admin/support/${ticket.id}`} className="mt-2 block text-2xl font-black hover:text-pink-400">
-                    @{ticket.username || (ticket.issue_type.startsWith("Affiliate —") ? "Affiliate" : "Player")}
+                    @{ticket.username || "Player"}
                   </Link>
 
                   <p className="mt-2 text-sm text-white/50">
