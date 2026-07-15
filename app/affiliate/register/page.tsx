@@ -156,7 +156,7 @@ export default function AffiliateRegisterPage() {
 
           <p className="mt-3 text-white/60">
             Create your affiliate account, receive your unique referral link
-            and earn GH₵1 for every qualified player.
+            and earn GH₵5 for every qualified player.
           </p>
         </div>
 

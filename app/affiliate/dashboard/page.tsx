@@ -365,7 +365,7 @@ export default function AffiliatePage() {
           </h1>
 
           <p className="mt-2 text-white/50">
-            Share your link. Bring real players. Earn GH₵1 per qualified referral.
+            Share your link. Bring real players. Earn GH₵5 per qualified player.
           </p>
         </section>
 
@@ -694,7 +694,7 @@ export default function AffiliatePage() {
           </h2>
 
           <p className="mt-3 leading-7 text-white/60">
-            You earn GH₵1 when a new player joins through your link,
+            You earn GH₵5 when a new player joins through your link, successfully deposits at least GH₵20 and plays at least GH₵20 worth of games.
             deposits successfully and plays at least GH₵20 worth of games.
             Each player can qualify only once.
           </p>

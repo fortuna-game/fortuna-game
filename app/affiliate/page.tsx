@@ -11,7 +11,7 @@ export default function AffiliateLandingPage() {
         </h1>
 
         <p className="mx-auto mt-4 max-w-2xl text-lg leading-8 text-white/60">
-          Share Fortuna Play with genuine players and earn GH₵1 when each
+          Share Fortuna Play with genuine players and earn GH₵5 when each
           referred player deposits and plays at least GH₵20.
         </p>
 
