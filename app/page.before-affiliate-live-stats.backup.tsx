@@ -3,7 +3,6 @@ import JackpotCard from "@/components/home/JackpotCard";
 import WinnersTicker from "@/components/home/WinnersTicker";
 import Stats from "@/components/home/Stats";
 import FeaturedGames from "@/components/home/FeaturedGames";
-import AffiliateStats from "@/components/home/AffiliateStats";
 
 export default function Home() {
   return (
@@ -43,8 +42,6 @@ export default function Home() {
             <p className="mt-5 text-sm text-white/40">
               Qualified referrals only. Terms and conditions apply.
             </p>
-
-            <AffiliateStats />
 
             <div className="mt-10 grid gap-5 md:grid-cols-3">
 
