@@ -30,13 +30,16 @@ export default function Home() {
             </p>
 
             <h2 className="mt-4 text-5xl font-black">
-              Earn GH₵5 For Every Qualified Referral
+              Make Up to GH₵100 Daily by Referring Players
             </h2>
 
             <p className="mx-auto mt-6 max-w-3xl text-lg text-white/70">
-              Share your personal referral link with friends.
-              Every player who qualifies earns you GH₵5.
-              Track referrals, commissions and withdrawals from your affiliate dashboard.
+              Refer at least 20 people daily who complete the required deposit and gameplay conditions.
+              Track your referrals, earnings and withdrawals from your affiliate dashboard.
+            </p>
+
+            <p className="mt-5 text-sm text-white/40">
+              Earnings depend on qualified referrals. Terms and qualification rules apply.
             </p>
 
             <div className="mt-10 flex flex-wrap justify-center gap-4">
@@ -45,7 +48,7 @@ export default function Home() {
                 href="/affiliate/register"
                 className="rounded-full bg-green-500 px-8 py-4 font-black text-black"
               >
-                Become an Affiliate
+                Start Earning
               </a>
 
               <a
