@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import VisitorTracker from "@/components/VisitorTracker";
-import SessionTimeout from "@/components/auth/SessionTimeout";
 
 export const metadata: Metadata = {
   title: "Fortuna Play",
@@ -18,7 +17,6 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-black text-white">
         <VisitorTracker />
-        <SessionTimeout />
         <Navbar />
         {children}
       </body>

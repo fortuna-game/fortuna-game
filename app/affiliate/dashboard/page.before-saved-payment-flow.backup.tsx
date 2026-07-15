@@ -84,7 +84,6 @@ export default function AffiliatePage() {
 
   const [loading, setLoading] = useState(true);
   const [savingPayment, setSavingPayment] = useState(false);
-  const [editingPayment, setEditingPayment] = useState(false);
   const [withdrawing, setWithdrawing] = useState(false);
 
   const [message, setMessage] = useState("");
@@ -209,7 +208,6 @@ export default function AffiliatePage() {
       );
 
       setSavingPayment(false);
-      setEditingPayment(false);
       await loadAffiliate();
     } catch {
       setMessage("Could not save payment details.");
@@ -222,6 +220,7 @@ export default function AffiliatePage() {
   ) {
     event.preventDefault();
 
+    setWithdrawing(true);
     setMessage("");
     setSuccessMessage("");
 
@@ -229,52 +228,9 @@ export default function AffiliatePage() {
 
     if (!Number.isFinite(amount) || amount <= 0) {
       setMessage("Enter a valid withdrawal amount.");
+      setWithdrawing(false);
       return;
     }
-
-    if (!affiliate) {
-      setMessage("Affiliate account could not be loaded.");
-      return;
-    }
-
-    const hasSavedPayment =
-      affiliate.payment_method === "momo"
-        ? Boolean(
-            affiliate.momo_network &&
-            affiliate.momo_number
-          )
-        : affiliate.payment_method === "bank"
-          ? Boolean(
-              affiliate.bank_name &&
-              affiliate.bank_account_name &&
-              affiliate.bank_account_number
-            )
-          : false;
-
-    if (!hasSavedPayment) {
-      setMessage(
-        "Please save valid payment details before requesting a withdrawal."
-      );
-      setEditingPayment(true);
-      return;
-    }
-
-    const paymentDescription =
-      affiliate.payment_method === "momo"
-        ? `${affiliate.momo_network} Mobile Money — ${affiliate.momo_number}`
-        : `${affiliate.bank_name} — ${affiliate.bank_account_number}`;
-
-    const confirmed = window.confirm(
-      `Confirm Withdrawal\n\nAmount: GH₵${amount.toFixed(
-        2
-      )}\nPayment Method: ${paymentDescription}\n\nThis payment will be sent to your saved account.`
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    setWithdrawing(true);
 
     const token = await getToken();
 
@@ -740,199 +696,130 @@ export default function AffiliatePage() {
           </div>
         </section>
 
-                <section className="mt-6 rounded-3xl border border-green-500/20 bg-white/5 p-6">
-          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-            <div>
-              <p className="text-sm font-black uppercase tracking-widest text-green-400">
-                Saved Payment Method
-              </p>
+        <section className="mt-6 rounded-3xl border border-green-500/20 bg-white/5 p-6">
+          <h2 className="text-2xl font-black text-green-400">
+            Payment Settings
+          </h2>
 
-              <h2 className="mt-2 text-2xl font-black text-white">
-                {affiliate.payment_method === "momo"
-                  ? "📱 Mobile Money"
-                  : affiliate.payment_method === "bank"
-                    ? "🏦 Bank Account"
-                    : "No payment method saved"}
-              </h2>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                setEditingPayment((current) => !current)
-              }
-              className="rounded-xl border border-green-500/30 px-5 py-3 font-black text-green-300 hover:bg-green-500/10"
-            >
-              {editingPayment
-                ? "Cancel Editing"
-                : "Edit Payment Details"}
-            </button>
-          </div>
-
-          {affiliate.payment_method === "momo" && (
-            <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-                  Network
-                </p>
-                <p className="mt-2 text-lg font-black">
-                  {affiliate.momo_network || "Not provided"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-                  Mobile Money Number
-                </p>
-                <p className="mt-2 text-lg font-black">
-                  {affiliate.momo_number || "Not provided"}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {affiliate.payment_method === "bank" && (
-            <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-                  Bank
-                </p>
-                <p className="mt-2 text-lg font-black">
-                  {affiliate.bank_name || "Not provided"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-                  Account Name
-                </p>
-                <p className="mt-2 text-lg font-black">
-                  {affiliate.bank_account_name || "Not provided"}
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
-                  Account Number
-                </p>
-                <p className="mt-2 text-lg font-black">
-                  {affiliate.bank_account_number || "Not provided"}
-                </p>
-              </div>
-            </div>
-          )}
-
-          <p className="mt-5 rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-sm font-bold text-green-300">
-            ✓ Affiliate withdrawals will be sent to this saved account.
+          <p className="mt-2 text-sm text-white/50">
+            Choose how you want to receive your affiliate earnings.
           </p>
 
-          {editingPayment && (
-            <form
-              onSubmit={savePaymentDetails}
-              className="mt-6 grid gap-5 rounded-3xl border border-white/10 bg-black/40 p-5"
-            >
-              <p className="font-black text-white">
-                Update Payment Details
-              </p>
+          <form
+            onSubmit={savePaymentDetails}
+            className="mt-6 grid gap-5"
+          >
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setPaymentMethod("momo")}
+                className={`rounded-2xl border p-5 text-left ${
+                  paymentMethod === "momo"
+                    ? "border-green-500 bg-green-500/10"
+                    : "border-white/10 bg-black"
+                }`}
+              >
+                <p className="font-black">
+                  📱 Mobile Money
+                </p>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("momo")}
-                  className={`rounded-2xl border p-5 text-left ${
-                    paymentMethod === "momo"
-                      ? "border-green-500 bg-green-500/10"
-                      : "border-white/10 bg-black"
-                  }`}
-                >
-                  <p className="font-black">📱 Mobile Money</p>
-                  <p className="mt-1 text-sm text-white/50">
-                    MTN, Telecel or AirtelTigo
-                  </p>
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod("bank")}
-                  className={`rounded-2xl border p-5 text-left ${
-                    paymentMethod === "bank"
-                      ? "border-green-500 bg-green-500/10"
-                      : "border-white/10 bg-black"
-                  }`}
-                >
-                  <p className="font-black">🏦 Bank Account</p>
-                  <p className="mt-1 text-sm text-white/50">
-                    Receive payment into your bank account
-                  </p>
-                </button>
-              </div>
-
-              {paymentMethod === "momo" && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <select
-                    value={momoNetwork}
-                    onChange={(event) =>
-                      setMomoNetwork(event.target.value)
-                    }
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
-                  >
-                    <option value="MTN">MTN Mobile Money</option>
-                    <option value="Telecel">Telecel Cash</option>
-                    <option value="AT">AirtelTigo Money</option>
-                  </select>
-
-                  <input
-                    value={momoNumber}
-                    onChange={(event) =>
-                      setMomoNumber(event.target.value)
-                    }
-                    placeholder="Mobile Money Number"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
-                  />
-                </div>
-              )}
-
-              {paymentMethod === "bank" && (
-                <div className="grid gap-4">
-                  <input
-                    value={bankName}
-                    onChange={(event) =>
-                      setBankName(event.target.value)
-                    }
-                    placeholder="Bank Name"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
-                  />
-
-                  <input
-                    value={bankAccountName}
-                    onChange={(event) =>
-                      setBankAccountName(event.target.value)
-                    }
-                    placeholder="Account Name"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
-                  />
-
-                  <input
-                    value={bankAccountNumber}
-                    onChange={(event) =>
-                      setBankAccountNumber(event.target.value)
-                    }
-                    placeholder="Account Number"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
-                  />
-                </div>
-              )}
+                <p className="mt-1 text-sm text-white/50">
+                  MTN, Telecel or AirtelTigo
+                </p>
+              </button>
 
               <button
-                disabled={savingPayment}
-                className="rounded-xl bg-green-500 py-4 font-black text-black disabled:opacity-40"
+                type="button"
+                onClick={() => setPaymentMethod("bank")}
+                className={`rounded-2xl border p-5 text-left ${
+                  paymentMethod === "bank"
+                    ? "border-green-500 bg-green-500/10"
+                    : "border-white/10 bg-black"
+                }`}
               >
-                {savingPayment
-                  ? "Saving..."
-                  : "Save Updated Payment Details"}
+                <p className="font-black">
+                  🏦 Bank Account
+                </p>
+
+                <p className="mt-1 text-sm text-white/50">
+                  Receive payment into your bank account
+                </p>
               </button>
-            </form>
-          )}
+            </div>
+
+            {paymentMethod === "momo" && (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <select
+                  value={momoNetwork}
+                  onChange={(event) =>
+                    setMomoNetwork(event.target.value)
+                  }
+                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                >
+                  <option value="MTN">
+                    MTN Mobile Money
+                  </option>
+
+                  <option value="Telecel">
+                    Telecel Cash
+                  </option>
+
+                  <option value="AT">
+                    AirtelTigo Money
+                  </option>
+                </select>
+
+                <input
+                  value={momoNumber}
+                  onChange={(event) =>
+                    setMomoNumber(event.target.value)
+                  }
+                  placeholder="Mobile Money Number"
+                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                />
+              </div>
+            )}
+
+            {paymentMethod === "bank" && (
+              <div className="grid gap-4">
+                <input
+                  value={bankName}
+                  onChange={(event) =>
+                    setBankName(event.target.value)
+                  }
+                  placeholder="Bank Name"
+                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                />
+
+                <input
+                  value={bankAccountName}
+                  onChange={(event) =>
+                    setBankAccountName(event.target.value)
+                  }
+                  placeholder="Account Name"
+                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                />
+
+                <input
+                  value={bankAccountNumber}
+                  onChange={(event) =>
+                    setBankAccountNumber(event.target.value)
+                  }
+                  placeholder="Account Number"
+                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                />
+              </div>
+            )}
+
+            <button
+              disabled={savingPayment}
+              className="rounded-xl bg-green-500 py-4 font-black text-black disabled:opacity-40"
+            >
+              {savingPayment
+                ? "Saving..."
+                : "Save Payment Details"}
+            </button>
+          </form>
         </section>
 
         <section className="mt-6 rounded-3xl border border-yellow-500/20 bg-white/5 p-6">
@@ -944,34 +831,6 @@ export default function AffiliatePage() {
             Available Balance: GH₵
             {Number(affiliate.available_balance).toFixed(2)}
           </p>
-
-          <div className="mt-5 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 p-5">
-            <p className="text-xs font-black uppercase tracking-widest text-yellow-300">
-              Withdraw To
-            </p>
-
-            <p className="mt-2 text-xl font-black text-white">
-              {affiliate.payment_method === "momo"
-                ? `${affiliate.momo_network || ""} Mobile Money`
-                : affiliate.payment_method === "bank"
-                  ? affiliate.bank_name || "Bank Account"
-                  : "No saved payment method"}
-            </p>
-
-            <p className="mt-2 text-white/60">
-              {affiliate.payment_method === "momo"
-                ? affiliate.momo_number || "Number not provided"
-                : affiliate.payment_method === "bank"
-                  ? `${affiliate.bank_account_name || ""} — ${
-                      affiliate.bank_account_number || ""
-                    }`
-                  : "Save your payment details before withdrawing."}
-            </p>
-
-            <p className="mt-3 text-sm font-bold text-green-300">
-              ✓ Using your saved payment details.
-            </p>
-          </div>
 
           {hasPendingWithdrawal && (
             <p className="mt-4 rounded-xl bg-yellow-500/10 p-4 text-yellow-300">
@@ -1007,12 +866,12 @@ export default function AffiliatePage() {
             >
               {withdrawing
                 ? "Requesting..."
-                : "Request Withdrawal"}
+                : "Withdraw"}
             </button>
           </form>
         </section>
 
-<section className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <section className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
           <h2 className="text-2xl font-black">
             Withdrawal History
           </h2>
