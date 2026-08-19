@@ -4,6 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
+type PrizeType =
+  | "cash"
+  | "rent"
+  | "physical"
+  | "grocery"
+  | "other";
+
 export default function AdminLuckyDrawPage() {
   const [tickets, setTickets] = useState<any[]>([]);
   const [draws, setDraws] = useState<any[]>([]);
@@ -12,7 +19,11 @@ export default function AdminLuckyDrawPage() {
   const [message, setMessage] = useState("");
 
   const [title, setTitle] = useState("");
+  const [prizeType, setPrizeType] = useState<PrizeType>("cash");
   const [prizeAmount, setPrizeAmount] = useState("");
+  const [prizeValue, setPrizeValue] = useState("");
+  const [prizeDescription, setPrizeDescription] = useState("");
+  const [prizeImage, setPrizeImage] = useState("");
   const [ticketPrice, setTicketPrice] = useState("");
   const [creating, setCreating] = useState(false);
   const [completing, setCompleting] = useState(false);
@@ -34,25 +45,29 @@ export default function AdminLuckyDrawPage() {
       return;
     }
 
-    const res = await fetch(`/api/admin/lucky-draw?t=${Date.now()}`, {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      cache: "no-store",
-    });
+    try {
+      const res = await fetch(`/api/admin/lucky-draw?t=${Date.now()}`, {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        cache: "no-store",
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (!res.ok) {
-      setMessage(data.error || "Could not load Lucky Draw.");
+      if (!res.ok) {
+        setMessage(data.error || "Could not load Lucky Draw.");
+        return;
+      }
+
+      setTickets(data.tickets || []);
+      setDraws(data.draws || []);
+      setTotalRevenue(Number(data.totalRevenue || 0));
+    } catch {
+      setMessage("Could not load Lucky Draw.");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    setTickets(data.tickets || []);
-    setDraws(data.draws || []);
-    setTotalRevenue(Number(data.totalRevenue || 0));
-    setLoading(false);
   }
 
   useEffect(() => {
@@ -61,14 +76,18 @@ export default function AdminLuckyDrawPage() {
 
   const openDraw = draws.find((draw) => draw.status === "open");
 
+  const isAutoPaidPrize =
+    prizeType === "cash" || prizeType === "rent";
+
   async function createDraw() {
     setMessage("");
 
-    const prize = Number(prizeAmount);
     const ticket = Number(ticketPrice);
+    const amount = Number(prizeAmount || 0);
+    const value = Number(prizeValue || 0);
 
-    if (!Number.isFinite(prize) || prize <= 0) {
-      setMessage("Enter a valid prize amount.");
+    if (!title.trim()) {
+      setMessage("Enter a prize title.");
       return;
     }
 
@@ -77,52 +96,78 @@ export default function AdminLuckyDrawPage() {
       return;
     }
 
+    if (isAutoPaidPrize && (!Number.isFinite(amount) || amount <= 0)) {
+      setMessage("Enter a valid cash or rent prize amount.");
+      return;
+    }
+
+    if (
+      !isAutoPaidPrize &&
+      (!Number.isFinite(value) || value <= 0)
+    ) {
+      setMessage("Enter the estimated value of the prize.");
+      return;
+    }
+
     const confirmed = window.confirm(
-      `Create a new Lucky Draw with a GH₵${prize.toFixed(
-        2
-      )} prize and GH₵${ticket.toFixed(2)} ticket price?`
+      `Create this Lucky Draw?
+
+Prize: ${title}
+Type: ${prizeType}
+Ticket: GH₵${ticket.toFixed(2)}`
     );
 
     if (!confirmed) return;
 
     setCreating(true);
 
-    const session = await getSession();
+    try {
+      const session = await getSession();
 
-    if (!session) {
-      setMessage("Admin login required.");
+      if (!session) {
+        setMessage("Admin login required.");
+        return;
+      }
+
+      const res = await fetch("/api/admin/lucky-draw/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          title: title.trim(),
+          prizeType,
+          prizeAmount: isAutoPaidPrize ? amount : 0,
+          prizeValue: isAutoPaidPrize ? amount : value,
+          prizeDescription: prizeDescription.trim(),
+          prizeImage: prizeImage.trim(),
+          ticketPrice: ticket,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.error || "Could not create Lucky Draw.");
+        return;
+      }
+
+      setTitle("");
+      setPrizeType("cash");
+      setPrizeAmount("");
+      setPrizeValue("");
+      setPrizeDescription("");
+      setPrizeImage("");
+      setTicketPrice("");
+      setMessage("🎉 New Lucky Draw created successfully.");
+
+      await loadData();
+    } catch {
+      setMessage("Could not create Lucky Draw.");
+    } finally {
       setCreating(false);
-      return;
     }
-
-    const res = await fetch("/api/admin/lucky-draw/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        title: title.trim(),
-        prizeAmount: prize,
-        ticketPrice: ticket,
-      }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setMessage(data.error || "Could not create Lucky Draw.");
-      setCreating(false);
-      return;
-    }
-
-    setTitle("");
-    setPrizeAmount("");
-    setTicketPrice("");
-    setMessage("🎉 New Lucky Draw created successfully.");
-    setCreating(false);
-
-    await loadData();
   }
 
   async function completeDraw() {
@@ -131,10 +176,22 @@ export default function AdminLuckyDrawPage() {
       return;
     }
 
+    const prizeType = openDraw.prize_type || "cash";
+    const isCashOrRent =
+      prizeType === "cash" || prizeType === "rent";
+
+    const prizeText = isCashOrRent
+      ? `GH₵${Number(openDraw.prize_amount || 0).toFixed(2)}`
+      : openDraw.title;
+
     const confirmed = window.confirm(
-      `Select a random winner, close this draw, and pay the GH₵${Number(
-        openDraw.prize_amount
-      ).toFixed(2)} prize?`
+      isCashOrRent
+        ? `Select a random winner, close this draw, and automatically credit ${prizeText} to the winner's wallet?`
+        : `Select a random winner and close this draw?
+
+The winner will receive: ${prizeText}
+
+No cash will automatically be credited. You will arrange prize delivery or collection manually.`
     );
 
     if (!confirmed) return;
@@ -142,41 +199,61 @@ export default function AdminLuckyDrawPage() {
     setCompleting(true);
     setMessage("");
 
-    const session = await getSession();
+    try {
+      const session = await getSession();
 
-    if (!session) {
-      setMessage("Admin login required.");
+      if (!session) {
+        setMessage("Admin login required.");
+        return;
+      }
+
+      const res = await fetch("/api/admin/lucky-draw/complete", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          drawId: openDraw.id,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.error || "Could not complete Lucky Draw.");
+        return;
+      }
+
+      if (data.result.prize_paid) {
+        setMessage(
+          `🏆 Winner selected! Ticket ${data.result.ticket_number} won GH₵${Number(
+            data.result.prize_amount
+          ).toFixed(2)} and the prize was credited to their wallet.`
+        );
+      } else {
+        setMessage(
+          `🏆 Winner selected! Ticket ${data.result.ticket_number} won ${openDraw.title}. Contact the winner to arrange collection or delivery.`
+        );
+      }
+
+      await loadData();
+    } catch {
+      setMessage("Could not complete Lucky Draw.");
+    } finally {
       setCompleting(false);
-      return;
     }
+  }
 
-    const res = await fetch("/api/admin/lucky-draw/complete", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({
-        drawId: openDraw.id,
-      }),
-    });
+  function getPrizeLabel(draw: any) {
+    const type = draw.prize_type || "cash";
 
-    const data = await res.json();
+    if (type === "cash") return "💰 Cash Prize";
+    if (type === "rent") return "🏠 Rent Support";
+    if (type === "grocery") return "🛒 Grocery Prize";
+    if (type === "physical") return "🎁 Physical Prize";
 
-    if (!res.ok) {
-      setMessage(data.error || "Could not complete Lucky Draw.");
-      setCompleting(false);
-      return;
-    }
-
-    setMessage(
-      `🏆 Winner selected! Ticket ${
-        data.result.ticket_number
-      } won GH₵${Number(data.result.prize_amount).toFixed(2)}.`
-    );
-
-    setCompleting(false);
-    await loadData();
+    return "🎁 Other Prize";
   }
 
   return (
@@ -189,7 +266,7 @@ export default function AdminLuckyDrawPage() {
             </h1>
 
             <p className="mt-2 text-white/60">
-              Create draws, manage tickets and select winners.
+              Create cash and real prize draws, manage tickets and select winners.
             </p>
           </div>
 
@@ -218,38 +295,76 @@ export default function AdminLuckyDrawPage() {
             </h2>
 
             <p className="mt-2 text-white/60">
-              Set the prize and ticket price for the next draw.
+              Create a cash prize or a real physical prize.
             </p>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-3">
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
               <div>
                 <label className="text-sm font-bold text-white/60">
-                  Draw Title
+                  Prize Title
                 </label>
 
                 <input
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Example: Weekend Cash Draw"
+                  placeholder="Example: iPhone 16 Pro Max"
                   className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
                 />
               </div>
 
               <div>
                 <label className="text-sm font-bold text-white/60">
-                  Prize Amount (GH₵)
+                  Prize Type
                 </label>
 
-                <input
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  value={prizeAmount}
-                  onChange={(e) => setPrizeAmount(e.target.value)}
-                  placeholder="500"
+                <select
+                  value={prizeType}
+                  onChange={(e) =>
+                    setPrizeType(e.target.value as PrizeType)
+                  }
                   className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                />
+                >
+                  <option value="cash">💰 Cash Prize</option>
+                  <option value="rent">🏠 Rent Support</option>
+                  <option value="physical">🎁 Physical Prize</option>
+                  <option value="grocery">🛒 Grocery / Food</option>
+                  <option value="other">🎁 Other Prize</option>
+                </select>
               </div>
+
+              {isAutoPaidPrize ? (
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Prize Amount (GH₵)
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    value={prizeAmount}
+                    onChange={(e) => setPrizeAmount(e.target.value)}
+                    placeholder="5000"
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Estimated Prize Value (GH₵)
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="0.01"
+                    value={prizeValue}
+                    onChange={(e) => setPrizeValue(e.target.value)}
+                    placeholder="15000"
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="text-sm font-bold text-white/60">
@@ -262,10 +377,64 @@ export default function AdminLuckyDrawPage() {
                   step="0.01"
                   value={ticketPrice}
                   onChange={(e) => setTicketPrice(e.target.value)}
-                  placeholder="5"
+                  placeholder="20"
                   className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
                 />
               </div>
+            </div>
+
+            <div className="mt-4">
+              <label className="text-sm font-bold text-white/60">
+                Prize Description
+              </label>
+
+              <textarea
+                value={prizeDescription}
+                onChange={(e) => setPrizeDescription(e.target.value)}
+                placeholder="Example: Brand new iPhone. Winner can arrange collection or delivery."
+                rows={3}
+                className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-sm font-bold text-white/60">
+                Prize Image URL
+              </label>
+
+              <input
+                type="url"
+                value={prizeImage}
+                onChange={(e) => setPrizeImage(e.target.value)}
+                placeholder="Paste the image URL here"
+                className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+              />
+
+              <p className="mt-2 text-xs text-white/40">
+                You can add an image URL for now. Next, we can build direct image upload.
+              </p>
+            </div>
+
+            {prizeImage && (
+              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+                <img
+                  src={prizeImage}
+                  alt={title || "Prize preview"}
+                  className="h-64 w-full object-contain"
+                />
+              </div>
+            )}
+
+            <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm">
+              {isAutoPaidPrize ? (
+                <p className="text-green-300">
+                  ✓ This prize will automatically be credited to the winner's Fortuna wallet.
+                </p>
+              ) : (
+                <p className="text-yellow-200">
+                  ⚠ This is a real prize. The winner will be recorded, but no cash will be automatically paid.
+                </p>
+              )}
             </div>
 
             <button
@@ -280,61 +449,89 @@ export default function AdminLuckyDrawPage() {
 
         {openDraw && (
           <>
-            <section className="mt-8 rounded-3xl border border-yellow-400/30 bg-yellow-400/10 p-6">
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <h2 className="text-2xl font-black text-yellow-400">
-                    {openDraw.title || "Current Lucky Draw"}
-                  </h2>
+            <section className="mt-8 overflow-hidden rounded-3xl border border-yellow-400/30 bg-yellow-400/10">
+              {openDraw.prize_image && (
+                <img
+                  src={openDraw.prize_image}
+                  alt={openDraw.title}
+                  className="h-72 w-full bg-black object-contain"
+                />
+              )}
 
-                  <p className="mt-2 text-white/60">
-                    Ticket sales are currently open.
-                  </p>
+              <div className="p-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-bold text-yellow-300">
+                      {getPrizeLabel(openDraw)}
+                    </p>
+
+                    <h2 className="mt-2 text-3xl font-black text-yellow-400">
+                      {openDraw.title || "Current Lucky Draw"}
+                    </h2>
+
+                    {openDraw.prize_description && (
+                      <p className="mt-3 max-w-2xl text-white/60">
+                        {openDraw.prize_description}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={completeDraw}
+                    disabled={completing || tickets.length === 0}
+                    className="rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {completing
+                      ? "Selecting Winner..."
+                      : "🏆 Select Winner & Close Draw"}
+                  </button>
                 </div>
-
-                <button
-                  onClick={completeDraw}
-                  disabled={completing || tickets.length === 0}
-                  className="rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {completing
-                    ? "Selecting Winner..."
-                    : "🏆 Select Winner & Close Draw"}
-                </button>
               </div>
             </section>
 
             <div className="mt-8 grid gap-4 md:grid-cols-4">
               <div className="rounded-3xl border border-yellow-400/20 bg-yellow-400/10 p-6">
-                <p className="text-white/60">Current Prize</p>
+                <p className="text-white/60">Prize</p>
 
-                <h2 className="mt-2 text-3xl font-black text-yellow-400">
-                  GH₵{Number(openDraw.prize_amount || 0).toFixed(2)}
+                <h2 className="mt-2 text-xl font-black text-yellow-400">
+                  {openDraw.prize_type === "cash" ||
+                  openDraw.prize_type === "rent"
+                    ? `GH₵${Number(openDraw.prize_amount || 0).toFixed(2)}`
+                    : openDraw.title}
+                </h2>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                <p className="text-white/60">Prize Value</p>
+
+                <h2 className="mt-2 text-2xl font-black">
+                  GH₵
+                  {Number(
+                    openDraw.prize_value ||
+                      openDraw.prize_amount ||
+                      0
+                  ).toFixed(2)}
                 </h2>
               </div>
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
                 <p className="text-white/60">Ticket Price</p>
 
-                <h2 className="mt-2 text-3xl font-black">
+                <h2 className="mt-2 text-2xl font-black">
                   GH₵{Number(openDraw.ticket_price || 0).toFixed(2)}
                 </h2>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+              <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
                 <p className="text-white/60">Tickets Sold</p>
 
-                <h2 className="mt-2 text-3xl font-black">
+                <h2 className="mt-2 text-3xl font-black text-green-300">
                   {tickets.length}
                 </h2>
-              </div>
 
-              <div className="rounded-3xl border border-green-400/20 bg-green-500/10 p-6">
-                <p className="text-white/60">Ticket Revenue</p>
-
-                <h2 className="mt-2 text-3xl font-black text-green-300">
-                  GH₵{totalRevenue.toFixed(2)}
-                </h2>
+                <p className="mt-1 text-sm text-white/50">
+                  Revenue: GH₵{totalRevenue.toFixed(2)}
+                </p>
               </div>
             </div>
 
@@ -358,7 +555,6 @@ export default function AdminLuckyDrawPage() {
                     >
                       <td className="p-4">
                         <p className="font-black">@{ticket.username}</p>
-
                         <p className="text-sm text-white/50">
                           {ticket.first_name} {ticket.last_name}
                         </p>
