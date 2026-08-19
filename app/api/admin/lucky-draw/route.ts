@@ -46,29 +46,25 @@ export async function GET(req: Request) {
       );
     }
 
-    const openDraw = (draws || []).find(
-      (draw) => draw.status === "open"
-    );
+    const drawIds = (draws || []).map((draw) => draw.id);
 
     let tickets: any[] = [];
-    let ticketsError: any = null;
 
-    if (openDraw) {
-      const result = await supabaseAdmin
+    if (drawIds.length > 0) {
+      const { data, error: ticketsError } = await supabaseAdmin
         .from("lucky_draw_tickets")
         .select("*")
-        .eq("draw_id", openDraw.id)
+        .in("draw_id", drawIds)
         .order("created_at", { ascending: false });
 
-      tickets = result.data || [];
-      ticketsError = result.error;
-    }
+      if (ticketsError) {
+        return NextResponse.json(
+          { error: ticketsError.message },
+          { status: 500 }
+        );
+      }
 
-    if (ticketsError) {
-      return NextResponse.json(
-        { error: ticketsError.message },
-        { status: 500 }
-      );
+      tickets = data || [];
     }
 
     const userIds = [

@@ -43,6 +43,64 @@ export async function POST(req: Request) {
       );
     }
 
+    const { data: draw, error: drawError } = await supabaseAdmin
+      .from("lucky_draws")
+      .select("id, title, status, prize_type")
+      .eq("id", drawId)
+      .maybeSingle();
+
+    if (drawError) {
+      return NextResponse.json(
+        { error: drawError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!draw) {
+      return NextResponse.json(
+        { error: "Lucky Draw not found." },
+        { status: 404 }
+      );
+    }
+
+    const status = String(draw.status || "").toLowerCase();
+
+    if (
+      status === "completed" ||
+      status === "complete" ||
+      status === "closed"
+    ) {
+      return NextResponse.json(
+        { error: "This Lucky Draw has already been completed." },
+        { status: 400 }
+      );
+    }
+
+    const { count, error: ticketError } = await supabaseAdmin
+      .from("lucky_draw_tickets")
+      .select("*", {
+        count: "exact",
+        head: true,
+      })
+      .eq("draw_id", drawId);
+
+    if (ticketError) {
+      return NextResponse.json(
+        { error: ticketError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!count || count < 1) {
+      return NextResponse.json(
+        {
+          error:
+            "Cannot select a winner because this Lucky Draw has no tickets.",
+        },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabaseAdmin.rpc(
       "complete_lucky_draw_atomic",
       {
@@ -60,7 +118,10 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       result: data,
-      message: "Winner selected and prize paid successfully.",
+      message:
+        draw.prize_type === "physical"
+          ? "Winner selected successfully. The physical prize must now be arranged for delivery or collection."
+          : "Winner selected and Lucky Draw completed successfully.",
     });
   } catch (error) {
     console.error("COMPLETE LUCKY DRAW ERROR:", error);

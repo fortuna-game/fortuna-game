@@ -60,6 +60,7 @@ export async function POST(req: Request) {
       "physical",
       "rent",
       "grocery",
+      "other",
     ];
 
     const type = validPrizeTypes.includes(prizeType)
@@ -79,26 +80,6 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         { error: "Enter a valid prize value." },
-        { status: 400 }
-      );
-    }
-
-    const { data: existing, error: existingError } = await supabaseAdmin
-      .from("lucky_draws")
-      .select("id")
-      .eq("status", "open")
-      .maybeSingle();
-
-    if (existingError) {
-      return NextResponse.json(
-        { error: existingError.message },
-        { status: 500 }
-      );
-    }
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "Close the current open draw first." },
         { status: 400 }
       );
     }

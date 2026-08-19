@@ -3,39 +3,67 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function GET() {
   try {
-    const { data: draw, error } = await supabaseAdmin
+    // Show every draw that is still active/visible to users.
+    // Completed draws are not returned.
+    const { data: draws, error } = await supabaseAdmin
       .from("lucky_draws")
       .select("*")
-      .eq("status", "open")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .in("status", ["open", "paused", "suspended"])
+      .order("created_at", { ascending: false });
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
-
-    if (!draw) {
       return NextResponse.json(
-        { error: "No Lucky Draw is currently open." },
-        { status: 404 }
+        { error: error.message },
+        { status: 500 }
       );
     }
 
-    const { count } = await supabaseAdmin
+    const drawList = draws || [];
+
+    if (drawList.length === 0) {
+      return NextResponse.json({
+        draws: [],
+      });
+    }
+
+    const drawIds = drawList.map((draw) => draw.id);
+
+    const { data: tickets, error: ticketsError } = await supabaseAdmin
       .from("lucky_draw_tickets")
-      .select("*", { count: "exact", head: true })
-      .eq("draw_id", draw.id);
+      .select("draw_id")
+      .in("draw_id", drawIds);
+
+    if (ticketsError) {
+      return NextResponse.json(
+        { error: ticketsError.message },
+        { status: 500 }
+      );
+    }
+
+    const ticketCounts: Record<string, number> = {};
+
+    for (const draw of drawList) {
+      ticketCounts[draw.id] = 0;
+    }
+
+    for (const ticket of tickets || []) {
+      ticketCounts[ticket.draw_id] =
+        (ticketCounts[ticket.draw_id] || 0) + 1;
+    }
+
+    const formattedDraws = drawList.map((draw) => ({
+      ...draw,
+      totalTickets: ticketCounts[draw.id] || 0,
+    }));
 
     return NextResponse.json({
-      draw,
-      totalTickets: count || 0,
+      draws: formattedDraws,
     });
   } catch (error) {
     console.error("LUCKY DRAW GET ERROR:", error);
 
     return NextResponse.json(
-      { error: "Could not load Lucky Draw." },
+      { error: "Could not load Lucky Draws." },
       { status: 500 }
     );
   }
@@ -75,6 +103,41 @@ export async function POST(req: Request) {
       );
     }
 
+    // Check the draw status before allowing a purchase
+    const { data: draw, error: drawError } = await supabaseAdmin
+      .from("lucky_draws")
+      .select("id, status, title")
+      .eq("id", drawId)
+      .maybeSingle();
+
+    if (drawError || !draw) {
+      return NextResponse.json(
+        { error: "Lucky Draw not found." },
+        { status: 404 }
+      );
+    }
+
+    if (draw.status === "paused") {
+      return NextResponse.json(
+        { error: "This Lucky Draw is currently paused. Ticket purchases are temporarily unavailable." },
+        { status: 400 }
+      );
+    }
+
+    if (draw.status === "suspended") {
+      return NextResponse.json(
+        { error: "This Lucky Draw has been suspended. Ticket purchases are unavailable." },
+        { status: 400 }
+      );
+    }
+
+    if (draw.status !== "open") {
+      return NextResponse.json(
+        { error: "This Lucky Draw is not currently accepting tickets." },
+        { status: 400 }
+      );
+    }
+
     const { data: ticketId, error } = await supabaseAdmin.rpc(
       "buy_lucky_draw_ticket_atomic",
       {
@@ -90,15 +153,23 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: ticket } = await supabaseAdmin
+    const { data: ticket, error: ticketError } = await supabaseAdmin
       .from("lucky_draw_tickets")
       .select("id, ticket_number, amount, created_at")
       .eq("id", ticketId)
       .single();
 
+    if (ticketError || !ticket) {
+      return NextResponse.json(
+        { error: "Ticket was purchased but could not be loaded." },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json({
       success: true,
       ticket,
+      drawId,
       message: "Your Lucky Draw ticket was purchased successfully.",
     });
   } catch (error) {
