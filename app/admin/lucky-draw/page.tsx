@@ -30,6 +30,19 @@ export default function AdminLuckyDrawPage() {
   const [creating, setCreating] = useState(false);
   const [completing, setCompleting] = useState(false);
 
+  const [editingDraw, setEditingDraw] = useState<any | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editPrizeType, setEditPrizeType] =
+    useState<PrizeType>("cash");
+  const [editPrizeAmount, setEditPrizeAmount] = useState("");
+  const [editPrizeValue, setEditPrizeValue] = useState("");
+  const [editPrizeDescription, setEditPrizeDescription] =
+    useState("");
+  const [editPrizeImage, setEditPrizeImage] = useState("");
+  const [editSelectedImage, setEditSelectedImage] =
+    useState<File | null>(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+
   async function getSession() {
     const {
       data: { session },
@@ -48,12 +61,15 @@ export default function AdminLuckyDrawPage() {
     }
 
     try {
-      const res = await fetch(`/api/admin/lucky-draw?t=${Date.now()}`, {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        cache: "no-store",
-      });
+      const res = await fetch(
+        `/api/admin/lucky-draw?t=${Date.now()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          cache: "no-store",
+        }
+      );
 
       const data = await res.json();
 
@@ -74,10 +90,19 @@ export default function AdminLuckyDrawPage() {
 
   useEffect(() => {
     void loadData();
+
+    const interval = window.setInterval(() => {
+      void loadData();
+    }, 5000);
+
+    return () => window.clearInterval(interval);
   }, []);
 
   const isAutoPaidPrize =
     prizeType === "cash" || prizeType === "rent";
+
+  const isEditAutoPaidPrize =
+    editPrizeType === "cash" || editPrizeType === "rent";
 
   async function uploadPrizeImage(file: File) {
     setUploadingImage(true);
@@ -94,13 +119,16 @@ export default function AdminLuckyDrawPage() {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/admin/lucky-draw/upload-image", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: formData,
-      });
+      const res = await fetch(
+        "/api/admin/lucky-draw/upload-image",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: formData,
+        }
+      );
 
       const responseText = await res.text();
 
@@ -109,21 +137,25 @@ export default function AdminLuckyDrawPage() {
       try {
         data = JSON.parse(responseText);
       } catch {
-        console.error("UPLOAD IMAGE RAW RESPONSE:", responseText);
+        console.error(
+          "UPLOAD IMAGE RAW RESPONSE:",
+          responseText
+        );
         setMessage(
-          `Image upload failed (${res.status}): ${responseText.slice(0, 200)}`
+          `Image upload failed (${res.status}): ${responseText.slice(
+            0,
+            200
+          )}`
         );
         return "";
       }
 
       if (!res.ok) {
-        console.error("UPLOAD IMAGE ERROR:", data);
         setMessage(data.error || "Could not upload image.");
         return "";
       }
 
-      setPrizeImage(data.url);
-      return data.url;
+      return data.url || "";
     } catch (error) {
       console.error("UPLOAD IMAGE ERROR:", error);
       setMessage("Could not upload image.");
@@ -145,9 +177,7 @@ export default function AdminLuckyDrawPage() {
     if (selectedImage) {
       uploadedImageUrl = await uploadPrizeImage(selectedImage);
 
-      if (!uploadedImageUrl) {
-        return;
-      }
+      if (!uploadedImageUrl) return;
     }
 
     if (!title.trim()) {
@@ -160,7 +190,10 @@ export default function AdminLuckyDrawPage() {
       return;
     }
 
-    if (isAutoPaidPrize && (!Number.isFinite(amount) || amount <= 0)) {
+    if (
+      isAutoPaidPrize &&
+      (!Number.isFinite(amount) || amount <= 0)
+    ) {
       setMessage("Enter a valid cash or rent prize amount.");
       return;
     }
@@ -193,48 +226,31 @@ Ticket: GH₵${ticket.toFixed(2)}`
         return;
       }
 
-      const res = await fetch("/api/admin/lucky-draw/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          title: title.trim(),
-          prizeType,
-          prizeAmount: isAutoPaidPrize ? amount : 0,
-          prizeValue: isAutoPaidPrize ? amount : value,
-          prizeDescription: prizeDescription.trim(),
-          prizeImage: uploadedImageUrl.trim(),
-          ticketPrice: ticket,
-        }),
-      });
+      const res = await fetch(
+        "/api/admin/lucky-draw/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            title: title.trim(),
+            prizeType,
+            prizeAmount: isAutoPaidPrize ? amount : 0,
+            prizeValue: isAutoPaidPrize ? amount : value,
+            prizeDescription: prizeDescription.trim(),
+            prizeImage: uploadedImageUrl.trim(),
+            ticketPrice: ticket,
+          }),
+        }
+      );
 
-      const responseText = await res.text();
-
-      let data: any = {};
-
-      try {
-        data = JSON.parse(responseText);
-      } catch {
-        console.error("CREATE DRAW RAW RESPONSE:", responseText);
-
-        setMessage(
-          `Server error (${res.status}): ${responseText.slice(0, 300)}`
-        );
-        return;
-      }
-
-      console.log("CREATE DRAW RESPONSE:", {
-        status: res.status,
-        data,
-      });
+      const data = await res.json();
 
       if (!res.ok) {
-        console.error("CREATE DRAW ERROR:", data);
-
         setMessage(
-          `Error ${res.status}: ${data.error || "Could not create Lucky Draw."}`
+          data.error || "Could not create Lucky Draw."
         );
         return;
       }
@@ -245,6 +261,7 @@ Ticket: GH₵${ticket.toFixed(2)}`
       setPrizeValue("");
       setPrizeDescription("");
       setPrizeImage("");
+      setSelectedImage(null);
       setTicketPrice("");
       setMessage("🎉 New Lucky Draw created successfully.");
 
@@ -253,6 +270,137 @@ Ticket: GH₵${ticket.toFixed(2)}`
       setMessage("Could not create Lucky Draw.");
     } finally {
       setCreating(false);
+    }
+  }
+
+  function startEdit(draw: any) {
+    setEditingDraw(draw);
+    setEditTitle(draw.title || "");
+    setEditPrizeType(draw.prize_type || "cash");
+    setEditPrizeAmount(
+      String(draw.prize_amount ?? "")
+    );
+    setEditPrizeValue(
+      String(draw.prize_value ?? draw.prize_amount ?? "")
+    );
+    setEditPrizeDescription(
+      draw.prize_description || ""
+    );
+    setEditPrizeImage(draw.prize_image || "");
+    setEditSelectedImage(null);
+    setMessage("");
+  }
+
+  function cancelEdit() {
+    setEditingDraw(null);
+    setEditTitle("");
+    setEditPrizeType("cash");
+    setEditPrizeAmount("");
+    setEditPrizeValue("");
+    setEditPrizeDescription("");
+    setEditPrizeImage("");
+    setEditSelectedImage(null);
+  }
+
+  async function saveEdit() {
+    if (!editingDraw) return;
+
+    setMessage("");
+
+    const amount = Number(editPrizeAmount || 0);
+    const value = Number(editPrizeValue || 0);
+
+    if (!editTitle.trim()) {
+      setMessage("Enter a prize title.");
+      return;
+    }
+
+    if (
+      isEditAutoPaidPrize &&
+      (!Number.isFinite(amount) || amount <= 0)
+    ) {
+      setMessage("Enter a valid cash or rent prize amount.");
+      return;
+    }
+
+    if (
+      !isEditAutoPaidPrize &&
+      (!Number.isFinite(value) || value <= 0)
+    ) {
+      setMessage("Enter a valid prize value.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Save changes to this Lucky Draw?
+
+Prize: ${editTitle}
+Type: ${editPrizeType}`
+    );
+
+    if (!confirmed) return;
+
+    setSavingEdit(true);
+
+    try {
+      let uploadedImageUrl = editPrizeImage;
+
+      if (editSelectedImage) {
+        uploadedImageUrl = await uploadPrizeImage(
+          editSelectedImage
+        );
+
+        if (!uploadedImageUrl) return;
+      }
+
+      const session = await getSession();
+
+      if (!session) {
+        setMessage("Admin login required.");
+        return;
+      }
+
+      const res = await fetch(
+        "/api/admin/lucky-draw/edit",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            drawId: editingDraw.id,
+            title: editTitle.trim(),
+            prizeType: editPrizeType,
+            prizeAmount: isEditAutoPaidPrize
+              ? amount
+              : 0,
+            prizeValue: isEditAutoPaidPrize
+              ? amount
+              : value,
+            prizeDescription:
+              editPrizeDescription.trim(),
+            prizeImage: uploadedImageUrl.trim(),
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(
+          data.error || "Could not update Lucky Draw."
+        );
+        return;
+      }
+
+      setMessage("✅ Lucky Draw updated successfully.");
+      cancelEdit();
+      await loadData();
+    } catch {
+      setMessage("Could not update Lucky Draw.");
+    } finally {
+      setSavingEdit(false);
     }
   }
 
@@ -282,22 +430,28 @@ Ticket: GH₵${ticket.toFixed(2)}`
         return;
       }
 
-      const res = await fetch("/api/admin/lucky-draw/update-status", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          drawId,
-          status: newStatus,
-        }),
-      });
+      const res = await fetch(
+        "/api/admin/lucky-draw/update-status",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            drawId,
+            status: newStatus,
+          }),
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.error || "Could not update Lucky Draw status.");
+        setMessage(
+          data.error ||
+            "Could not update Lucky Draw status."
+        );
         return;
       }
 
@@ -314,7 +468,9 @@ Ticket: GH₵${ticket.toFixed(2)}`
       prizeType === "cash" || prizeType === "rent";
 
     const prizeText = isCashOrRent
-      ? `GH₵${Number(draw.prize_amount || 0).toFixed(2)}`
+      ? `GH₵${Number(
+          draw.prize_amount || 0
+        ).toFixed(2)}`
       : draw.title;
 
     const confirmed = window.confirm(
@@ -324,7 +480,7 @@ Ticket: GH₵${ticket.toFixed(2)}`
 
 The winner will receive: ${prizeText}
 
-No cash will automatically be credited. You will arrange prize delivery or collection manually.`
+No cash will automatically be credited. Delivery or collection details will be requested from the winner.`
     );
 
     if (!confirmed) return;
@@ -340,33 +496,42 @@ No cash will automatically be credited. You will arrange prize delivery or colle
         return;
       }
 
-      const res = await fetch("/api/admin/lucky-draw/complete", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          drawId: draw.id,
-        }),
-      });
+      const res = await fetch(
+        "/api/admin/lucky-draw/complete",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            drawId: draw.id,
+          }),
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.error || "Could not complete Lucky Draw.");
+        setMessage(
+          data.error || "Could not complete Lucky Draw."
+        );
         return;
       }
 
-      if (data.result.prize_paid) {
+      if (data.result?.prize_paid) {
         setMessage(
-          `🏆 Winner selected! Ticket ${data.result.ticket_number} won GH₵${Number(
+          `🏆 Winner selected! Ticket ${
+            data.result.ticket_number
+          } won GH₵${Number(
             data.result.prize_amount
           ).toFixed(2)} and the prize was credited to their wallet.`
         );
       } else {
         setMessage(
-          `🏆 Winner selected! Ticket ${data.result.ticket_number} won ${draw.title}. Contact the winner to arrange collection or delivery.`
+          `🏆 Winner selected! Ticket ${
+            data.result?.ticket_number
+          } won ${draw.title}. The winner can now submit delivery details.`
         );
       }
 
@@ -399,7 +564,8 @@ No cash will automatically be credited. You will arrange prize delivery or colle
             </h1>
 
             <p className="mt-2 text-white/60">
-              Create cash and real prize draws, manage tickets and select winners.
+              Create, edit and manage Lucky Draw prizes,
+              tickets and winners.
             </p>
           </div>
 
@@ -418,272 +584,402 @@ No cash will automatically be credited. You will arrange prize delivery or colle
         )}
 
         {loading && (
-          <p className="mt-8 text-white/60">Loading Lucky Draw...</p>
+          <p className="mt-8 text-white/60">
+            Loading Lucky Draw...
+          </p>
         )}
 
         {!loading && (
-          <section className="mt-8 rounded-3xl border border-yellow-400/30 bg-yellow-400/10 p-6">
-            <h2 className="text-2xl font-black text-yellow-400">
-              Create New Lucky Draw
-            </h2>
-
-            <p className="mt-2 text-white/60">
-              Create a cash prize or a real physical prize.
-            </p>
-
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              <div>
-                <label className="text-sm font-bold text-white/60">
-                  Prize Title
-                </label>
-
-                <input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Example: iPhone 16 Pro Max"
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-bold text-white/60">
-                  Prize Type
-                </label>
-
-                <select
-                  value={prizeType}
-                  onChange={(e) =>
-                    setPrizeType(e.target.value as PrizeType)
-                  }
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                >
-                  <option value="cash">💰 Cash Prize</option>
-                  <option value="rent">🏠 Rent Support</option>
-                  <option value="physical">🎁 Physical Prize</option>
-                  <option value="grocery">🛒 Grocery / Food</option>
-                  <option value="other">🎁 Other Prize</option>
-                </select>
-              </div>
-
-              {isAutoPaidPrize ? (
-                <div>
-                  <label className="text-sm font-bold text-white/60">
-                    Prize Amount (GH₵)
-                  </label>
-
-                  <input
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={prizeAmount}
-                    onChange={(e) => setPrizeAmount(e.target.value)}
-                    placeholder="5000"
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                  />
-                </div>
-              ) : (
-                <div>
-                  <label className="text-sm font-bold text-white/60">
-                    Estimated Prize Value (GH₵)
-                  </label>
-
-                  <input
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={prizeValue}
-                    onChange={(e) => setPrizeValue(e.target.value)}
-                    placeholder="15000"
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                  />
-                </div>
-              )}
-
-              <div>
-                <label className="text-sm font-bold text-white/60">
-                  Ticket Price (GH₵)
-                </label>
-
-                <input
-                  type="number"
-                  min="1"
-                  step="0.01"
-                  value={ticketPrice}
-                  onChange={(e) => setTicketPrice(e.target.value)}
-                  placeholder="20"
-                  className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-                />
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <label className="text-sm font-bold text-white/60">
-                Prize Description
-              </label>
-
-              <textarea
-                value={prizeDescription}
-                onChange={(e) => setPrizeDescription(e.target.value)}
-                placeholder="Example: Brand new iPhone. Winner can arrange collection or delivery."
-                rows={3}
-                className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
-              />
-            </div>
-
-            <div className="mt-4">
-              <label className="text-sm font-bold text-white/60">
-                Prize Image
-              </label>
-
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => {
-                  const file = e.target.files?.[0] || null;
-                  setSelectedImage(file);
-                  setPrizeImage("");
-                }}
-                className="mt-2 block w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-sm text-white file:mr-4 file:rounded-lg file:border-0 file:bg-yellow-400 file:px-4 file:py-2 file:font-bold file:text-black hover:file:bg-yellow-300"
-              />
-
-              {selectedImage && (
-                <p className="mt-2 text-xs text-green-300">
-                  ✓ Selected: {selectedImage.name}
-                </p>
-              )}
-
-              <p className="mt-2 text-xs text-white/40">
-                Select an image from your device. It will be uploaded automatically when you create the Lucky Draw.
-              </p>
-            </div>
-
-            {prizeImage && (
-              <div className="mt-5 overflow-hidden rounded-2xl border border-white/10 bg-black/40">
-                <img
-                  src={prizeImage}
-                  alt={title || "Prize preview"}
-                  className="h-64 w-full object-contain"
-                />
-              </div>
-            )}
-
-            <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-4 text-sm">
-              {isAutoPaidPrize ? (
-                <p className="text-green-300">
-                  ✓ This prize will automatically be credited to the winner's Fortuna wallet.
-                </p>
-              ) : (
-                <p className="text-yellow-200">
-                  ⚠ This is a real prize. The winner will be recorded, but no cash will be automatically paid.
-                </p>
-              )}
-            </div>
-
-            <button
-              onClick={createDraw}
-              disabled={creating}
-              className="mt-6 rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:opacity-50"
-            >
-              {creating ? "Creating Draw..." : "🎟️ Create & Open Draw"}
-            </button>
-          </section>
-        )}
-
-        {draws.length > 0 && (
-          <section className="mt-8">
-            <div className="mb-5">
-              <h2 className="text-3xl font-black text-yellow-400">
-                Lucky Draws
+          <>
+            <section className="mt-8 rounded-3xl border border-yellow-400/30 bg-yellow-400/10 p-6">
+              <h2 className="text-2xl font-black text-yellow-400">
+                Create New Lucky Draw
               </h2>
 
-              <p className="mt-2 text-white/60">
-                Manage each Lucky Draw independently. You can run multiple draws at the same time.
-              </p>
-            </div>
+              <div className="mt-6 grid gap-4 md:grid-cols-2">
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Prize Title
+                  </label>
 
-            <div className="grid gap-6">
-              {draws.map((draw) => {
-                const drawTickets = tickets.filter(
-                  (ticket) => ticket.draw_id === draw.id
-                );
+                  <input
+                    value={title}
+                    onChange={(e) =>
+                      setTitle(e.target.value)
+                    }
+                    placeholder="Example: iPhone 16 Pro Max"
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  />
+                </div>
 
-                const drawRevenue = drawTickets.reduce(
-                  (sum, ticket) => sum + Number(ticket.amount || 0),
-                  0
-                );
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Prize Type
+                  </label>
 
-                return (
-                <section
-                  key={draw.id}
-                  className="overflow-hidden rounded-3xl border border-white/10 bg-white/5"
-                >
-                  {draw.prize_image && (
-                    <img
-                      src={draw.prize_image}
-                      alt={draw.title}
-                      className="h-72 w-full bg-black object-contain"
+                  <select
+                    value={prizeType}
+                    onChange={(e) =>
+                      setPrizeType(
+                        e.target.value as PrizeType
+                      )
+                    }
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  >
+                    <option value="cash">Cash</option>
+                    <option value="rent">Rent Support</option>
+                    <option value="physical">
+                      Physical Item
+                    </option>
+                    <option value="grocery">Grocery</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {isAutoPaidPrize ? (
+                  <div>
+                    <label className="text-sm font-bold text-white/60">
+                      Prize Amount
+                    </label>
+
+                    <input
+                      type="number"
+                      value={prizeAmount}
+                      onChange={(e) =>
+                        setPrizeAmount(e.target.value)
+                      }
+                      placeholder="Example: 1000"
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
                     />
+                  </div>
+                ) : (
+                  <div>
+                    <label className="text-sm font-bold text-white/60">
+                      Estimated Prize Value
+                    </label>
+
+                    <input
+                      type="number"
+                      value={prizeValue}
+                      onChange={(e) =>
+                        setPrizeValue(e.target.value)
+                      }
+                      placeholder="Example: 5000"
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Ticket Price
+                  </label>
+
+                  <input
+                    type="number"
+                    value={ticketPrice}
+                    onChange={(e) =>
+                      setTicketPrice(e.target.value)
+                    }
+                    placeholder="Example: 10"
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-sm font-bold text-white/60">
+                    Prize Description
+                  </label>
+
+                  <textarea
+                    value={prizeDescription}
+                    onChange={(e) =>
+                      setPrizeDescription(e.target.value)
+                    }
+                    placeholder="Describe the prize"
+                    className="mt-2 min-h-28 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-white/60">
+                    Prize Image
+                  </label>
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) =>
+                      setSelectedImage(
+                        e.target.files?.[0] || null
+                      )
+                    }
+                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                  />
+                </div>
+
+              </div>
+
+              <button
+                onClick={createDraw}
+                disabled={creating || uploadingImage}
+                className="mt-6 rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:opacity-50"
+              >
+                {creating || uploadingImage
+                  ? "Please wait..."
+                  : "Create Lucky Draw"}
+              </button>
+            </section>
+
+            {editingDraw && (
+              <section className="mt-8 rounded-3xl border border-blue-400/30 bg-blue-500/10 p-6">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-black text-blue-300">
+                      Edit Lucky Draw
+                    </h2>
+                    <p className="mt-1 text-sm text-white/60">
+                      Correct any mistake before completing
+                      the draw.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={cancelEdit}
+                    className="rounded-xl border border-white/20 px-4 py-2 font-bold"
+                  >
+                    Cancel Edit
+                  </button>
+                </div>
+
+                <div className="mt-6 grid gap-4 md:grid-cols-2">
+                  <div>
+                    <label className="text-sm font-bold text-white/60">
+                      Prize Title
+                    </label>
+
+                    <input
+                      value={editTitle}
+                      onChange={(e) =>
+                        setEditTitle(e.target.value)
+                      }
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-white/60">
+                      Prize Type
+                    </label>
+
+                    <select
+                      value={editPrizeType}
+                      onChange={(e) =>
+                        setEditPrizeType(
+                          e.target.value as PrizeType
+                        )
+                      }
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                    >
+                      <option value="cash">Cash</option>
+                      <option value="rent">
+                        Rent Support
+                      </option>
+                      <option value="physical">
+                        Physical Item
+                      </option>
+                      <option value="grocery">
+                        Grocery
+                      </option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {isEditAutoPaidPrize ? (
+                    <div>
+                      <label className="text-sm font-bold text-white/60">
+                        Prize Amount
+                      </label>
+
+                      <input
+                        type="number"
+                        value={editPrizeAmount}
+                        onChange={(e) =>
+                          setEditPrizeAmount(
+                            e.target.value
+                          )
+                        }
+                        className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="text-sm font-bold text-white/60">
+                        Estimated Prize Value
+                      </label>
+
+                      <input
+                        type="number"
+                        value={editPrizeValue}
+                        onChange={(e) =>
+                          setEditPrizeValue(
+                            e.target.value
+                          )
+                        }
+                        className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      />
+                    </div>
                   )}
 
-                  <div className="p-6">
-                    <div className="flex flex-wrap items-start justify-between gap-4">
-                      <div>
-                        <div className="flex flex-wrap items-center gap-3">
-                          <p className="text-sm font-bold text-yellow-300">
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-bold text-white/60">
+                      Prize Description
+                    </label>
+
+                    <textarea
+                      value={editPrizeDescription}
+                      onChange={(e) =>
+                        setEditPrizeDescription(
+                          e.target.value
+                        )
+                      }
+                      className="mt-2 min-h-28 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-white/60">
+                      Replace Prize Image
+                    </label>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) =>
+                        setEditSelectedImage(
+                          e.target.files?.[0] || null
+                        )
+                      }
+                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                    />
+                  </div>
+
+                </div>
+
+                <button
+                  onClick={saveEdit}
+                  disabled={savingEdit || uploadingImage}
+                  className="mt-6 rounded-xl bg-blue-400 px-6 py-3 font-black text-black disabled:opacity-50"
+                >
+                  {savingEdit || uploadingImage
+                    ? "Saving..."
+                    : "Save Changes"}
+                </button>
+              </section>
+            )}
+
+            <section className="mt-8">
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <h2 className="text-2xl font-black text-yellow-400">
+                  All Active Lucky Draws
+                </h2>
+
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70">
+                  Total Revenue: GH₵
+                  {totalRevenue.toFixed(2)}
+                </div>
+              </div>
+
+              <div className="mt-6 grid gap-6 lg:grid-cols-2">
+                {draws.map((draw) => {
+                  const drawTickets = tickets.filter(
+                    (ticket) =>
+                      ticket.draw_id === draw.id
+                  );
+
+                  const revenue =
+                    drawTickets.length *
+                    Number(draw.ticket_price || 0);
+
+                  const prizeText =
+                    draw.prize_type === "cash" ||
+                    draw.prize_type === "rent"
+                      ? `GH₵${Number(
+                          draw.prize_amount || 0
+                        ).toFixed(2)}`
+                      : draw.title;
+
+                  return (
+                    <div
+                      key={draw.id}
+                      className="rounded-3xl border border-white/10 bg-white/5 p-6"
+                    >
+                      {draw.prize_image && (
+                        <img
+                          src={draw.prize_image}
+                          alt={draw.title}
+                          className="h-48 w-full rounded-2xl object-cover"
+                        />
+                      )}
+
+                      <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                          <p className="text-sm font-bold text-white/50">
                             {getPrizeLabel(draw)}
                           </p>
 
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-black ${
-                              draw.status === "open"
-                                ? "bg-green-500/20 text-green-300"
-                                : draw.status === "paused"
-                                ? "bg-yellow-400/20 text-yellow-300"
-                                : draw.status === "suspended"
-                                ? "bg-red-500/20 text-red-300"
-                                : "bg-white/10 text-white/60"
-                            }`}
-                          >
-                            {String(draw.status || "open").toUpperCase()}
-                          </span>
+                          <h3 className="mt-1 text-2xl font-black text-yellow-400">
+                            {draw.title}
+                          </h3>
+
+                          <p className="mt-2 text-sm text-white/60">
+                            Status:{" "}
+                            <span className="font-bold">
+                              {draw.status}
+                            </span>
+                          </p>
                         </div>
 
-                        <h2 className="mt-2 text-3xl font-black text-yellow-400">
-                          {draw.title || "Lucky Draw"}
-                        </h2>
-
-                        {draw.prize_description && (
-                          <p className="mt-3 max-w-2xl text-white/60">
-                            {draw.prize_description}
-                          </p>
-                        )}
+                        <button
+                          onClick={() => startEdit(draw)}
+                          disabled={draw.status === "completed"}
+                          className="rounded-xl border border-blue-400/40 px-4 py-2 font-black text-blue-300 disabled:opacity-40"
+                        >
+                          ✏ Edit
+                        </button>
                       </div>
 
-                      <div className="flex flex-wrap gap-2">
+                      {draw.prize_description && (
+                        <p className="mt-4 text-sm text-white/70">
+                          {draw.prize_description}
+                        </p>
+                      )}
+
+                      <div className="mt-6 flex flex-wrap gap-3">
                         {draw.status === "open" && (
                           <>
                             <button
-                              onClick={() => updateDrawStatus(draw.id, "paused")}
-                              className="rounded-xl border border-yellow-400/40 px-4 py-2 font-bold text-yellow-300"
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "paused"
+                                )
+                              }
+                              className="rounded-xl bg-yellow-400 px-4 py-2 font-black text-black"
                             >
                               ⏸ Pause
                             </button>
 
                             <button
-                              onClick={() => updateDrawStatus(draw.id, "suspended")}
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "suspended"
+                                )
+                              }
                               className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-300"
                             >
                               ⚠ Suspend
-                            </button>
-
-                            <button
-                              onClick={() => completeDraw(draw)}
-                              disabled={completing}
-                              className="rounded-xl bg-yellow-400 px-4 py-2 font-black text-black disabled:opacity-50"
-                            >
-                              {completing
-                                ? "Selecting..."
-                                : "🏆 Select Winner & Close"}
                             </button>
                           </>
                         )}
@@ -691,14 +987,24 @@ No cash will automatically be credited. You will arrange prize delivery or colle
                         {draw.status === "paused" && (
                           <>
                             <button
-                              onClick={() => updateDrawStatus(draw.id, "open")}
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "open"
+                                )
+                              }
                               className="rounded-xl bg-green-400 px-4 py-2 font-black text-black"
                             >
                               ▶ Resume
                             </button>
 
                             <button
-                              onClick={() => updateDrawStatus(draw.id, "suspended")}
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "suspended"
+                                )
+                              }
                               className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-300"
                             >
                               ⚠ Suspend
@@ -708,65 +1014,91 @@ No cash will automatically be credited. You will arrange prize delivery or colle
 
                         {draw.status === "suspended" && (
                           <button
-                            onClick={() => updateDrawStatus(draw.id, "open")}
+                            onClick={() =>
+                              updateDrawStatus(
+                                draw.id,
+                                "open"
+                              )
+                            }
                             className="rounded-xl bg-green-400 px-4 py-2 font-black text-black"
                           >
                             ▶ Resume
                           </button>
                         )}
                       </div>
+
+                      <div className="mt-6 grid gap-4 md:grid-cols-4">
+                        <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4">
+                          <p className="text-sm text-white/60">
+                            Prize
+                          </p>
+                          <h3 className="mt-2 text-xl font-black text-yellow-400">
+                            {prizeText}
+                          </h3>
+                        </div>
+
+                        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+                          <p className="text-sm text-white/60">
+                            Ticket Price
+                          </p>
+                          <h3 className="mt-2 text-xl font-black">
+                            GH₵
+                            {Number(
+                              draw.ticket_price || 0
+                            ).toFixed(2)}
+                          </h3>
+                        </div>
+
+                        <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
+                          <p className="text-sm text-white/60">
+                            Tickets Sold
+                          </p>
+                          <h3 className="mt-2 text-xl font-black text-blue-300">
+                            {drawTickets.length}
+                          </h3>
+                        </div>
+
+                        <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
+                          <p className="text-sm text-white/60">
+                            Revenue
+                          </p>
+                          <h3 className="mt-2 text-xl font-black text-green-300">
+                            GH₵{revenue.toFixed(2)}
+                          </h3>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => completeDraw(draw)}
+                        disabled={
+                          completing ||
+                          drawTickets.length === 0 ||
+                          draw.status !== "open"
+                        }
+                        className="mt-6 w-full rounded-xl bg-green-400 px-5 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {draw.status === "completed"
+                          ? "Completed"
+                          : completing
+                          ? "Selecting Winner..."
+                          : drawTickets.length === 0
+                          ? "No Tickets Yet"
+                          : draw.status !== "open"
+                          ? "Draw Must Be Open To Complete"
+                          : "🏆 Select Winner & Complete Draw"}
+                      </button>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <div className="mt-6 grid gap-4 md:grid-cols-5">
-                      <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4">
-                        <p className="text-sm text-white/60">Prize</p>
-
-                        <h3 className="mt-2 text-xl font-black text-yellow-400">
-                          {draw.prize_type === "cash" ||
-                          draw.prize_type === "rent"
-                            ? `GH₵${Number(draw.prize_amount || 0).toFixed(2)}`
-                            : draw.title}
-                        </h3>
-                      </div>
-
-                      <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                        <p className="text-sm text-white/60">Ticket Price</p>
-
-                        <h3 className="mt-2 text-xl font-black">
-                          GH₵{Number(draw.ticket_price || 0).toFixed(2)}
-                        </h3>
-                      </div>
-
-                      <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
-                        <p className="text-sm text-white/60">Tickets Sold</p>
-
-                        <h3 className="mt-2 text-xl font-black text-blue-300">
-                          {drawTickets.length}
-                        </h3>
-                      </div>
-
-                      <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
-                        <p className="text-sm text-white/60">Revenue</p>
-
-                        <h3 className="mt-2 text-xl font-black text-green-300">
-                          GH₵{drawRevenue.toFixed(2)}
-                        </h3>
-                      </div>
-
-                      <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                        <p className="text-sm text-white/60">Status</p>
-
-                        <h3 className="mt-2 text-xl font-black">
-                          {String(draw.status || "open").toUpperCase()}
-                        </h3>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-                );
-              })}
-            </div>
-          </section>
+              {draws.length === 0 && (
+                <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-white/60">
+                  No active Lucky Draws yet.
+                </div>
+              )}
+            </section>
+          </>
         )}
       </div>
     </main>
