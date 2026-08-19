@@ -1,0 +1,66 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+
+    <linearGradient id="main" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ff1493"/>
+      <stop offset="55%" stop-color="#e60073"/>
+      <stop offset="100%" stop-color="#8b2cff"/>
+    </linearGradient>
+
+    <linearGradient id="bolt" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0%" stop-color="#ff4db8"/>
+      <stop offset="100%" stop-color="#7c3cff"/>
+    </linearGradient>
+
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+
+  <g filter="url(#glow)">
+    <!-- Stylized Fortuna P -->
+    <path
+      d="M255 230
+         H520
+         C685 230 790 320 790 465
+         C790 610 685 700 520 700
+         H425
+         L325 880
+         L370 700
+         H255
+         Z
+
+         M425 360
+         V570
+         H515
+         C585 570 630 530 630 465
+         C630 400 585 360 515 360
+         Z"
+      fill="url(#main)"
+      fill-rule="evenodd"
+    />
+
+    <!-- Lightning slash -->
+    <path
+      d="M390 245
+         H520
+         L435 440
+         H545
+         L315 810
+         L365 555
+         H285
+         Z"
+      fill="url(#bolt)"
+    />
+  </g>
+</svg>
