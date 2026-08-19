@@ -146,10 +146,32 @@ Ticket: GH₵${ticket.toFixed(2)}`
         }),
       });
 
-      const data = await res.json();
+      const responseText = await res.text();
+
+      let data: any = {};
+
+      try {
+        data = JSON.parse(responseText);
+      } catch {
+        console.error("CREATE DRAW RAW RESPONSE:", responseText);
+
+        setMessage(
+          `Server error (${res.status}): ${responseText.slice(0, 300)}`
+        );
+        return;
+      }
+
+      console.log("CREATE DRAW RESPONSE:", {
+        status: res.status,
+        data,
+      });
 
       if (!res.ok) {
-        setMessage(data.error || "Could not create Lucky Draw.");
+        console.error("CREATE DRAW ERROR:", data);
+
+        setMessage(
+          `Error ${res.status}: ${data.error || "Could not create Lucky Draw."}`
+        );
         return;
       }
 
@@ -501,18 +523,21 @@ No cash will automatically be credited. You will arrange prize delivery or colle
                 </h2>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-                <p className="text-white/60">Prize Value</p>
+              {(openDraw.prize_type === "cash" ||
+                openDraw.prize_type === "rent") && (
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
+                  <p className="text-white/60">Prize Value</p>
 
-                <h2 className="mt-2 text-2xl font-black">
-                  GH₵
-                  {Number(
-                    openDraw.prize_value ||
-                      openDraw.prize_amount ||
-                      0
-                  ).toFixed(2)}
-                </h2>
-              </div>
+                  <h2 className="mt-2 text-2xl font-black">
+                    GH₵
+                    {Number(
+                      openDraw.prize_value ||
+                        openDraw.prize_amount ||
+                        0
+                    ).toFixed(2)}
+                  </h2>
+                </div>
+              )}
 
               <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
                 <p className="text-white/60">Ticket Price</p>
