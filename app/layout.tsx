@@ -8,14 +8,21 @@ export const metadata: Metadata = {
   title: "Fortuna Play",
   description: "Play. Win. Celebrate.",
   applicationName: "Fortuna Play",
+
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
+
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "Fortuna Play",
-  },
-  icons: {
-    icon: "/icon-192.png",
-    apple: "/apple-touch-icon.png",
   },
 };
 
@@ -31,6 +38,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+      </head>
       <body className="bg-black text-white">
         <VisitorTracker />
         <SessionTimeout />
