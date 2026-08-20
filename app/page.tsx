@@ -18,54 +18,43 @@ export default function Home() {
       </div>
 
       <section className="mx-auto mt-10 max-w-7xl px-6">
-        <div className="overflow-hidden rounded-[40px] border border-[#F5B700]/40 bg-gradient-to-br from-[#F5B700]/15 via-[#0B2545] to-[#071A33] p-6 shadow-2xl sm:p-10">
-          <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto]">
-            <div>
+        <div className="rounded-3xl border border-[#F5B700]/40 bg-gradient-to-r from-[#F5B700]/10 via-[#0B2545] to-[#071A33] p-5 shadow-xl sm:p-6">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full bg-red-500 px-4 py-2 text-xs font-black tracking-wider text-white">
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-white"></span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-red-500 px-3 py-1.5 text-xs font-black text-white">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
                   LIVE DRAW
                 </span>
 
-                <span className="rounded-full border border-[#F5B700]/30 bg-[#F5B700]/10 px-4 py-2 text-xs font-black text-[#FFD54A]">
+                <span className="rounded-full border border-[#F5B700]/30 bg-[#F5B700]/10 px-3 py-1.5 text-xs font-black text-[#FFD54A]">
                   WINNERS ANNOUNCEMENT
                 </span>
               </div>
 
-              <h2 className="mt-6 text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl">
+              <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
                 Watch the Live Draw & See Who Wins
               </h2>
 
-              <p className="mt-5 max-w-2xl text-base leading-7 text-[#B4C0D1] sm:text-lg">
-                Join the excitement as Fortuna Play announces Lucky Draw winners.
-                Watch the live results and see the selected winners and prizes.
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-[#B4C0D1]">
+                Watch live Lucky Draw selections and see previously selected winners.
               </p>
-
-              <div className="mt-7 flex flex-wrap gap-4">
-                <a
-                  href="/lucky-draw/live"
-                  className="inline-flex items-center gap-3 rounded-full bg-[#FFD54A] px-7 py-4 font-black text-black transition hover:scale-105 hover:bg-yellow-300"
-                >
-                  <span>🔴</span>
-                  Watch Live Draw
-                  <span>→</span>
-                </a>
-
-                <a
-                  href="/winners"
-                  className="inline-flex items-center gap-3 rounded-full border border-[#4D94F5] px-7 py-4 font-black text-white transition hover:bg-[#4D94F5]"
-                >
-                  View All Winners
-                  <span>🏆</span>
-                </a>
-              </div>
             </div>
 
-            <div className="flex justify-center">
-              <div className="relative flex h-44 w-44 items-center justify-center rounded-full border border-[#F5B700]/50 bg-[#071A33]/80 text-7xl shadow-2xl sm:h-52 sm:w-52 sm:text-8xl">
-                <div className="absolute inset-3 animate-pulse rounded-full border border-[#F5B700]/20"></div>
-                ��
-              </div>
+            <div className="flex shrink-0 flex-wrap gap-3">
+              <a
+                href="/lucky-draw/live"
+                className="rounded-full bg-[#FFD54A] px-5 py-3 font-black text-black transition hover:bg-yellow-300"
+              >
+                🔴 Watch Live Draw →
+              </a>
+
+              <a
+                href="/winners"
+                className="rounded-full border border-[#4D94F5] px-5 py-3 font-black text-white transition hover:bg-[#4D94F5]"
+              >
+                🏆 View All Winners
+              </a>
             </div>
           </div>
         </div>
