@@ -21,11 +21,14 @@ export async function GET(request: Request) {
         draw_at,
         created_at
       `)
-      .in("status", ["open", "selecting", "completed"])
       .order("created_at", { ascending: false });
 
     if (requestedDrawId) {
+      // A specific draw ID is a replay request, so completed draws are allowed.
       drawsQuery = drawsQuery.eq("id", requestedDrawId);
+    } else {
+      // The normal Live Draw page must NEVER fall back to a completed draw.
+      drawsQuery = drawsQuery.in("status", ["open", "selecting"]);
     }
 
     const { data: draws, error: drawsError } =
