@@ -4,14 +4,44 @@ import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 const games = [
-  { icon: "🎟️", name: "Lucky Draw", href: "/lucky-draw" },
-  { icon: "🧠", name: "Memory Match", href: "/skill-games/memory-match" },
-  { icon: "🔢", name: "Math Rush", href: "/skill-games/math-rush" },
-  { icon: "🏹", name: "Target Challenge", href: "/skill-games/target-challenge" },
-  { icon: "🧩", name: "Stack Balance", href: "/skill-games/stack-balance" },
-  { icon: "🏃", name: "Maze Escape", href: "/skill-games/maze-escape" },
-  { icon: "❓", name: "Trivia Challenge", href: "/skill-games/trivia" },
-  { icon: "🎮", name: "All Skill Games", href: "/skill-games" },
+  {
+    icon: "💰",
+    name: "Lucky Draw",
+    description: "Get in. Get lucky. Win exciting prizes.",
+    href: "/skill-games/lucky-draw",
+    featured: true,
+  },
+  {
+    icon: "🎁",
+    name: "Prize Vault",
+    description: "Pick a vault and unlock a surprise prize.",
+    href: "/skill-games/prize-vault",
+    featured: true,
+  },
+  {
+    icon: "🧠",
+    name: "Trivia Sprint",
+    description: "Test your knowledge.",
+    href: "/skill-games/trivia",
+  },
+  {
+    icon: "➗",
+    name: "Math Rush",
+    description: "Fast calculations.",
+    href: "/skill-games/math-rush",
+  },
+  {
+    icon: "🔤",
+    name: "Word Puzzle",
+    description: "Test your word mastery.",
+    href: "/skill-games/word-puzzle",
+  },
+  {
+    icon: "🧩",
+    name: "Memory Match",
+    description: "Challenge your memory.",
+    href: "/skill-games/memory-match",
+  },
 ];
 
 export default function FeaturedGames() {
@@ -32,15 +62,29 @@ export default function FeaturedGames() {
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-24">
-      <h2 className="text-center text-5xl font-black text-white">
-        Featured Skill Games
-      </h2>
+      <div className="text-center">
+        <p className="text-xs font-black uppercase tracking-[0.3em] text-[#FFD54A]">
+          Games & Challenges
+        </p>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <h2 className="mt-3 text-4xl font-black text-white sm:text-5xl">
+          Play. Challenge yourself. Win.
+        </h2>
+
+        <p className="mx-auto mt-4 max-w-2xl text-[#9AAAC1]">
+          Enter exciting draws, unlock prizes, and test your skills.
+        </p>
+      </div>
+
+      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {games.map((game) => (
           <div
             key={game.name}
-            className="rounded-3xl border border-[#32659D] bg-[#0B2545]/70 p-6"
+            className={`rounded-3xl border p-6 shadow-xl ${
+              game.featured
+                ? "border-[#F5B700]/60 bg-[#0B2545]"
+                : "border-[#32659D] bg-[#0B2545]/70"
+            }`}
           >
             <div className="text-5xl">{game.icon}</div>
 
@@ -48,15 +92,33 @@ export default function FeaturedGames() {
               {game.name}
             </h3>
 
+            <p className="mt-2 text-sm text-[#9AAAC1]">
+              {game.description}
+            </p>
+
             <button
               type="button"
               onClick={() => startGame(game.href)}
-              className="mt-6 block w-full rounded-xl bg-[#3F82DD] py-4 text-center font-black text-black hover:bg-blue-400"
+              className={`mt-6 block w-full rounded-xl py-4 text-center font-black text-black transition ${
+                game.featured
+                  ? "bg-[#FFD54A] hover:bg-yellow-300"
+                  : "bg-[#3F82DD] hover:bg-blue-400"
+              }`}
             >
-              Start Now
+              Play Now
             </button>
           </div>
         ))}
+      </div>
+
+      <div className="mt-10 text-center">
+        <button
+          type="button"
+          onClick={() => router.push("/skill-games")}
+          className="rounded-xl border border-[#4D94F5] px-8 py-4 font-black text-white transition hover:bg-[#4D94F5]"
+        >
+          View All Games →
+        </button>
       </div>
     </section>
   );
