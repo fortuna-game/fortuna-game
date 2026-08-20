@@ -33,7 +33,11 @@ const ROLL_SECONDS = 60;
 const REVEAL_SECONDS = 25;
 const TOTAL_SECONDS = ROLL_SECONDS + REVEAL_SECONDS;
 
-export default function LiveTicketMachine() {
+export default function LiveTicketMachine({
+  drawId,
+}: {
+  drawId?: string;
+}) {
   const [data, setData] = useState<LiveData | null>(null);
   const [now, setNow] = useState(Date.now());
 
@@ -44,7 +48,11 @@ export default function LiveTicketMachine() {
 
   async function load() {
     try {
-      const response = await fetch("/api/lucky-draw/live", {
+      const endpoint = drawId
+        ? `/api/lucky-draw/live?draw=${encodeURIComponent(drawId)}`
+        : "/api/lucky-draw/live";
+
+      const response = await fetch(endpoint, {
         cache: "no-store",
       });
 
@@ -71,7 +79,7 @@ export default function LiveTicketMachine() {
     }, 2000);
 
     return () => clearInterval(refresh);
-  }, []);
+  }, [drawId]);
 
   useEffect(() => {
     const timer = setInterval(() => {

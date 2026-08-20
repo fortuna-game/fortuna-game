@@ -30,53 +30,66 @@ export default function LiveLuckyDrawPage() {
   const [draws, setDraws] = useState<Draw[]>([]);
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState("");
+  const [replayDrawId, setReplayDrawId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setReplayDrawId(params.get("draw"));
+  }, []);
 
   async function loadResults() {
     try {
-      const res = await fetch("/api/lucky-draw/live", {
+      const endpoint = replayDrawId
+        ? `/api/lucky-draw/live?draw=${encodeURIComponent(replayDrawId)}`
+        : "/api/lucky-draw/live";
+
+      const res = await fetch(endpoint, {
         cache: "no-store",
       });
 
       const data = await res.json();
 
       if (res.ok && data?.draw) {
-        const liveDraw = data.draw;
+        const draw = data.draw;
 
-        const selected_winners = (data.winners || []).map(
-          (winner: {
-            id: string;
-            winner_position: number;
-            selected_at: string;
-            username?: string | null;
-          }) => ({
-            id: winner.id,
-            winner_position: winner.winner_position,
-            selected_at: winner.selected_at,
-            name: winner.username || "Winner",
-          })
-        );
+        const isAllowed =
+          replayDrawId ||
+          draw.status === "open" ||
+          draw.status === "selecting";
 
-        setDraws([
-          {
-            id: liveDraw.id,
-            title: liveDraw.title,
-            prize_amount: liveDraw.prize_amount ?? null,
-            prize_type: liveDraw.prize_type ?? null,
-            prize_description: liveDraw.prize_description ?? null,
-            prize_image: liveDraw.prize_image ?? null,
-            prize_value: liveDraw.prize_value ?? null,
-            status: liveDraw.status,
-            winner_count: Number(liveDraw.winner_count || 1),
-            selection_started_at:
-              liveDraw.selection_started_at ?? null,
-            participant_count: Number(
-              liveDraw.participant_count || 0
-            ),
-            selected_winners,
-          },
-        ]);
+        if (!isAllowed) {
+          setDraws([]);
+        } else {
+          setDraws([
+            {
+              id: draw.id,
+              title: draw.title,
+              prize_amount: draw.prize_amount ?? null,
+              prize_type: draw.prize_type ?? null,
+              prize_description: draw.prize_description ?? null,
+              prize_image: draw.prize_image ?? null,
+              prize_value: draw.prize_value ?? null,
+              status: draw.status,
+              winner_count: Number(draw.winner_count || 1),
+              selection_started_at: draw.selection_started_at ?? null,
+              participant_count: Number(draw.participant_count || 0),
+              selected_winners: (data.winners || []).map(
+                (winner: {
+                  id: string;
+                  winner_position: number;
+                  selected_at: string;
+                  username?: string | null;
+                }) => ({
+                  id: winner.id,
+                  winner_position: winner.winner_position,
+                  selected_at: winner.selected_at,
+                  name: winner.username || "Winner",
+                })
+              ),
+            },
+          ]);
+        }
       } else {
-        // No active draw: do NOT fall back to completed/recorded draws.
         setDraws([]);
       }
 
@@ -90,6 +103,13 @@ export default function LiveLuckyDrawPage() {
   }
 
   useEffect(() => {
+    if (replayDrawId === null) {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has("draw")) {
+        return;
+      }
+    }
+
     loadResults();
 
     const interval = setInterval(() => {
@@ -97,7 +117,7 @@ export default function LiveLuckyDrawPage() {
     }, 2000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [replayDrawId]);
 
   return (
     <main className="min-h-screen bg-[#071A33] px-4 py-8 text-white sm:px-6 lg:px-4 sm:px-6 lg:px-10">
@@ -117,7 +137,9 @@ export default function LiveLuckyDrawPage() {
             </p>
           </div>
 
-        <LiveTicketMachine />
+        {!loading && (replayDrawId || draws.length > 0) && (
+          <LiveTicketMachine drawId={replayDrawId || undefined} />
+        )}
 
           <Link
             href="/lucky-draw"
