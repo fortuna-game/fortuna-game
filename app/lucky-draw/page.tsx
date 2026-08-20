@@ -301,7 +301,7 @@ export default function LuckyDrawPage() {
                       <img
                         src={draw.prize_image}
                         alt={draw.title}
-                        className="mx-auto aspect-[3/4] w-full max-w-sm rounded-xl border border-[#38BDF8]/15 object-cover"
+                        className="h-48 w-full rounded-xl border border-[#38BDF8]/15 object-cover sm:h-64"
                       />
                     </div>
                   )}
@@ -491,7 +491,7 @@ export default function LuckyDrawPage() {
                 ?
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-6 flex gap-3">
                 <button
                   onClick={() => setConfirmDraw(null)}
                   className="flex-1 rounded-xl border border-white/15 px-4 py-3 font-bold text-white/75"

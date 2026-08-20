@@ -184,15 +184,15 @@ export default function PrizeVaultPage() {
     fulfillmentType !== "wallet";
 
   return (
-    <main className="min-h-screen bg-[#071A33] px-4 py-10 text-white">
+    <main className="min-h-screen bg-black px-4 py-10 text-white">
       <div className="mx-auto max-w-4xl text-center">
         <div className="text-6xl">🎁</div>
 
-        <h1 className="mt-4 text-4xl font-black text-[#4D94F5]">
+        <h1 className="mt-4 text-4xl font-black text-pink-500">
           Fortuna Prize Vault
         </h1>
 
-        <p className="mt-3 text-[#9AAAC1]">
+        <p className="mt-3 text-white/60">
           Choose one mystery vault for GH₵20 and reveal your result.
         </p>
 
@@ -210,12 +210,12 @@ export default function PrizeVaultPage() {
 
         {playing && (
           <>
-            <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5 text-left">
-              <h2 className="text-xl font-black text-[#66A7FF]">
+            <div className="mx-auto mt-6 max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-left">
+              <h2 className="text-xl font-black text-pink-400">
                 📋 How to Play
               </h2>
 
-              <p className="mt-3 leading-7 text-[#B4C0D1]">
+              <p className="mt-3 leading-7 text-white/70">
                 Each play costs GH₵20. Choose one of the 12 mystery vaults.
                 Your entry fee is deducted when you select a vault. If you win
                 an item, airtime, data, food or voucher, submit the requested
@@ -223,20 +223,20 @@ export default function PrizeVaultPage() {
               </p>
             </div>
 
-            <div className="mx-auto mt-5 max-w-xl rounded-3xl border border-[#2A5688] bg-[#3F82DD]/10 p-5">
-              <p className="text-sm text-[#9AAAC1]">Entry Fee</p>
+            <div className="mx-auto mt-5 max-w-xl rounded-3xl border border-pink-500/20 bg-pink-500/10 p-5">
+              <p className="text-sm text-white/60">Entry Fee</p>
 
-              <p className="mt-1 text-3xl font-black text-[#66A7FF]">
+              <p className="mt-1 text-3xl font-black text-pink-400">
                 GH₵20
               </p>
 
-              <p className="mt-2 text-sm text-[#9AAAC1]">
+              <p className="mt-2 text-sm text-white/60">
                 Possible prizes include smartphones, wigs, shopping vouchers,
                 pizza, lunch, data, airtime, cash and surprise gifts.
               </p>
             </div>
 
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:grid-cols-4">
+            <div className="mt-8 grid grid-cols-3 gap-3 sm:grid-cols-4">
               {Array.from({ length: 12 }).map((_, index) => (
                 <button
                   key={index}
@@ -244,15 +244,15 @@ export default function PrizeVaultPage() {
                   onClick={() => void openVault(index)}
                   className={`group flex aspect-square flex-col items-center justify-center rounded-3xl border font-black transition ${
                     selected === index
-                      ? "scale-105 border-blue-400 bg-[#3F82DD]/20"
-                      : "border-[#2A5688] bg-[#0B2545]/70 hover:scale-105 hover:border-blue-400"
+                      ? "scale-105 border-pink-400 bg-pink-500/20"
+                      : "border-pink-500/20 bg-white/5 hover:scale-105 hover:border-pink-400"
                   } disabled:cursor-not-allowed`}
                 >
                   <span className="text-4xl transition group-hover:scale-110">
                     🎁
                   </span>
 
-                  <span className="mt-2 text-sm text-[#9AAAC1]">
+                  <span className="mt-2 text-sm text-white/60">
                     Vault {index + 1}
                   </span>
                 </button>
@@ -262,14 +262,14 @@ export default function PrizeVaultPage() {
         )}
 
         {opening && (
-          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-[#32659D] bg-[#3F82DD]/10 p-8">
+          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-pink-500/30 bg-pink-500/10 p-8">
             <div className="animate-pulse text-7xl">🔓</div>
 
-            <h2 className="mt-4 text-2xl font-black text-[#66A7FF]">
+            <h2 className="mt-4 text-2xl font-black text-pink-400">
               Opening Vault {selected !== null ? selected + 1 : ""}...
             </h2>
 
-            <p className="mt-3 text-[#9AAAC1]">
+            <p className="mt-3 text-white/60">
               Revealing your result.
             </p>
           </div>
@@ -280,7 +280,7 @@ export default function PrizeVaultPage() {
             className={`mx-auto mt-10 max-w-xl rounded-3xl border p-6 sm:p-8 ${
               result.won
                 ? "border-green-400/30 bg-green-500/10"
-                : "border-[#32659D] bg-[#3F82DD]/10"
+                : "border-pink-500/30 bg-pink-500/10"
             }`}
           >
             <div className="text-7xl">
@@ -289,7 +289,7 @@ export default function PrizeVaultPage() {
 
             <h2
               className={`mt-4 text-3xl font-black ${
-                result.won ? "text-green-300" : "text-[#66A7FF]"
+                result.won ? "text-green-300" : "text-pink-400"
               }`}
             >
               {result.won ? "Congratulations!" : "Try Again"}
@@ -300,22 +300,22 @@ export default function PrizeVaultPage() {
             </p>
 
             {result.won && (
-              <p className="mt-3 text-xl font-black text-[#FFE08A]">
+              <p className="mt-3 text-xl font-black text-yellow-300">
                 Prize Value: GH₵{Number(result.prize?.value || 0).toFixed(2)}
               </p>
             )}
 
-            <p className="mt-3 text-[#9AAAC1]">
+            <p className="mt-3 text-white/60">
               {result.prize?.description}
             </p>
 
             {result.cashCredited && (
-              <div className="mt-5 rounded-2xl border border-green-400/20 bg-[#071A33]/30 p-4">
+              <div className="mt-5 rounded-2xl border border-green-400/20 bg-black/30 p-4">
                 <p className="font-black text-green-300">
                   Cash credited automatically
                 </p>
 
-                <p className="mt-2 text-sm text-[#9AAAC1]">
+                <p className="mt-2 text-sm text-white/60">
                   GH₵{Number(result.prize?.value || 0).toFixed(2)} has been
                   added to your Fortuna wallet.
                 </p>
@@ -330,34 +330,34 @@ export default function PrizeVaultPage() {
             )}
 
             {claimRequired && !claimSubmitted && (
-              <div className="mt-6 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5 text-left">
-                <h3 className="text-xl font-black text-[#66A7FF]">
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/40 p-5 text-left">
+                <h3 className="text-xl font-black text-pink-400">
                   Submit Prize Details
                 </h3>
 
                 {needsNetwork && (
-                  <p className="mt-2 text-sm text-[#9AAAC1]">
+                  <p className="mt-2 text-sm text-white/60">
                     Enter the phone number and network that should receive your{" "}
                     {fulfillmentType === "airtime" ? "airtime" : "data bundle"}.
                   </p>
                 )}
 
                 {fulfillmentType === "food_delivery" && (
-                  <p className="mt-2 text-sm text-[#9AAAC1]">
+                  <p className="mt-2 text-sm text-white/60">
                     Enter your full delivery details so Fortuna Admin can arrange
                     your food delivery.
                   </p>
                 )}
 
                 {fulfillmentType === "delivery" && (
-                  <p className="mt-2 text-sm text-[#9AAAC1]">
+                  <p className="mt-2 text-sm text-white/60">
                     Enter your full delivery details so Fortuna Admin can deliver
                     your prize.
                   </p>
                 )}
 
                 {needsVoucherDetails && (
-                  <p className="mt-2 text-sm text-[#9AAAC1]">
+                  <p className="mt-2 text-sm text-white/60">
                     Enter your name and phone number so Fortuna Admin can send or
                     arrange your voucher.
                   </p>
@@ -368,7 +368,7 @@ export default function PrizeVaultPage() {
                     value={fullName}
                     onChange={(event) => setFullName(event.target.value)}
                     placeholder="Full name"
-                    className="mt-4 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                    className="mt-4 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                   />
                 )}
 
@@ -377,14 +377,14 @@ export default function PrizeVaultPage() {
                   value={phone}
                   onChange={(event) => setPhone(event.target.value)}
                   placeholder="Phone number"
-                  className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                  className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                 />
 
                 {needsNetwork && (
                   <select
                     value={network}
                     onChange={(event) => setNetwork(event.target.value)}
-                    className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                    className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                   >
                     <option value="">Select network</option>
                     <option value="MTN">MTN</option>
@@ -399,14 +399,14 @@ export default function PrizeVaultPage() {
                       value={region}
                       onChange={(event) => setRegion(event.target.value)}
                       placeholder="Region"
-                      className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                      className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                     />
 
                     <input
                       value={city}
                       onChange={(event) => setCity(event.target.value)}
                       placeholder="City or town"
-                      className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                      className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                     />
 
                     <textarea
@@ -414,7 +414,7 @@ export default function PrizeVaultPage() {
                       onChange={(event) => setAddress(event.target.value)}
                       placeholder="Full delivery address and nearest landmark"
                       rows={4}
-                      className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                      className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                     />
                   </>
                 )}
@@ -424,7 +424,7 @@ export default function PrizeVaultPage() {
                   onChange={(event) => setNote(event.target.value)}
                   placeholder="Additional note (optional)"
                   rows={3}
-                  className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
+                  className="mt-3 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
                 />
 
                 <button
@@ -440,12 +440,12 @@ export default function PrizeVaultPage() {
             )}
 
             {claimSubmitted && (
-              <div className="mt-5 rounded-2xl border border-green-400/20 bg-[#071A33]/30 p-4">
+              <div className="mt-5 rounded-2xl border border-green-400/20 bg-black/30 p-4">
                 <p className="font-black text-green-300">
                   Prize claim submitted
                 </p>
 
-                <p className="mt-2 text-sm text-[#9AAAC1]">
+                <p className="mt-2 text-sm text-white/60">
                   Fortuna Admin can now see your details and process your prize.
                 </p>
               </div>
@@ -454,13 +454,13 @@ export default function PrizeVaultPage() {
             <button
               onClick={playAgain}
               disabled={claimRequired && !claimSubmitted}
-              className="mt-6 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
+              className="mt-6 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
             >
               Play Again — GH₵20
             </button>
 
             {claimRequired && !claimSubmitted && (
-              <p className="mt-3 text-xs text-[#8295B0]">
+              <p className="mt-3 text-xs text-white/50">
                 Submit your prize details before playing again.
               </p>
             )}
@@ -469,7 +469,7 @@ export default function PrizeVaultPage() {
 
         <Link
           href="/skill-games"
-          className="mt-8 inline-block rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-6 py-3 font-bold"
+          className="mt-8 inline-block rounded-xl border border-white/10 bg-white/5 px-6 py-3 font-bold"
         >
           ← Back to Skill Games
         </Link>
