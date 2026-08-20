@@ -283,7 +283,7 @@ export default function LiveTicketMachine({
             <p className="mt-1 whitespace-nowrap text-base font-black text-green-300 sm:text-lg">
               {revealing && winner?.ticket_number
   ? "🏆 WINNER SELECTED"
-  : "�� SELECTING"}
+  : "SELECTING"}
             </p>
           </div>
         </div>
