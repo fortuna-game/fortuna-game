@@ -26,11 +26,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: deposit } = await supabaseAdmin
+    const { data: deposit, error: depositError } = await supabaseAdmin
       .from("deposits")
-      .select("*")
+      .select("id, user_id, amount, reference, status")
       .eq("reference", reference)
       .maybeSingle();
+
+    if (depositError) {
+      console.error("DEPOSIT LOOKUP ERROR:", depositError);
+
+      return NextResponse.json(
+        { error: depositError.message },
+        { status: 500 }
+      );
+    }
 
     if (!deposit) {
       return NextResponse.json(
@@ -39,6 +48,7 @@ export async function POST(req: Request) {
       );
     }
 
+    // Terminal states must never be processed again.
     if (
       deposit.status === "completed" ||
       deposit.status === "failed" ||
@@ -46,10 +56,15 @@ export async function POST(req: Request) {
       deposit.status === "declined" ||
       deposit.status === "expired"
     ) {
-      return NextResponse.json({ success: true });
+      return NextResponse.json({
+        success: true,
+        status: deposit.status,
+      });
     }
 
-    const normalizedStatus = String(status || "").toLowerCase();
+    const normalizedStatus = String(status || "")
+      .trim()
+      .toLowerCase();
 
     const isSuccessful =
       normalizedStatus.includes("success") ||
@@ -69,40 +84,99 @@ export async function POST(req: Request) {
     const isFailed =
       normalizedStatus.includes("failed");
 
+    // SUCCESS: keep the existing atomic wallet-crediting flow.
     if (isSuccessful) {
-      const { error: completeError } = await supabaseAdmin.rpc("complete_deposit_atomic", {
-        p_reference: reference,
-      });
+      const { error: completeError } =
+        await supabaseAdmin.rpc("complete_deposit_atomic", {
+          p_reference: reference,
+        });
 
       if (completeError) {
-        return NextResponse.json({ error: completeError.message }, { status: 500 });
+        console.error(
+          "COMPLETE DEPOSIT ERROR:",
+          completeError
+        );
+
+        return NextResponse.json(
+          { error: completeError.message },
+          { status: 500 }
+        );
       }
-    } else if (isCancelled || isDeclined || isExpired || isFailed) {
-      const failureStatus = isCancelled
-        ? "cancelled"
-        : isDeclined
-        ? "declined"
-        : isExpired
-        ? "expired"
-        : "failed";
 
-      await supabaseAdmin
-        .from("deposits")
-        .update({ status: failureStatus })
-        .eq("id", deposit.id);
-
-      await supabaseAdmin
-        .from("wallet_transactions")
-        .insert({
-          user_id: deposit.user_id,
-          type: "deposit",
-          amount: Number(deposit.amount),
-          status: failureStatus,
-          reference,
-        });
+      return NextResponse.json({
+        success: true,
+        status: "completed",
+      });
     }
 
-    return NextResponse.json({ success: true });
+    // Only a confirmed provider result should leave PENDING.
+    let finalStatus:
+      | "cancelled"
+      | "declined"
+      | "expired"
+      | "failed"
+      | null = null;
+
+    if (isCancelled) {
+      finalStatus = "cancelled";
+    } else if (isDeclined) {
+      finalStatus = "declined";
+    } else if (isExpired) {
+      finalStatus = "expired";
+    } else if (isFailed) {
+      finalStatus = "failed";
+    }
+
+    // Unknown / missing / inconclusive status:
+    // leave the deposit PENDING.
+    if (!finalStatus) {
+      console.log(
+        "HUBTEL CALLBACK INCONCLUSIVE:",
+        reference,
+        normalizedStatus || "(empty status)"
+      );
+
+      return NextResponse.json({
+        success: true,
+        status: "pending",
+      });
+    }
+
+    // Change the deposit only if it is still pending.
+    // This prevents duplicate callbacks from creating duplicate history rows.
+    const { data: updatedDeposit, error: updateError } =
+      await supabaseAdmin
+        .from("deposits")
+        .update({ status: finalStatus })
+        .eq("id", deposit.id)
+        .eq("status", "pending")
+        .select("id, status")
+        .maybeSingle();
+
+    if (updateError) {
+      console.error(
+        "UPDATE DEPOSIT STATUS ERROR:",
+        updateError
+      );
+
+      return NextResponse.json(
+        { error: updateError.message },
+        { status: 500 }
+      );
+    }
+
+    // Another callback/request may already have finalized it.
+    if (!updatedDeposit) {
+      return NextResponse.json({
+        success: true,
+        status: finalStatus,
+      });
+    }
+
+    return NextResponse.json({
+      success: true,
+      status: finalStatus,
+    });
   } catch (error) {
     console.error("CALLBACK ERROR:", error);
 

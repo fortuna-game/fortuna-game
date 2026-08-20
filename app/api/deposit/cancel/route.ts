@@ -85,14 +85,6 @@ export async function POST(req: Request) {
       });
     }
 
-    await supabaseAdmin.from("wallet_transactions").insert({
-      user_id: user.id,
-      type: "deposit",
-      amount: 0,
-      status: "cancelled",
-      reference,
-    });
-
     return NextResponse.json({
       success: true,
       status: "cancelled",

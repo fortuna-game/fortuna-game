@@ -29,8 +29,28 @@ export default function WalletPage() {
   const [username, setUsername] = useState("");
 
   async function loadWallet() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) return;
+
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (session?.access_token) {
+        await fetch("/api/deposit/reconcile", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Deposit reconciliation failed:", error);
+    }
 
     const { data: profile } = await supabase
       .from("profiles")
