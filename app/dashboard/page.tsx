@@ -85,6 +85,36 @@ export default function Dashboard() {
           </div>
         </section>
 
+        <Link
+          href="/lucky-draw/live"
+          className="mt-6 block overflow-hidden rounded-3xl border border-red-500/40 bg-gradient-to-r from-red-600/25 via-[#0B2545] to-[#071A33] p-6 shadow-xl transition hover:-translate-y-1 hover:border-red-400"
+        >
+          <div className="flex flex-col items-start justify-between gap-5 sm:flex-row sm:items-center">
+            <div>
+              <div className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-2 rounded-full bg-red-500 px-3 py-1 text-xs font-black text-white">
+                  <span className="h-2 w-2 animate-pulse rounded-full bg-white" />
+                  LIVE NOW
+                </span>
+
+                <span className="text-3xl">📺</span>
+              </div>
+
+              <h2 className="mt-4 text-2xl font-black sm:text-3xl">
+                Watch the Live Draw & See Who Wins
+              </h2>
+
+              <p className="mt-2 max-w-2xl text-sm text-[#B4C0D1] sm:text-base">
+                Watch the latest Lucky Draw results live and see the winners as they are announced.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-red-500 px-6 py-4 font-black text-white">
+              Watch Live Draw →
+            </div>
+          </div>
+        </Link>
+
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 
           <Link
