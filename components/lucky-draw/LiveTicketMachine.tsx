@@ -204,7 +204,7 @@ export default function LiveTicketMachine() {
         </p>
       </div>
 
-      <div className="mx-auto mt-8 max-w-5xl rounded-[28px] border border-[#32659D] bg-[#071A33] p-5">
+      <div className="mx-auto mt-8 w-full max-w-5xl overflow-hidden rounded-[28px] border border-[#32659D] bg-[#071A33] p-4 sm:p-5">
         <div className="mb-4 flex items-center justify-between">
           <span className="text-sm font-black text-[#9AAAC1]">
             {revealing ? "WINNER REVEAL" : "TICKET MACHINE RUNNING"}
@@ -220,10 +220,10 @@ export default function LiveTicketMachine() {
 
           <div
             ref={viewportRef}
-            className="overflow-hidden rounded-2xl border border-[#F5B700]/30 bg-black/20 p-4"
+            className="relative w-full max-w-full overflow-hidden rounded-2xl border border-[#F5B700]/30 bg-black/20 p-3 sm:p-4"
           >
             <div
-              className={`flex w-max gap-4 ${
+              className={`flex w-max max-w-none shrink-0 gap-3 sm:gap-4 will-change-transform ${
                 revealing ? "" : "animate-[ticket-marquee_1.5s_linear_infinite]"
               }`}
             >
@@ -255,7 +255,7 @@ export default function LiveTicketMachine() {
           </div>
         </div>
 
-        <div className="mt-5 grid grid-cols-3 gap-3 text-center text-xs">
+        <div className="mt-5 grid grid-cols-3 gap-2 text-center text-[11px] sm:gap-3 sm:text-xs">
           <div className="rounded-xl bg-[#0B2545] p-3">
             <p className="text-[#8295B0]">Tickets</p>
             <p className="mt-1 text-lg font-black">
@@ -272,7 +272,7 @@ export default function LiveTicketMachine() {
 
           <div className="rounded-xl bg-[#0B2545] p-3">
             <p className="text-[#8295B0]">Status</p>
-            <p className="mt-1 text-lg font-black text-green-300">
+            <p className="mt-1 whitespace-nowrap text-base font-black text-green-300 sm:text-lg">
               {draw.status}
             </p>
           </div>
