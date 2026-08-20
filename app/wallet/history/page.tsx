@@ -116,7 +116,7 @@ export default function AccountHistoryPage() {
       <div className="mx-auto max-w-5xl">
         <h1 className="text-3xl sm:text-4xl font-black text-[#4D94F5]">Account History</h1>
         <p className="mt-2 text-[#9AAAC1]">
-          Completed deposits, failed payments, withdrawals, refunds, wins and entry fees.
+          Deposits, cancellations, failed payments, withdrawals, refunds, wins and entry fees.
         </p>
 
         <div className="mt-8 space-y-4">
@@ -140,11 +140,15 @@ export default function AccountHistoryPage() {
                     {item.amount >= 0 ? "+" : "-"}GH₵{Math.abs(item.amount).toFixed(2)}
                   </p>
 
-                  <p className={
-                    item.status === "failed"
-                      ? "mt-1 text-sm capitalize text-red-500"
-                      : "mt-1 text-sm capitalize text-green-300"
-                  }>
+                  <p
+                    className={
+                      item.status === "failed"
+                        ? "mt-1 text-sm capitalize text-red-500"
+                        : item.status === "cancelled"
+                        ? "mt-1 text-sm capitalize text-orange-400"
+                        : "mt-1 text-sm capitalize text-green-300"
+                    }
+                  >
                     {item.status}
                   </p>
                 </div>

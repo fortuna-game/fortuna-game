@@ -41,7 +41,10 @@ export async function POST(req: Request) {
 
     if (
       deposit.status === "completed" ||
-      deposit.status === "failed"
+      deposit.status === "failed" ||
+      deposit.status === "cancelled" ||
+      deposit.status === "declined" ||
+      deposit.status === "expired"
     ) {
       return NextResponse.json({ success: true });
     }
@@ -52,11 +55,19 @@ export async function POST(req: Request) {
       normalizedStatus.includes("success") ||
       normalizedStatus.includes("completed");
 
-    const isFailed =
-      normalizedStatus.includes("failed") ||
-      normalizedStatus.includes("cancel") ||
+    const isCancelled =
+      normalizedStatus.includes("cancel");
+
+    const isDeclined =
       normalizedStatus.includes("declined") ||
-      normalizedStatus.includes("expired");
+      normalizedStatus.includes("reject");
+
+    const isExpired =
+      normalizedStatus.includes("expired") ||
+      normalizedStatus.includes("timeout");
+
+    const isFailed =
+      normalizedStatus.includes("failed");
 
     if (isSuccessful) {
       const { error: completeError } = await supabaseAdmin.rpc("complete_deposit_atomic", {
@@ -66,10 +77,18 @@ export async function POST(req: Request) {
       if (completeError) {
         return NextResponse.json({ error: completeError.message }, { status: 500 });
       }
-    } else if (isFailed) {
+    } else if (isCancelled || isDeclined || isExpired || isFailed) {
+      const failureStatus = isCancelled
+        ? "cancelled"
+        : isDeclined
+        ? "declined"
+        : isExpired
+        ? "expired"
+        : "failed";
+
       await supabaseAdmin
         .from("deposits")
-        .update({ status: "failed" })
+        .update({ status: failureStatus })
         .eq("id", deposit.id);
 
       await supabaseAdmin
@@ -78,7 +97,7 @@ export async function POST(req: Request) {
           user_id: deposit.user_id,
           type: "deposit",
           amount: Number(deposit.amount),
-          status: "failed",
+          status: failureStatus,
           reference,
         });
     }

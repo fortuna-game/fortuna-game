@@ -19,6 +19,11 @@ export default function WalletPage() {
     typeof window !== "undefined" &&
     window.location.search.includes("payment=failed");
 
+  const paymentReference =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("reference")
+      : null;
+
   const [balance, setBalance] = useState("0.00");
   const [verifying, setVerifying] = useState(false);
   const [username, setUsername] = useState("");
@@ -55,7 +60,34 @@ export default function WalletPage() {
 
       return () => clearTimeout(timer);
     }
-  }, [paymentSuccess]);
+
+    if (paymentFailed && paymentReference) {
+      async function markCancelled() {
+        try {
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
+
+          if (!session?.access_token) return;
+
+          await fetch("/api/deposit/cancel", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session.access_token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              reference: paymentReference,
+            }),
+          });
+        } catch (error) {
+          console.error("Could not mark cancelled deposit:", error);
+        }
+      }
+
+      void markCancelled();
+    }
+  }, [paymentSuccess, paymentFailed, paymentReference]);
 
   return (
     <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
