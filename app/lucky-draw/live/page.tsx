@@ -33,18 +33,57 @@ export default function LiveLuckyDrawPage() {
 
   async function loadResults() {
     try {
-      const res = await fetch("/api/lucky-draw/results", {
+      const res = await fetch("/api/lucky-draw/live", {
         cache: "no-store",
       });
 
       const data = await res.json();
 
-      if (res.ok) {
-        setDraws(data.draws || []);
-        setUpdatedAt(new Date().toLocaleTimeString());
+      if (res.ok && data?.draw) {
+        const liveDraw = data.draw;
+
+        const selected_winners = (data.winners || []).map(
+          (winner: {
+            id: string;
+            winner_position: number;
+            selected_at: string;
+            username?: string | null;
+          }) => ({
+            id: winner.id,
+            winner_position: winner.winner_position,
+            selected_at: winner.selected_at,
+            name: winner.username || "Winner",
+          })
+        );
+
+        setDraws([
+          {
+            id: liveDraw.id,
+            title: liveDraw.title,
+            prize_amount: liveDraw.prize_amount ?? null,
+            prize_type: liveDraw.prize_type ?? null,
+            prize_description: liveDraw.prize_description ?? null,
+            prize_image: liveDraw.prize_image ?? null,
+            prize_value: liveDraw.prize_value ?? null,
+            status: liveDraw.status,
+            winner_count: Number(liveDraw.winner_count || 1),
+            selection_started_at:
+              liveDraw.selection_started_at ?? null,
+            participant_count: Number(
+              liveDraw.participant_count || 0
+            ),
+            selected_winners,
+          },
+        ]);
+      } else {
+        // No active draw: do NOT fall back to completed/recorded draws.
+        setDraws([]);
       }
+
+      setUpdatedAt(new Date().toLocaleTimeString());
     } catch (error) {
       console.error(error);
+      setDraws([]);
     } finally {
       setLoading(false);
     }
