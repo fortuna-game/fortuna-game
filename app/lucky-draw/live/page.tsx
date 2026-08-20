@@ -131,7 +131,7 @@ export default function LiveLuckyDrawPage() {
                   <img
                     src={draw.prize_image}
                     alt={draw.title}
-                    className="mx-auto aspect-[3/4] w-full max-w-sm object-cover"
+                    className="mx-auto h-56 w-full max-w-md rounded-2xl object-cover sm:h-64 lg:h-72"
                   />
                 )}
 
