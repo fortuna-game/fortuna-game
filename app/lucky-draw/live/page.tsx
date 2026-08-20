@@ -1,5 +1,6 @@
 "use client";
 
+import LiveTicketMachine from "@/components/lucky-draw/LiveTicketMachine";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
@@ -76,6 +77,8 @@ export default function LiveLuckyDrawPage() {
               Winners appear automatically as they are securely selected.
             </p>
           </div>
+
+        <LiveTicketMachine />
 
           <Link
             href="/lucky-draw"
