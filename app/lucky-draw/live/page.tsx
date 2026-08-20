@@ -283,6 +283,22 @@ export default function LiveLuckyDrawPage() {
             There are currently no Lucky Draw results available.
           </div>
         )}
+
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <a
+            href="/lucky-draw/replays"
+            className="rounded-full border border-[#4D94F5] px-6 py-3 font-black text-white transition hover:bg-[#4D94F5]"
+          >
+            🎬 Previous Draws & Replays
+          </a>
+
+          <a
+            href="/winners"
+            className="rounded-full border border-[#F5B700] px-6 py-3 font-black text-[#FFD54A] transition hover:bg-[#F5B700]/10"
+          >
+            🏆 View Winners
+          </a>
+        </div>
       </div>
     </main>
   );

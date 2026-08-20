@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
-export async function GET() {
+export async function GET(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const requestedDrawId = searchParams.get("draw");
   try {
-    const { data: draws, error: drawsError } = await supabaseAdmin
+    let drawsQuery = supabaseAdmin
       .from("lucky_draws")
       .select(`
         id,
@@ -20,8 +22,14 @@ export async function GET() {
         created_at
       `)
       .in("status", ["open", "selecting", "completed"])
-      .order("created_at", { ascending: false })
-      .limit(1);
+      .order("created_at", { ascending: false });
+
+    if (requestedDrawId) {
+      drawsQuery = drawsQuery.eq("id", requestedDrawId);
+    }
+
+    const { data: draws, error: drawsError } =
+      await drawsQuery.limit(1);
 
     if (drawsError) {
       return NextResponse.json(
