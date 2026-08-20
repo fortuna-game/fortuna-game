@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -24,20 +25,11 @@ export default function Navbar() {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-
-    const previousOverflow = document.body.style.overflow;
-    const previousPaddingRight = document.body.style.paddingRight;
-
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.body.style.paddingRight = previousPaddingRight;
-    };
-  }, [open]);
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 1024px)");
@@ -88,6 +80,30 @@ export default function Navbar() {
     window.location.href = "/";
   }
 
+  useEffect(() => {
+    if (!open) return;
+
+    const scrollY = window.scrollY;
+    const originalPosition = document.body.style.position;
+    const originalTop = document.body.style.top;
+    const originalWidth = document.body.style.width;
+    const originalOverflow = document.body.style.overflow;
+
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.position = originalPosition;
+      document.body.style.top = originalTop;
+      document.body.style.width = originalWidth;
+      document.body.style.overflow = originalOverflow;
+
+      window.scrollTo(0, scrollY);
+    };
+  }, [open]);
+
   const name = profile?.username || profile?.first_name || "Player";
 
   const userLinks = [
@@ -100,7 +116,8 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-[1000] border-b border-blue-700/20 bg-[#071A33]/95 backdrop-blur-xl">
+    <>
+      <header className="sticky top-0 z-[1000] border-b border-blue-700/20 bg-[#071A33]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <Link
           href="/"
@@ -177,55 +194,63 @@ export default function Navbar() {
         )}
       </div>
 
-      {!loading && profile && open && (
-        <div className="fixed inset-x-0 bottom-0 top-[73px] z-[9999] block overflow-y-auto overscroll-contain touch-pan-y border-t border-[#38BDF8]/15 bg-[#071A33] px-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl lg:hidden">
-          <div className="grid gap-2 pt-4">
-            {userLinks.map(([label, href]) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setOpen(false)}
-                className="rounded-xl bg-[#0B2545]/70 px-4 py-3 font-bold"
-              >
-                {label}
-              </Link>
-            ))}
+      </header>
 
-            <div className="grid grid-cols-2 gap-2">
-              <Link
-                href="/wallet/deposit"
-                onClick={() => setOpen(false)}
-                className="rounded-xl bg-[#3F82DD] px-4 py-3 text-center font-black text-black"
-              >
-                Deposit
-              </Link>
+      {mounted &&
+        !loading &&
+        profile &&
+        open &&
+        createPortal(
+          <div className="fixed inset-x-0 bottom-0 top-[73px] z-[2147483647] overflow-y-auto overscroll-contain touch-pan-y border-t border-[#38BDF8]/15 bg-[#071A33] px-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl lg:hidden">
+            <div className="grid gap-2 pt-4">
+              {userLinks.map(([label, href]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl bg-[#0B2545]/70 px-4 py-3 font-bold"
+                >
+                  {label}
+                </Link>
+              ))}
+
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href="/wallet/deposit"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl bg-[#3F82DD] px-4 py-3 text-center font-black text-black"
+                >
+                  Deposit
+                </Link>
+
+                <Link
+                  href="/wallet/withdraw"
+                  onClick={() => setOpen(false)}
+                  className="rounded-xl bg-[#3F82DD] px-4 py-3 text-center font-black text-black"
+                >
+                  Withdraw
+                </Link>
+              </div>
 
               <Link
-                href="/wallet/withdraw"
+                href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="rounded-xl bg-[#3F82DD] px-4 py-3 text-center font-black text-black"
+                className="rounded-xl bg-[#0F2F57]/80 px-4 py-3 font-bold"
               >
-                Withdraw
+                @{name}
               </Link>
+
+              <button
+                onClick={() => void handleLogout()}
+                className="rounded-xl bg-[#2C63B3] px-4 py-3 font-bold text-white"
+              >
+                Logout
+              </button>
             </div>
+          </div>,
+          document.body
+        )}
 
-            <Link
-              href="/dashboard"
-              onClick={() => setOpen(false)}
-              className="rounded-xl bg-[#0F2F57]/80 px-4 py-3 font-bold"
-            >
-              @{name}
-            </Link>
-
-            <button
-              onClick={() => void handleLogout()}
-              className="rounded-xl bg-[#2C63B3] px-4 py-3 font-bold text-white"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      )}
-    </header>
+    </>
   );
 }
