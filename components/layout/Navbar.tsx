@@ -100,7 +100,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-blue-700/20 bg-[#071A33]/95 backdrop-blur-xl">
+    <header className="sticky top-0 z-[1000] border-b border-blue-700/20 bg-[#071A33]/95 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
         <Link
           href="/"
@@ -178,7 +178,7 @@ export default function Navbar() {
       </div>
 
       {!loading && profile && open && (
-        <div className="fixed inset-x-0 bottom-0 top-[73px] z-50 overflow-y-auto overscroll-contain border-t border-[#38BDF8]/15 bg-[#071A33]/98 px-4 pb-6 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 top-[73px] z-[9999] block overflow-y-auto overscroll-contain touch-pan-y border-t border-[#38BDF8]/15 bg-[#071A33] px-4 pb-[calc(env(safe-area-inset-bottom)+1.5rem)] shadow-2xl lg:hidden">
           <div className="grid gap-2 pt-4">
             {userLinks.map(([label, href]) => (
               <Link
