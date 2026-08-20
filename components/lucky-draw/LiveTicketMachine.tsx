@@ -182,6 +182,13 @@ export default function LiveTicketMachine() {
 
   return (
     <section className="mt-8 overflow-hidden rounded-[32px] border border-[#F5B700]/40 bg-gradient-to-br from-[#0B2545] via-[#071A33] to-[#111D3A] p-5 shadow-2xl sm:p-8">
+    <style>{`
+      @keyframes ticket-marquee {
+        from { transform: translateX(0); }
+        to { transform: translateX(-33.333%); }
+      }
+    `}</style>
+
       <div className="text-center">
         <div className="inline-flex items-center gap-2 rounded-full bg-red-500 px-4 py-2 text-xs font-black text-white">
           <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-white" />
@@ -209,13 +216,17 @@ export default function LiveTicketMachine() {
         </div>
 
         <div className="relative">
-          <div className="pointer-events-none absolute left-1/2 top-0 z-20 h-full w-1 -translate-x-1/2 bg-[#FFD54A] shadow-[0_0_25px_rgba(250,204,21,0.8)]" />
+          <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-44 -translate-x-1/2 rounded-3xl border-2 border-[#FFD54A]/90 bg-[#FFD54A]/5 shadow-[0_0_35px_rgba(250,204,21,0.25)] sm:w-52" />
 
           <div
             ref={viewportRef}
             className="overflow-hidden rounded-2xl border border-[#F5B700]/30 bg-black/20 p-4"
           >
-            <div className="flex w-max gap-4">
+            <div
+              className={`flex w-max gap-4 ${
+                revealing ? "" : "animate-[ticket-marquee_1.5s_linear_infinite]"
+              }`}
+            >
               {displayTickets.map((ticket, index) => {
                 const isWinner =
                   winningIndex >= 0 &&
