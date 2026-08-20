@@ -184,8 +184,8 @@ export default function LiveTicketMachine() {
     <section className="mt-8 overflow-hidden rounded-[32px] border border-[#F5B700]/40 bg-gradient-to-br from-[#0B2545] via-[#071A33] to-[#111D3A] p-5 shadow-2xl sm:p-8">
     <style>{`
       @keyframes ticket-marquee {
-        from { transform: translateX(0); }
-        to { transform: translateX(-33.333%); }
+        from { transform: translate3d(0, 0, 0); }
+        to { transform: translate3d(-33.333%, 0, 0); }
       }
     `}</style>
 
@@ -215,39 +215,43 @@ export default function LiveTicketMachine() {
           </span>
         </div>
 
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-1/2 z-20 w-44 -translate-x-1/2 rounded-3xl border-2 border-[#FFD54A]/90 bg-[#FFD54A]/5 shadow-[0_0_35px_rgba(250,204,21,0.25)] sm:w-52" />
+        <div className="relative w-full">
+          <div className="relative w-full overflow-hidden rounded-2xl border border-[#F5B700]/30 bg-black/20 p-3 sm:p-4">
+            {/* Fixed center selection frame */}
+            <div className="pointer-events-none absolute inset-y-3 left-1/2 z-30 w-[min(11rem,72%)] -translate-x-1/2 rounded-3xl border-2 border-[#FFD54A] bg-[#FFD54A]/[0.04] shadow-[0_0_35px_rgba(250,204,21,0.25)] sm:inset-y-4 sm:w-52" />
 
-          <div
-            ref={viewportRef}
-            className="relative w-full max-w-full overflow-hidden rounded-2xl border border-[#F5B700]/30 bg-black/20 p-3 sm:p-4"
-          >
-            <div
-              className={`flex w-max max-w-none shrink-0 gap-3 sm:gap-4 will-change-transform ${
-                revealing ? "w-full justify-center" : "animate-[ticket-marquee_1.5s_linear_infinite]"
-              }`}
-            >
-              {revealing && winner && winningIndex >= 0 ? (
-                <div
-                  ref={winnerRef}
-                  className="flex h-28 w-44 shrink-0 items-center justify-center rounded-3xl border-2 border-[#FFD54A] bg-gradient-to-br from-[#FFD54A] to-yellow-500 text-lg font-black text-black shadow-[0_0_45px_rgba(250,204,21,0.65)]"
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <span className="text-3xl">🎟️</span>
-                    <span>{winner.ticket_number}</span>
+            {revealing && winner ? (
+              /* REVEAL: ONLY THE REAL WINNING TICKET */
+              <div className="flex h-28 w-full items-center justify-center sm:h-32">
+                <div className="flex h-24 w-[min(10rem,68%)] max-w-40 items-center justify-center rounded-2xl border-2 border-[#FFD54A] bg-gradient-to-br from-[#FFD54A] to-yellow-500 text-black shadow-[0_0_40px_rgba(250,204,21,0.6)] sm:h-28 sm:w-44">
+                  <div className="flex min-w-0 flex-col items-center gap-1">
+                    <span className="text-2xl sm:text-3xl">🎟️</span>
+                    <span className="max-w-full truncate px-2 text-sm font-black sm:text-base">
+                      {winner.ticket_number}
+                    </span>
                   </div>
                 </div>
-              ) : (
-                displayTickets.map((ticket, index) => (
-                  <div
-                    key={`${ticket.id}-${index}`}
-                    className="flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border border-[#32659D] bg-[#0B2545] text-lg font-black text-white"
-                  >
-                    🎟️ {ticket.ticket_number}
-                  </div>
-                ))
-              )}
-            </div>
+              </div>
+            ) : (
+              /* ROLL: ONLY THE REAL TICKETS MOVE */
+              <div className="w-full overflow-hidden rounded-xl">
+                <div className="flex w-max shrink-0 gap-3 will-change-transform animate-[ticket-marquee_2.4s_linear_infinite] sm:gap-4">
+                  {displayTickets.map((ticket, index) => (
+                    <div
+                      key={`${ticket.id}-${index}`}
+                      className="flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border border-[#32659D] bg-gradient-to-br from-[#0B2545] to-[#071A33] text-base font-black text-white shadow-lg sm:h-28 sm:w-40 sm:text-lg"
+                    >
+                      <div className="flex min-w-0 flex-col items-center gap-1">
+                        <span className="text-xl sm:text-2xl">🎟️</span>
+                        <span className="max-w-full truncate px-2">
+                          {ticket.ticket_number}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
