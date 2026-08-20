@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
-export default function GamesRedirectPage() {
+export default function GamesPage() {
   redirect("/skill-games");
 }
