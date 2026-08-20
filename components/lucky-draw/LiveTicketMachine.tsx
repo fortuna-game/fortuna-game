@@ -224,33 +224,29 @@ export default function LiveTicketMachine() {
           >
             <div
               className={`flex w-max max-w-none shrink-0 gap-3 sm:gap-4 will-change-transform ${
-                revealing ? "" : "animate-[ticket-marquee_1.5s_linear_infinite]"
+                revealing ? "w-full justify-center" : "animate-[ticket-marquee_1.5s_linear_infinite]"
               }`}
             >
-              {displayTickets.map((ticket, index) => {
-                const isWinner =
-                  winningIndex >= 0 &&
-                  index % tickets.length === winningIndex;
-
-                return (
+              {revealing && winner && winningIndex >= 0 ? (
+                <div
+                  ref={winnerRef}
+                  className="flex h-28 w-44 shrink-0 items-center justify-center rounded-3xl border-2 border-[#FFD54A] bg-gradient-to-br from-[#FFD54A] to-yellow-500 text-lg font-black text-black shadow-[0_0_45px_rgba(250,204,21,0.65)]"
+                >
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-3xl">🎟️</span>
+                    <span>{winner.ticket_number}</span>
+                  </div>
+                </div>
+              ) : (
+                displayTickets.map((ticket, index) => (
                   <div
                     key={`${ticket.id}-${index}`}
-                    ref={
-                      isWinner &&
-                      index === winningIndex + tickets.length
-                        ? winnerRef
-                        : undefined
-                    }
-                    className={`flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border text-lg font-black ${
-                      isWinner && revealing
-                        ? "border-[#FFD54A] bg-[#FFD54A] text-black shadow-[0_0_35px_rgba(250,204,21,0.55)]"
-                        : "border-[#32659D] bg-[#0B2545] text-white"
-                    }`}
+                    className="flex h-24 w-36 shrink-0 items-center justify-center rounded-2xl border border-[#32659D] bg-[#0B2545] text-lg font-black text-white"
                   >
                     🎟️ {ticket.ticket_number}
                   </div>
-                );
-              })}
+                ))
+              )}
             </div>
           </div>
         </div>
