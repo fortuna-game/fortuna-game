@@ -5,216 +5,243 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
-type GameResult = {
+type Activity = {
   id: string;
-  game_slug: string;
-  score: number;
-  prize_amount: number;
-  won: boolean;
-  created_at: string;
-};
-
-type LuckyDrawWin = {
-  id: string;
+  source: "skill_game" | "lucky_draw" | "prize_vault";
   title: string;
-  prize_amount: number | null;
-  prize_type: string | null;
-  prize_description: string | null;
-  prize_value: number | null;
-  draw_at: string | null;
-  created_at: string;
+  subtitle: string;
+  outcome: "won" | "lost";
+  score: number | null;
+  prizeAmount: number;
+  createdAt: string;
+  claimStatus: string | null;
+  href: string | null;
 };
 
-function GameHistoryContent() {
-  const searchParams = useSearchParams();
-  const initialTab = searchParams.get("tab") === "wins" ? "wins" : "history";
+type Tab = "all" | "wins" | "losses";
 
-  const [tab, setTab] = useState<"history" | "wins">(initialTab);
-  const [results, setResults] = useState<GameResult[]>([]);
-  const [wins, setWins] = useState<LuckyDrawWin[]>([]);
+function ActivityContent() {
+  const searchParams = useSearchParams();
+
+  const requestedTab = searchParams.get("tab");
+
+  const initialTab: Tab =
+    requestedTab === "wins"
+      ? "wins"
+      : requestedTab === "losses"
+      ? "losses"
+      : "all";
+
+  const [tab, setTab] = useState<Tab>(initialTab);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function loadData() {
+  async function loadActivity() {
     setLoading(true);
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    if (!session) {
-      setResults([]);
-      setWins([]);
+      if (!session) {
+        setActivities([]);
+        return;
+      }
+
+      const response = await fetch("/api/my-activity", {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        cache: "no-store",
+      });
+
+      if (!response.ok) {
+        setActivities([]);
+        return;
+      }
+
+      const data = await response.json();
+
+      setActivities(data.activities || []);
+    } catch (error) {
+      console.error(error);
+      setActivities([]);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const { data: gameResults } = await supabase
-      .from("game_results")
-      .select("*")
-      .eq("user_id", session.user.id)
-      .order("created_at", { ascending: false });
-
-    setResults(gameResults || []);
-
-    const winsResponse = await fetch("/api/my-wins", {
-      headers: {
-        Authorization: `Bearer ${session.access_token}`,
-      },
-    });
-
-    if (winsResponse.ok) {
-      const winsData = await winsResponse.json();
-      setWins(winsData.wins || []);
-    } else {
-      setWins([]);
-    }
-
-    setLoading(false);
   }
 
   useEffect(() => {
-    void loadData();
+    void loadActivity();
   }, []);
+
+  const visibleActivities = activities.filter((item) => {
+    if (tab === "wins") return item.outcome === "won";
+    if (tab === "losses") return item.outcome === "lost";
+    return true;
+  });
+
+  const tabButton = (
+    value: Tab,
+    label: string,
+    activeClass: string
+  ) => (
+    <button
+      type="button"
+      onClick={() => setTab(value)}
+      className={`border-b-2 px-4 py-3 text-sm font-black transition ${
+        tab === value
+          ? activeClass
+          : "border-transparent text-[#8295B0] hover:text-white"
+      }`}
+    >
+      {label}
+    </button>
+  );
 
   return (
     <main className="min-h-screen bg-[#071A33] px-4 py-8 text-white sm:px-6 sm:py-10">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl font-black text-[#4D94F5] sm:text-4xl">
-          My Activity
-        </h1>
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-black sm:text-4xl">
+              My Activity
+            </h1>
 
-        <p className="mt-2 text-[#9AAAC1]">
-          View your game history and Lucky Draw wins.
-        </p>
-
-        <div className="mt-8 flex flex-wrap gap-3 border-b border-[#38BDF8]/15">
-          <button
-            onClick={() => setTab("history")}
-            className={`border-b-2 px-4 py-3 font-black transition ${
-              tab === "history"
-                ? "border-blue-500 text-[#66A7FF]"
-                : "border-transparent text-[#8295B0]"
-            }`}
-          >
-            History
-          </button>
-
-          <button
-            onClick={() => setTab("wins")}
-            className={`border-b-2 px-4 py-3 font-black transition ${
-              tab === "wins"
-                ? "border-[#FFD54A] text-[#FFE08A]"
-                : "border-transparent text-[#8295B0]"
-            }`}
-          >
-            Wins
-          </button>
+            <p className="mt-2 text-sm text-[#9AAAC1]">
+              Your complete game and prize activity.
+            </p>
+          </div>
 
           <Link
             href="/wallet/history"
-            className="border-b-2 border-transparent px-4 py-3 font-black text-[#8295B0]"
+            className="text-sm font-bold text-[#8295B0] hover:text-white"
           >
-            Transactions
+            Transactions →
           </Link>
         </div>
 
-        {loading ? (
-          <p className="mt-8 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6 text-[#9AAAC1]">
-            Loading your activity...
-          </p>
-        ) : tab === "history" ? (
-          <div className="mt-6 space-y-4">
-            {results.map((r) => (
-              <div
-                key={r.id}
-                className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5"
-              >
-                <div className="flex flex-wrap items-center justify-between gap-3 gap-4">
-                  <div>
-                    <p className="text-xl font-black capitalize">
-                      {r.game_slug.replaceAll("-", " ")}
-                    </p>
+        <div className="mt-6 border-b border-white/10">
+          <div className="flex flex-wrap">
+            {tabButton(
+              "all",
+              "All Activity",
+              "border-white text-white"
+            )}
 
-                    <p className="mt-1 text-sm text-[#8295B0]">
-                      Score: {r.score}
-                    </p>
+            {tabButton(
+              "wins",
+              "Wins",
+              "border-green-500 text-green-400"
+            )}
 
-                    <p className="mt-1 text-xs text-[#7185A3]">
-                      {new Date(r.created_at).toLocaleString()}
-                    </p>
-                  </div>
-
-                  <div className="text-right">
-                    <p
-                      className={
-                        r.won
-                          ? "text-2xl font-black text-[#66A7FF]"
-                          : "text-2xl font-black text-red-300"
-                      }
-                    >
-                      {r.won ? "Won" : "Lost"}
-                    </p>
-
-                    <p className="mt-1 text-sm text-[#8295B0]">
-                      Prize: GH₵{Number(r.prize_amount || 0).toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {results.length === 0 && (
-              <p className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6 text-[#9AAAC1]">
-                No game history yet.
-              </p>
+            {tabButton(
+              "losses",
+              "Losses",
+              "border-red-500 text-red-400"
             )}
           </div>
+        </div>
+
+        {loading ? (
+          <div className="py-12 text-center text-sm text-[#8295B0]">
+            Loading your activity...
+          </div>
+        ) : visibleActivities.length === 0 ? (
+          <div className="py-16 text-center">
+            <p className="text-lg font-black">
+              {tab === "wins"
+                ? "No wins recorded yet."
+                : tab === "losses"
+                ? "No losses recorded yet."
+                : "No activity recorded yet."}
+            </p>
+
+            <p className="mt-2 text-sm text-[#8295B0]">
+              Your completed games and prize events will appear here.
+            </p>
+          </div>
         ) : (
-          <div className="mt-6 space-y-4">
-            {wins.map((win) => (
-              <div
-                key={win.id}
-                className="rounded-2xl border border-[#FFD54A]/25 bg-[#FFD54A]/[0.05] p-5"
-              >
-                <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-wider text-[#FFE08A]">
-                      Lucky Draw Winner 🎉
+          <div className="mt-2 overflow-hidden bg-white text-[#071A33]">
+            {visibleActivities.map((item) => {
+              const won = item.outcome === "won";
+
+              return (
+                <div
+                  key={item.id}
+                  className={`grid gap-3 border-b px-4 py-4 last:border-b-0 sm:grid-cols-[1fr_auto_auto] sm:items-center ${
+                    won
+                      ? "border-green-100"
+                      : "border-red-100"
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate text-base font-black capitalize">
+                        {item.title}
+                      </p>
+
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#8295B0]">
+                        {item.source === "skill_game"
+                          ? "Game"
+                          : item.source === "lucky_draw"
+                          ? "Lucky Draw"
+                          : "Prize Vault"}
+                      </span>
+                    </div>
+
+                    <p className="mt-1 text-xs text-[#8295B0]">
+                      {item.subtitle}
+                      {item.score !== null
+                        ? ` · Score ${item.score}`
+                        : ""}
                     </p>
 
-                    <h2 className="mt-1 text-xl font-black">
-                      Congratulations! You won {win.title}
-                    </h2>
-
-                    {win.prize_description && (
-                      <p className="mt-2 text-sm text-[#9AAAC1]">
-                        {win.prize_description}
-                      </p>
-                    )}
-
-                    <p className="mt-2 text-xs text-[#7185A3]">
-                      Draw completed:{" "}
-                      {new Date(
-                        win.draw_at || win.created_at
-                      ).toLocaleString()}
+                    <p className="mt-1 text-[11px] text-[#A3AAB5]">
+                      {new Date(item.createdAt).toLocaleString()}
                     </p>
                   </div>
 
-                  <Link
-                    href={`/lucky-draw/claim-prize?drawId=${win.id}`}
-                    className="shrink-0 rounded-xl bg-[#FFD54A] px-5 py-3 text-center font-black text-black"
+                  <div
+                    className={`text-sm font-black ${
+                      won ? "text-green-600" : "text-red-600"
+                    }`}
                   >
-                    View Prize Details
-                  </Link>
-                </div>
-              </div>
-            ))}
+                    {won ? "WON" : "LOST"}
+                  </div>
 
-            {wins.length === 0 && (
-              <p className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6 text-[#9AAAC1]">
-                You have not won a Lucky Draw yet.
-              </p>
-            )}
+                  <div className="text-left sm:text-right">
+                    {won ? (
+                      <>
+                        <p className="text-sm font-black text-green-600">
+                          GH₵{Number(item.prizeAmount || 0).toFixed(2)}
+                        </p>
+
+                        {item.claimStatus && (
+                          <p className="mt-1 text-[11px] capitalize text-[#8295B0]">
+                            {item.claimStatus.replaceAll("_", " ")}
+                          </p>
+                        )}
+
+                        {item.href && (
+                          <Link
+                            href={item.href}
+                            className="mt-1 inline-block text-[11px] font-black text-green-700 hover:underline"
+                          >
+                            Prize details →
+                          </Link>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-xs font-bold text-red-500">
+                        No prize won
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -227,13 +254,13 @@ export default function GameHistoryPage() {
     <Suspense
       fallback={
         <main className="min-h-screen bg-[#071A33] px-4 py-8 text-white">
-          <div className="mx-auto max-w-5xl text-center text-[#9AAAC1]">
+          <div className="mx-auto max-w-5xl py-12 text-center text-sm text-[#8295B0]">
             Loading your activity...
           </div>
         </main>
       }
     >
-      <GameHistoryContent />
+      <ActivityContent />
     </Suspense>
   );
 }

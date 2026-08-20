@@ -137,7 +137,9 @@ export default function AccountHistoryPage() {
                       ? "text-2xl font-black text-[#66A7FF]"
                       : "text-2xl font-black text-red-500"
                   }>
-                    {item.amount >= 0 ? "+" : "-"}GH₵{Math.abs(item.amount).toFixed(2)}
+                    {item.status === "cancelled"
+                      ? `GH₵${Math.abs(item.amount).toFixed(2)}`
+                      : `${item.amount >= 0 ? "+" : "-"}GH₵${Math.abs(item.amount).toFixed(2)}`}
                   </p>
 
                   <p
