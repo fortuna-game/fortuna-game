@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 async function requireAdmin(req: Request) {
-  const token = req.headers.get("authorization")?.replace("Bearer ", "");
+  const token = req.headers
+    .get("authorization")
+    ?.replace("Bearer ", "");
 
   if (!token) return false;
 
@@ -35,16 +37,23 @@ export async function POST(req: Request) {
     }
 
     const {
-      drawId,
+      id,
       title,
       prizeType,
       prizeAmount,
       prizeValue,
       prizeDescription,
       prizeImage,
-      ticketPrice,
-      status,
+      rules,
+      winnerCount,
+      startsAt,
+      selectionAt,
     } = await req.json();
+
+    const drawId = String(id || "").trim();
+    const cleanTitle = String(title || "").trim();
+    const finalPrizeType = String(prizeType || "").trim();
+    const finalWinnerCount = Number(winnerCount);
 
     if (!drawId) {
       return NextResponse.json(
@@ -53,26 +62,9 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: existingDraw, error: findError } =
-      await supabaseAdmin
-        .from("lucky_draws")
-        .select("*")
-        .eq("id", drawId)
-        .maybeSingle();
-
-    if (findError || !existingDraw) {
+    if (!cleanTitle) {
       return NextResponse.json(
-        { error: "Lucky Draw not found." },
-        { status: 404 }
-      );
-    }
-
-    if (existingDraw.status === "completed") {
-      return NextResponse.json(
-        {
-          error:
-            "Completed Lucky Draws cannot be edited to protect winner transparency.",
-        },
+        { error: "Lucky Draw title is required." },
         { status: 400 }
       );
     }
@@ -85,44 +77,58 @@ export async function POST(req: Request) {
       "other",
     ];
 
-    const validStatuses = [
-      "open",
-      "paused",
-      "suspended",
-    ];
-
-    const finalPrizeType = validPrizeTypes.includes(prizeType)
-      ? prizeType
-      : existingDraw.prize_type;
-
-    const finalStatus = validStatuses.includes(status)
-      ? status
-      : existingDraw.status;
-
-    const finalTicketPrice =
-      ticketPrice !== undefined
-        ? Number(ticketPrice)
-        : Number(existingDraw.ticket_price);
-
-    const finalPrizeAmount =
-      prizeAmount !== undefined
-        ? Number(prizeAmount)
-        : Number(existingDraw.prize_amount);
-
-    const finalPrizeValue =
-      prizeValue !== undefined
-        ? Number(prizeValue)
-        : Number(existingDraw.prize_value || 0);
-
-    if (
-      !Number.isFinite(finalTicketPrice) ||
-      finalTicketPrice <= 0
-    ) {
+    if (!validPrizeTypes.includes(finalPrizeType)) {
       return NextResponse.json(
-        { error: "Enter a valid ticket price." },
+        { error: "Select a valid prize type." },
         { status: 400 }
       );
     }
+
+    if (
+      !Number.isInteger(finalWinnerCount) ||
+      finalWinnerCount < 1
+    ) {
+      return NextResponse.json(
+        { error: "Number of winners must be at least 1." },
+        { status: 400 }
+      );
+    }
+
+    const finalStartsAt =
+      startsAt && !Number.isNaN(new Date(startsAt).getTime())
+        ? new Date(startsAt).toISOString()
+        : null;
+
+    const finalSelectionAt =
+      selectionAt &&
+      !Number.isNaN(new Date(selectionAt).getTime())
+        ? new Date(selectionAt).toISOString()
+        : null;
+
+    if (!finalStartsAt || !finalSelectionAt) {
+      return NextResponse.json(
+        {
+          error:
+            "Draw start time and winner selection time are required.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      new Date(finalSelectionAt) <= new Date(finalStartsAt)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Winner selection time must be after the draw start time.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const finalPrizeAmount = Number(prizeAmount || 0);
+    const finalPrizeValue = Number(prizeValue || 0);
 
     if (
       finalPrizeType === "cash" &&
@@ -146,45 +152,68 @@ export async function POST(req: Request) {
       );
     }
 
-    const updateData = {
-      title:
-        title?.trim() ||
-        existingDraw.title,
-      prize_type: finalPrizeType,
-      prize_amount:
-        finalPrizeType === "cash"
-          ? finalPrizeAmount
-          : finalPrizeValue,
-      prize_value:
-        finalPrizeType === "cash"
-          ? finalPrizeValue
-          : finalPrizeValue,
-      prize_description:
-        prizeDescription?.trim() || null,
-      prize_image:
-        prizeImage?.trim() || null,
-      ticket_price: finalTicketPrice,
-      status: finalStatus,
-    };
-
-    const { data: updatedDraw, error: updateError } =
+    const { data: existingDraw, error: existingError } =
       await supabaseAdmin
         .from("lucky_draws")
-        .update(updateData)
+        .select(
+          "id, status, winner_count, selection_started_at"
+        )
         .eq("id", drawId)
-        .select("*")
-        .single();
+        .maybeSingle();
 
-    if (updateError) {
+    if (existingError || !existingDraw) {
       return NextResponse.json(
-        { error: updateError.message },
+        { error: "Lucky Draw not found." },
+        { status: 404 }
+      );
+    }
+
+    if (
+      existingDraw.selection_started_at ||
+      existingDraw.status === "completed"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw can no longer be edited because winner selection has started or the draw is completed.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const { data: draw, error } = await supabaseAdmin
+      .from("lucky_draws")
+      .update({
+        title: cleanTitle,
+        prize_type: finalPrizeType,
+        prize_amount:
+          finalPrizeType === "cash"
+            ? finalPrizeAmount
+            : finalPrizeValue,
+        prize_value: finalPrizeValue,
+        prize_description:
+          String(prizeDescription || "").trim() || null,
+        prize_image:
+          String(prizeImage || "").trim() || null,
+        rules: String(rules || "").trim() || null,
+        winner_count: finalWinnerCount,
+        starts_at: finalStartsAt,
+        selection_at: finalSelectionAt,
+      })
+      .eq("id", drawId)
+      .select("*")
+      .single();
+
+    if (error) {
+      return NextResponse.json(
+        { error: error.message },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      draw: updatedDraw,
+      draw,
       message: "Lucky Draw updated successfully.",
     });
   } catch (error) {

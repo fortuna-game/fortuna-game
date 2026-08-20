@@ -48,7 +48,7 @@ export default function WithdrawalHistoryPage() {
   return (
     <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-[#4D94F5]">Withdrawal History</h1>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#4D94F5]">Withdrawal History</h1>
         <p className="mt-2 text-[#9AAAC1]">Live status of your withdrawals.</p>
 
         <div className="mt-8 space-y-4">

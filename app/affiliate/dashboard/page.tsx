@@ -621,7 +621,7 @@ export default function AffiliatePage() {
 
                   <div className="mt-6 grid gap-5 md:grid-cols-2">
                     <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
-                      <div className="flex items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3 gap-3">
                         <p className="font-black">
                           💰 Successful Deposits
                         </p>
@@ -650,7 +650,7 @@ export default function AffiliatePage() {
                     </div>
 
                     <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
-                      <div className="flex items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center justify-between gap-3 gap-3">
                         <p className="font-black">
                           🎮 Real-Money Gameplay
                         </p>

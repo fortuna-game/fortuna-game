@@ -114,7 +114,7 @@ export default function AccountHistoryPage() {
   return (
     <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-[#4D94F5]">Account History</h1>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#4D94F5]">Account History</h1>
         <p className="mt-2 text-[#9AAAC1]">
           Completed deposits, failed payments, withdrawals, refunds, wins and entry fees.
         </p>
@@ -122,7 +122,7 @@ export default function AccountHistoryPage() {
         <div className="mt-8 space-y-4">
           {items.map((item) => (
             <div key={item.id} className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 gap-4">
                 <div>
                   <p className="font-bold capitalize">{item.title}</p>
                   <p className="mt-1 text-sm text-[#8295B0]">{item.reference || "No reference"}</p>

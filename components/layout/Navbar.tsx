@@ -26,6 +26,33 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    if (!open) return;
+
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(min-width: 1024px)");
+
+    const handleChange = () => {
+      if (mediaQuery.matches) {
+        setOpen(false);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
     async function loadUser() {
       const {
         data: { user },
@@ -151,7 +178,7 @@ export default function Navbar() {
       </div>
 
       {!loading && profile && open && (
-        <div className="border-t border-[#38BDF8]/15 px-4 pb-4 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 top-[73px] z-50 overflow-y-auto overscroll-contain border-t border-[#38BDF8]/15 bg-[#071A33]/98 px-4 pb-6 lg:hidden">
           <div className="grid gap-2 pt-4">
             {userLinks.map(([label, href]) => (
               <Link

@@ -27,7 +27,7 @@ export default function AdminLoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
-      <form onSubmit={login} className="w-full max-w-md rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8">
+      <form onSubmit={login} className="w-full max-w-md min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8">
         <div className="text-center">
           <div className="text-5xl">🛡️</div>
           <h1 className="mt-4 text-3xl font-black text-[#4D94F5]">Fortuna Admin Login</h1>

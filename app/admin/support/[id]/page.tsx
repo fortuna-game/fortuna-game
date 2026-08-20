@@ -137,7 +137,7 @@ export default function AdminTicketDetailPage() {
   if (!ticket) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
-        <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-8">
+        <div className="min-w-0 rounded-3xl border border-red-500/20 bg-red-500/10 p-8">
           {message}
         </div>
       </main>
@@ -156,7 +156,7 @@ export default function AdminTicketDetailPage() {
           ← Back to Support Tickets
         </Link>
 
-        <div className="mt-6 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+        <div className="mt-6 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
           <div className="flex flex-wrap items-center gap-3">
             <span
               className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest ${
@@ -194,7 +194,7 @@ export default function AdminTicketDetailPage() {
           )}
 
           {ticket.issue_type.startsWith("Affiliate —") && (
-            <div className="mt-6 rounded-3xl border border-green-500/20 bg-green-500/10 p-5">
+            <div className="mt-6 min-w-0 rounded-3xl border border-green-500/20 bg-green-500/10 p-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="text-sm font-black uppercase tracking-widest text-green-400">
@@ -216,7 +216,7 @@ export default function AdminTicketDetailPage() {
               {affiliate ? (
                 <>
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                    <div className="min-w-0 rounded-2xl bg-[#071A33]/40 p-4">
                       <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Phone Number
                       </p>
@@ -225,7 +225,7 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                    <div className="min-w-0 rounded-2xl bg-[#071A33]/40 p-4">
                       <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Email Address
                       </p>
@@ -234,7 +234,7 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                    <div className="min-w-0 rounded-2xl bg-[#071A33]/40 p-4">
                       <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Payment Method
                       </p>
@@ -243,7 +243,7 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                    <div className="min-w-0 rounded-2xl bg-[#071A33]/40 p-4">
                       <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Payment Details
                       </p>
@@ -263,7 +263,7 @@ export default function AdminTicketDetailPage() {
 
                   {affiliateStats && (
                     <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                      <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
                         <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Total Referrals
                         </p>
@@ -272,7 +272,7 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                      <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
                         <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Qualified
                         </p>
@@ -281,7 +281,7 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                      <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
                         <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Total Earnings
                         </p>
@@ -290,7 +290,7 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                      <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
                         <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Available
                         </p>
@@ -299,7 +299,7 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                      <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
                         <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Pending Withdrawal
                         </p>
@@ -311,14 +311,14 @@ export default function AdminTicketDetailPage() {
                   )}
                 </>
               ) : (
-                <p className="mt-4 rounded-2xl bg-[#071A33]/40 p-4 text-[#9AAAC1]">
+                <p className="mt-4 min-w-0 rounded-2xl bg-[#071A33]/40 p-4 text-[#9AAAC1]">
                   The affiliate profile could not be loaded for this ticket.
                 </p>
               )}
             </div>
           )}
 
-          <div className="mt-6 rounded-2xl bg-[#071A33]/50 p-5">
+          <div className="mt-6 min-w-0 rounded-2xl bg-[#071A33]/50 p-5">
             <h2 className="font-black">
               {ticket.issue_type.startsWith("Affiliate —")
                 ? "Affiliate Message"
@@ -351,7 +351,7 @@ export default function AdminTicketDetailPage() {
               onChange={(e) => setReply(e.target.value)}
               rows={7}
               placeholder="Write your reply or update..."
-              className="mt-3 w-full rounded-2xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-white outline-none focus:border-blue-500"
+              className="mt-3 w-full min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-white outline-none focus:border-blue-500"
             />
           </div>
 

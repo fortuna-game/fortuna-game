@@ -312,7 +312,7 @@ export default function AdminPrizeVaultPage() {
   if (denied) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
-        <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
+        <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">
             Access Denied
           </h1>
@@ -370,7 +370,7 @@ export default function AdminPrizeVaultPage() {
           {cards.map(([label, value]) => (
             <div
               key={String(label)}
-              className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6"
+              className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6"
             >
               <p className="text-sm text-[#8295B0]">{label}</p>
 
@@ -402,7 +402,7 @@ export default function AdminPrizeVaultPage() {
           </div>
 
           {showPrizeForm && (
-            <div className="mt-5 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+            <div className="mt-5 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
               <h3 className="text-xl font-black">
                 {editingPrizeId ? "Edit Prize" : "Add New Prize"}
               </h3>
@@ -567,8 +567,8 @@ export default function AdminPrizeVaultPage() {
             Prize Inventory
           </h2>
 
-          <div className="mt-5 overflow-x-auto rounded-3xl border border-[#2A5688]">
-            <table className="w-full min-w-[1050px] text-left">
+          <div className="mt-5 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1050px] text-left">
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">Prize</th>
@@ -649,7 +649,7 @@ export default function AdminPrizeVaultPage() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </section>
 
@@ -678,7 +678,7 @@ export default function AdminPrizeVaultPage() {
               return (
                 <div
                   key={play.id}
-                  className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
+                  className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
                 >
                   <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                     <div>
@@ -752,7 +752,7 @@ export default function AdminPrizeVaultPage() {
                   </div>
 
                   {hasClaimDetails && (
-                    <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+                    <div className="mt-5 min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
                       <h3 className="font-black text-[#66A7FF]">
                         Player Claim Details
                       </h3>
@@ -840,7 +840,7 @@ export default function AdminPrizeVaultPage() {
                   )}
 
                   {(canProcess || canFulfill) && (
-                    <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/30 p-5">
+                    <div className="mt-5 min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/30 p-5">
                       <label className="text-sm font-black text-[#B4C0D1]">
                         Admin Note
                       </label>
@@ -912,7 +912,7 @@ export default function AdminPrizeVaultPage() {
             })}
 
             {plays.length === 0 && (
-              <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
+              <div className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
                 No Prize Vault plays yet.
               </div>
             )}

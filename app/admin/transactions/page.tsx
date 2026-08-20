@@ -67,22 +67,22 @@ export default function AdminTransactionsPage() {
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+          <div className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
             <p className="text-sm text-[#9AAAC1]">Transactions</p>
             <h2 className="mt-2 text-3xl font-black">{summary.totalTransactions}</h2>
           </div>
 
-          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Credits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">GH₵{Number(summary.totalCredit || 0).toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Debits</p>
             <h2 className="mt-2 text-3xl font-black text-red-500">GH₵{Number(summary.totalDebit || 0).toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Net Flow</p>
             <h2 className="mt-2 text-3xl font-black text-[#66A7FF]">GH₵{Number(summary.netFlow || 0).toFixed(2)}</h2>
           </div>
@@ -102,11 +102,11 @@ export default function AdminTransactionsPage() {
           ))}
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
+        {message && <div className="mt-8 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
-            <table className="w-full min-w-[1300px] text-left">
+          <div className="mt-8 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1300px] text-left">
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">User</th>
@@ -155,7 +155,7 @@ export default function AdminTransactionsPage() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
       </div>

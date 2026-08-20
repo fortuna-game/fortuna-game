@@ -150,12 +150,12 @@ export default function SupportPage() {
   return (
     <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <div className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6 md:p-8">
+        <div className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6 md:p-5 sm:p-6 lg:p-8">
           <p className="text-sm font-bold uppercase tracking-widest text-green-400">
             Fortuna Affiliate Support
           </p>
 
-          <h1 className="mt-3 text-4xl font-black text-green-500">
+          <h1 className="mt-3 text-3xl sm:text-4xl font-black text-green-500">
             Affiliate Support Centre
           </h1>
 

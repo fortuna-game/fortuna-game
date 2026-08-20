@@ -60,7 +60,7 @@ export default function WalletPage() {
   return (
     <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-[#4D94F5]">Wallet</h1>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#4D94F5]">Wallet</h1>
         <p className="mt-2 text-[#9AAAC1]">@{username}</p>
 
         {verifying && (
@@ -77,7 +77,7 @@ export default function WalletPage() {
 
         <section className="mt-6 rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
           <p className="text-[#9AAAC1]">Available Balance</p>
-          <h2 className="mt-2 text-5xl font-black text-[#4D94F5]">₵{balance}</h2>
+          <h2 className="mt-2 text-3xl sm:text-3xl sm:text-4xl lg:text-5xl font-black text-[#4D94F5]">₵{balance}</h2>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <Link href="/wallet/deposit" className="rounded-xl bg-[#3F82DD] py-3 text-center font-black text-black">

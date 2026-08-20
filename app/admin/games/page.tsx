@@ -111,7 +111,7 @@ export default function AdminGamesPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
-          <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+          <div className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
             <p className="text-sm text-[#9AAAC1]">
               Total Games
             </p>
@@ -121,7 +121,7 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">
               Total Stakes
             </p>
@@ -131,7 +131,7 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
             <p className="text-sm text-[#9AAAC1]">
               Total Payouts
             </p>
@@ -141,7 +141,7 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">
               Game Profit
             </p>
@@ -178,15 +178,15 @@ export default function AdminGamesPage() {
         </div>
 
         {message && (
-          <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+          <div className="mt-8 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
             {message}
           </div>
         )}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
+          <div className="mt-8 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
 
-            <table className="w-full min-w-[1300px] text-left">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1300px] text-left">
 
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
@@ -283,7 +283,7 @@ export default function AdminGamesPage() {
 
               </tbody>
 
-            </table>
+            </table></div>
 
           </div>
         )}

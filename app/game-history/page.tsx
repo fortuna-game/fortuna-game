@@ -87,7 +87,7 @@ function GameHistoryContent() {
           View your game history and Lucky Draw wins.
         </p>
 
-        <div className="mt-8 flex gap-3 border-b border-[#38BDF8]/15">
+        <div className="mt-8 flex flex-wrap gap-3 border-b border-[#38BDF8]/15">
           <button
             onClick={() => setTab("history")}
             className={`border-b-2 px-4 py-3 font-black transition ${
@@ -129,7 +129,7 @@ function GameHistoryContent() {
                 key={r.id}
                 className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5"
               >
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 gap-4">
                   <div>
                     <p className="text-xl font-black capitalize">
                       {r.game_slug.replaceAll("-", " ")}

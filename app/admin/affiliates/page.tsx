@@ -302,7 +302,7 @@ export default function AdminAffiliatesPage() {
           {summaryCards.map(([label, value]) => (
             <div
               key={String(label)}
-              className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
+              className="min-w-0 rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
             >
               <p className="text-sm text-[#8295B0]">{label}</p>
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
@@ -319,7 +319,7 @@ export default function AdminAffiliatesPage() {
             {payouts.map((payout) => (
               <article
                 key={payout.id}
-                className="rounded-3xl border border-[#F5B700]/20 bg-[#0B2545]/70 p-6"
+                className="min-w-0 rounded-3xl border border-[#F5B700]/20 bg-[#0B2545]/70 p-6"
               >
                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                   <div>
@@ -477,7 +477,7 @@ export default function AdminAffiliatesPage() {
             ))}
 
             {payouts.length === 0 && (
-              <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
+              <div className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
                 No affiliate withdrawal requests yet.
               </div>
             )}
@@ -500,7 +500,7 @@ export default function AdminAffiliatesPage() {
             {visibleAffiliates.map((affiliate) => (
               <article
                 key={affiliate.id}
-                className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
+                className="min-w-0 rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
               >
                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                   <div>
@@ -554,7 +554,7 @@ export default function AdminAffiliatesPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+                <div className="mt-5 min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
                   <p className="text-xs uppercase text-[#7185A3]">
                     Preferred Payment Method
                   </p>

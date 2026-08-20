@@ -67,17 +67,17 @@ export default function AdminDepositsPage() {
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Completed Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">GH₵{totalCompleted.toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Pending Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-[#66A7FF]">GH₵{totalPending.toFixed(2)}</h2>
           </div>
 
-          <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
+          <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
             <p className="text-sm text-[#9AAAC1]">Failed Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-red-300">GH₵{totalFailed.toFixed(2)}</h2>
           </div>
@@ -97,11 +97,11 @@ export default function AdminDepositsPage() {
           ))}
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
+        {message && <div className="mt-8 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
-            <table className="w-full min-w-[1100px] text-left">
+          <div className="mt-8 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1100px] text-left">
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">User</th>
@@ -134,7 +134,7 @@ export default function AdminDepositsPage() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
       </div>

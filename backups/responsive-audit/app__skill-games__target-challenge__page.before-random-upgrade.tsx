@@ -240,7 +240,7 @@ export default function ArrowTargetPage() {
                 style={{ left: `${aim}%` }}
               />
 
-              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-5 overflow-hidden rounded-2xl border border-white/10">
+              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 overflow-hidden rounded-2xl border border-white/10">
                 {zones.map((zone) => (
                   <div
                     key={zone}

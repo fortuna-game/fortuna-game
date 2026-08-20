@@ -27,8 +27,14 @@ export default function AdminLuckyDrawPage() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [ticketPrice, setTicketPrice] = useState("");
+  const [rules, setRules] = useState("");
+  const [winnerCount, setWinnerCount] = useState("1");
+  const [startsAt, setStartsAt] = useState("");
+  const [selectionAt, setSelectionAt] = useState("");
   const [creating, setCreating] = useState(false);
   const [completing, setCompleting] = useState(false);
+  const [selectingWinner, setSelectingWinner] = useState<string | null>(null);
+  const [selectedWinner, setSelectedWinner] = useState<any | null>(null);
 
   const [editingDraw, setEditingDraw] = useState<any | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -41,6 +47,10 @@ export default function AdminLuckyDrawPage() {
   const [editPrizeImage, setEditPrizeImage] = useState("");
   const [editSelectedImage, setEditSelectedImage] =
     useState<File | null>(null);
+  const [editRules, setEditRules] = useState("");
+  const [editWinnerCount, setEditWinnerCount] = useState("1");
+  const [editStartsAt, setEditStartsAt] = useState("");
+  const [editSelectionAt, setEditSelectionAt] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
 
   const [claims, setClaims] = useState<any[]>([]);
@@ -175,6 +185,7 @@ export default function AdminLuckyDrawPage() {
     const ticket = Number(ticketPrice);
     const amount = Number(prizeAmount || 0);
     const value = Number(prizeValue || 0);
+    const winners = Number(winnerCount);
 
     let uploadedImageUrl = prizeImage;
 
@@ -191,6 +202,39 @@ export default function AdminLuckyDrawPage() {
 
     if (!Number.isFinite(ticket) || ticket <= 0) {
       setMessage("Enter a valid ticket price.");
+      return;
+    }
+
+    if (!Number.isInteger(winners) || winners < 1) {
+      setMessage("Number of winners must be at least 1.");
+      return;
+    }
+
+    if (!startsAt) {
+      setMessage("Select the draw start date and time.");
+      return;
+    }
+
+    if (!selectionAt) {
+      setMessage("Select the winner selection date and time.");
+      return;
+    }
+
+    const startDate = new Date(startsAt);
+    const selectionDate = new Date(selectionAt);
+
+    if (
+      Number.isNaN(startDate.getTime()) ||
+      Number.isNaN(selectionDate.getTime())
+    ) {
+      setMessage("Enter valid draw dates and times.");
+      return;
+    }
+
+    if (selectionDate <= startDate) {
+      setMessage(
+        "Winner selection time must be after the draw start time."
+      );
       return;
     }
 
@@ -215,7 +259,10 @@ export default function AdminLuckyDrawPage() {
 
 Prize: ${title}
 Type: ${prizeType}
-Ticket: GH₵${ticket.toFixed(2)}`
+Ticket: GH₵${ticket.toFixed(2)}
+Winners: ${winners}
+Starts: ${startDate.toLocaleString()}
+Selection: ${selectionDate.toLocaleString()}`
     );
 
     if (!confirmed) return;
@@ -246,6 +293,10 @@ Ticket: GH₵${ticket.toFixed(2)}`
             prizeDescription: prizeDescription.trim(),
             prizeImage: uploadedImageUrl.trim(),
             ticketPrice: ticket,
+            rules: rules.trim(),
+            winnerCount: winners,
+            startsAt: startDate.toISOString(),
+            selectionAt: selectionDate.toISOString(),
           }),
         }
       );
@@ -267,6 +318,10 @@ Ticket: GH₵${ticket.toFixed(2)}`
       setPrizeImage("");
       setSelectedImage(null);
       setTicketPrice("");
+      setRules("");
+      setWinnerCount("1");
+      setStartsAt("");
+      setSelectionAt("");
       setMessage("🎉 New Lucky Draw created successfully.");
 
       await loadData();
@@ -274,6 +329,78 @@ Ticket: GH₵${ticket.toFixed(2)}`
       setMessage("Could not create Lucky Draw.");
     } finally {
       setCreating(false);
+    }
+  }
+
+  function toDateTimeLocal(value: string | null | undefined) {
+    if (!value) return "";
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) return "";
+
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+
+    return localDate.toISOString().slice(0, 16);
+  }
+
+  async function selectNextWinner(draw: any) {
+    setMessage("");
+    setSelectedWinner(null);
+    setSelectingWinner(draw.id);
+
+    try {
+      const session = await getSession();
+
+      if (!session) {
+        setMessage("Admin login required.");
+        return;
+      }
+
+      const res = await fetch(
+        "/api/admin/lucky-draw/select-next-winner",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            drawId: draw.id,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setMessage(data.error || "Could not select winner.");
+        return;
+      }
+
+      if (data.winner) {
+        setSelectedWinner({
+          ...data.winner,
+          drawTitle: draw.title,
+          prizeDescription:
+            draw.prize_description ||
+            draw.prize_type ||
+            "Lucky Draw Prize",
+          winnerCount: draw.winner_count || 1,
+        });
+
+        setMessage(
+          `Winner ${data.winner.winner_position} selected successfully.`
+        );
+      }
+
+      await loadData();
+    } catch (error) {
+      console.error(error);
+      setMessage("Something went wrong while selecting the winner.");
+    } finally {
+      setSelectingWinner(null);
     }
   }
 
@@ -292,6 +419,10 @@ Ticket: GH₵${ticket.toFixed(2)}`
     );
     setEditPrizeImage(draw.prize_image || "");
     setEditSelectedImage(null);
+    setEditRules(draw.rules || "");
+    setEditWinnerCount(String(draw.winner_count || 1));
+    setEditStartsAt(toDateTimeLocal(draw.starts_at));
+    setEditSelectionAt(toDateTimeLocal(draw.selection_at));
     setMessage("");
   }
 
@@ -304,6 +435,10 @@ Ticket: GH₵${ticket.toFixed(2)}`
     setEditPrizeDescription("");
     setEditPrizeImage("");
     setEditSelectedImage(null);
+    setEditRules("");
+    setEditWinnerCount("1");
+    setEditStartsAt("");
+    setEditSelectionAt("");
   }
 
   async function saveEdit() {
@@ -313,9 +448,40 @@ Ticket: GH₵${ticket.toFixed(2)}`
 
     const amount = Number(editPrizeAmount || 0);
     const value = Number(editPrizeValue || 0);
+    const winners = Number(editWinnerCount);
 
     if (!editTitle.trim()) {
       setMessage("Enter a prize title.");
+      return;
+    }
+
+    if (!Number.isInteger(winners) || winners < 1) {
+      setMessage("Number of winners must be at least 1.");
+      return;
+    }
+
+    if (!editStartsAt || !editSelectionAt) {
+      setMessage(
+        "Select both the draw start time and winner selection time."
+      );
+      return;
+    }
+
+    const startDate = new Date(editStartsAt);
+    const selectionDate = new Date(editSelectionAt);
+
+    if (
+      Number.isNaN(startDate.getTime()) ||
+      Number.isNaN(selectionDate.getTime())
+    ) {
+      setMessage("Enter valid draw dates and times.");
+      return;
+    }
+
+    if (selectionDate <= startDate) {
+      setMessage(
+        "Winner selection time must be after the draw start time."
+      );
       return;
     }
 
@@ -385,6 +551,10 @@ Type: ${editPrizeType}`
             prizeDescription:
               editPrizeDescription.trim(),
             prizeImage: uploadedImageUrl.trim(),
+            rules: editRules.trim(),
+            winnerCount: winners,
+            startsAt: startDate.toISOString(),
+            selectionAt: selectionDate.toISOString(),
           }),
         }
       );
@@ -668,7 +838,7 @@ No cash will automatically be credited. Delivery or collection details will be r
         </div>
 
         {message && (
-          <div className="mt-8 rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-5 text-yellow-200">
+          <div className="mt-8 min-w-0 rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-5 text-yellow-200">
             {message}
           </div>
         )}
@@ -681,7 +851,7 @@ No cash will automatically be credited. Delivery or collection details will be r
 
         {!loading && (
           <>
-            <section className="mt-8 rounded-3xl border border-[#FFD54A]/30 bg-[#FFD54A]/10 p-6">
+            <section className="mt-8 min-w-0 rounded-3xl border border-[#FFD54A]/30 bg-[#FFD54A]/10 p-6">
               <h2 className="text-2xl font-black text-[#FFD54A]">
                 Create New Lucky Draw
               </h2>
@@ -808,6 +978,86 @@ No cash will automatically be credited. Delivery or collection details will be r
                   />
                 </div>
 
+                <div>
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Number of Winners
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={winnerCount}
+                    onChange={(e) =>
+                      setWinnerCount(e.target.value)
+                    }
+                    placeholder="Example: 5"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                  />
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    🏆 {Number(winnerCount) > 0
+                      ? `${Number(winnerCount)} winner${
+                          Number(winnerCount) === 1 ? "" : "s"
+                        } will be selected one by one.`
+                      : "Enter the number of winners."}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Draw Start Date & Time
+                  </label>
+
+                  <input
+                    type="datetime-local"
+                    value={startsAt}
+                    onChange={(e) =>
+                      setStartsAt(e.target.value)
+                    }
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Winner Selection Date & Time
+                  </label>
+
+                  <input
+                    type="datetime-local"
+                    value={selectionAt}
+                    onChange={(e) =>
+                      setSelectionAt(e.target.value)
+                    }
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                  />
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    Entries will close when this time is reached and
+                    the transparent winner selection will begin.
+                  </p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Lucky Draw Rules
+                  </label>
+
+                  <textarea
+                    value={rules}
+                    onChange={(e) =>
+                      setRules(e.target.value)
+                    }
+                    placeholder="Enter the rules and conditions for this specific Lucky Draw..."
+                    className="mt-2 min-h-32 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                  />
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    These rules will be shown with this Lucky Draw.
+                  </p>
+                </div>
+
               </div>
 
               <button
@@ -822,7 +1072,7 @@ No cash will automatically be credited. Delivery or collection details will be r
             </section>
 
             {editingDraw && (
-              <section className="mt-8 rounded-3xl border border-blue-400/30 bg-[#3F82DD]/10 p-6">
+              <section className="mt-8 min-w-0 rounded-3xl border border-blue-400/30 bg-[#3F82DD]/10 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-black text-blue-300">
@@ -954,6 +1204,87 @@ No cash will automatically be credited. Delivery or collection details will be r
                     />
                   </div>
 
+                  <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Number of Winners
+                    </label>
+
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      value={editWinnerCount}
+                      onChange={(e) =>
+                        setEditWinnerCount(e.target.value)
+                      }
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                    />
+
+                    <p className="mt-2 text-xs text-[#8295B0]">
+                      🏆 {Number(editWinnerCount) > 0
+                        ? `${Number(editWinnerCount)} winner${
+                            Number(editWinnerCount) === 1
+                              ? ""
+                              : "s"
+                          } will be selected one by one.`
+                        : "Enter the number of winners."}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Draw Start Date & Time
+                    </label>
+
+                    <input
+                      type="datetime-local"
+                      value={editStartsAt}
+                      onChange={(e) =>
+                        setEditStartsAt(e.target.value)
+                      }
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Winner Selection Date & Time
+                    </label>
+
+                    <input
+                      type="datetime-local"
+                      value={editSelectionAt}
+                      onChange={(e) =>
+                        setEditSelectionAt(e.target.value)
+                      }
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
+                    />
+
+                    <p className="mt-2 text-xs text-[#8295B0]">
+                      Entries close at this time and transparent winner
+                      selection can begin.
+                    </p>
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Lucky Draw Rules
+                    </label>
+
+                    <textarea
+                      value={editRules}
+                      onChange={(e) =>
+                        setEditRules(e.target.value)
+                      }
+                      placeholder="Enter the rules and conditions for this Lucky Draw..."
+                      className="mt-2 min-h-32 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                    />
+
+                    <p className="mt-2 text-xs text-[#8295B0]">
+                      These rules apply specifically to this draw.
+                    </p>
+                  </div>
+
                 </div>
 
                 <button
@@ -1002,13 +1333,13 @@ No cash will automatically be credited. Delivery or collection details will be r
                   return (
                     <div
                       key={draw.id}
-                      className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6"
+                      className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6"
                     >
                       {draw.prize_image && (
                         <img
                           src={draw.prize_image}
                           alt={draw.title}
-                          className="h-48 w-full rounded-2xl object-cover"
+                          className="mx-auto aspect-[3/4] w-full max-w-sm min-w-0 rounded-2xl object-cover"
                         />
                       )}
 
@@ -1118,7 +1449,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                       </div>
 
                       <div className="mt-6 grid gap-4 md:grid-cols-4">
-                        <div className="rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-4">
+                        <div className="min-w-0 rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-4">
                           <p className="text-sm text-[#9AAAC1]">
                             Prize
                           </p>
@@ -1127,7 +1458,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </h3>
                         </div>
 
-                        <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                        <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
                           <p className="text-sm text-[#9AAAC1]">
                             Ticket Price
                           </p>
@@ -1139,7 +1470,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </h3>
                         </div>
 
-                        <div className="rounded-2xl border border-blue-400/20 bg-[#3F82DD]/10 p-4">
+                        <div className="min-w-0 rounded-2xl border border-blue-400/20 bg-[#3F82DD]/10 p-4">
                           <p className="text-sm text-[#9AAAC1]">
                             Tickets Sold
                           </p>
@@ -1148,7 +1479,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </h3>
                         </div>
 
-                        <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
+                        <div className="min-w-0 rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
                           <p className="text-sm text-[#9AAAC1]">
                             Revenue
                           </p>
@@ -1158,24 +1489,47 @@ No cash will automatically be credited. Delivery or collection details will be r
                         </div>
                       </div>
 
+                      {selectedWinner?.draw_id === draw.id && (
+                        <div className="mt-6 min-w-0 rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5 text-center">
+                          <p className="text-sm font-bold text-yellow-300">
+                            🎉 WINNER {selectedWinner.winner_position} SELECTED
+                          </p>
+
+                          <h3 className="mt-2 text-xl font-black text-white">
+                            {selectedWinner.full_name ||
+                              selectedWinner.name ||
+                              selectedWinner.email ||
+                              "Winner Selected"}
+                          </h3>
+
+                          {selectedWinner.ticket_number && (
+                            <p className="mt-1 text-sm text-[#9AAAC1]">
+                              Ticket: {selectedWinner.ticket_number}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
                       <button
-                        onClick={() => completeDraw(draw)}
+                        onClick={() => selectNextWinner(draw)}
                         disabled={
-                          completing ||
+                          selectingWinner === draw.id ||
                           drawTickets.length === 0 ||
-                          draw.status !== "open"
+                          draw.status === "completed"
                         }
-                        className="mt-6 w-full rounded-xl bg-green-400 px-5 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
+                        className="mt-6 w-full rounded-xl bg-yellow-400 px-5 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {draw.status === "completed"
-                          ? "Completed"
-                          : completing
+                          ? "🎉 Draw Completed"
+                          : selectingWinner === draw.id
                           ? "Selecting Winner..."
                           : drawTickets.length === 0
                           ? "No Tickets Yet"
-                          : draw.status !== "open"
-                          ? "Draw Must Be Open To Complete"
-                          : "🏆 Select Winner & Complete Draw"}
+                          : `🏆 ${
+                              selectedWinner?.draw_id === draw.id
+                                ? "Select Next Winner"
+                                : "Start Transparent Selection"
+                            }`}
                       </button>
                     </div>
                   );
@@ -1183,7 +1537,7 @@ No cash will automatically be credited. Delivery or collection details will be r
               </div>
 
               {draws.length === 0 && (
-                <div className="mt-6 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#9AAAC1]">
+                <div className="mt-6 min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#9AAAC1]">
                   No active Lucky Draws yet.
                 </div>
               )}

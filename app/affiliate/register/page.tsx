@@ -148,9 +148,9 @@ export default function AffiliateRegisterPage() {
     <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-5 py-10 text-white">
       <div className="w-full max-w-2xl rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-7 shadow-2xl">
         <div className="text-center">
-          <div className="text-6xl">🤝</div>
+          <div className="text-3xl sm:text-4xl sm:text-3xl sm:text-3xl sm:text-4xl lg:text-5xl lg:text-6xl">🤝</div>
 
-          <h1 className="mt-4 text-4xl font-black text-green-400">
+          <h1 className="mt-4 text-3xl sm:text-4xl font-black text-green-400">
             Join Fortuna Affiliate Program
           </h1>
 

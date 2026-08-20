@@ -130,7 +130,7 @@ export default function SkillGamesPage() {
                   </p>
 
                   <div
-                    className={`mt-6 flex items-center justify-between rounded-2xl px-5 py-4 font-black text-black transition ${
+                    className={`mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl px-5 py-4 font-black text-black transition ${
                       game.slug === "lucky-draw"
                         ? "bg-[#FFD54A] group-hover:bg-yellow-300"
                         : "bg-[#3F82DD] group-hover:bg-blue-400"
@@ -185,7 +185,7 @@ export default function SkillGamesPage() {
                   {tag}
                 </p>
 
-                <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-[#3F82DD] px-4 py-3 font-black text-black">
+                <div className="relative mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#3F82DD] px-4 py-3 font-black text-black">
                   <span>Open Game</span>
                   <span className="transition group-hover:translate-x-1">→</span>
                 </div>

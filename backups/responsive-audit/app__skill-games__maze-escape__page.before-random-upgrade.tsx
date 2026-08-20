@@ -5,22 +5,29 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import RewardsCard from "@/components/RewardsCard";
 
-type Card = { id: string; symbol: string };
+type Maze = {
+  size: number;
+  walls: string[];
+  start: { x: number; y: number };
+  exit: { x: number; y: number };
+  maxMoves: number;
+  timeLimit: number;
+};
+
 type Result = { score: number; total: number; won: boolean; payout: number };
 
-export default function MemoryMatchPage() {
+export default function MazeEscapePage() {
   const [stake, setStake] = useState("");
   const [sessionId, setSessionId] = useState("");
-  const [cards, setCards] = useState<Card[]>([]);
-  const [revealed, setRevealed] = useState<Record<string, string>>({});
-  const [flipped, setFlipped] = useState<string[]>([]);
-  const [matched, setMatched] = useState<string[]>([]);
-  const [moves, setMoves] = useState<[string, string][]>([]);
-  const [maxMoves, setMaxMoves] = useState(10);
+  const [maze, setMaze] = useState<Maze | null>(null);
+  const [player, setPlayer] = useState({ x: 0, y: 0 });
+  const [moves, setMoves] = useState<string[]>([]);
+  const [timeLeft, setTimeLeft] = useState(60);
   const [result, setResult] = useState<Result | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [timeLeft, setTimeLeft] = useState(75);
+
+  const playing = Boolean(maze) && !result;
 
   async function startGame() {
     setLoading(true);
@@ -29,7 +36,7 @@ export default function MemoryMatchPage() {
     const { data: auth } = await supabase.auth.getSession();
     const token = auth.session?.access_token;
 
-    const res = await fetch("/api/skill-games/memory-match/secure-start", {
+    const res = await fetch("/api/skill-games/maze-escape/secure-start", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ stake: Number(stake) }),
@@ -44,24 +51,22 @@ export default function MemoryMatchPage() {
     }
 
     setSessionId(data.sessionId);
-    setCards(data.cards || []);
-    setMaxMoves(data.maxMoves || 10);
-    setRevealed({});
-    setFlipped([]);
-    setMatched([]);
+    setMaze(data.maze);
+    setPlayer(data.maze.start);
     setMoves([]);
+    setTimeLeft(data.maze.timeLimit || 45);
     setResult(null);
-    setTimeLeft(75);
     setLoading(false);
   }
 
-  async function finishGame(finalMoves: [string, string][]) {
+  async function finishGame(finalMoves: string[]) {
+    if (loading || result) return;
     setLoading(true);
 
     const { data: auth } = await supabase.auth.getSession();
     const token = auth.session?.access_token;
 
-    const res = await fetch("/api/skill-games/memory-match/secure-finish", {
+    const res = await fetch("/api/skill-games/maze-escape/secure-finish", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ sessionId, moves: finalMoves }),
@@ -79,60 +84,51 @@ export default function MemoryMatchPage() {
     setLoading(false);
   }
 
-  function finishNow(finalMoves: [string, string][]) {
-    void finishGame(finalMoves);
-  }
+  function move(direction: string) {
+    if (!maze || loading || result) return;
 
-  function flipCard(id: string) {
-    if (loading || result || matched.includes(id) || flipped.includes(id)) return;
-    if (flipped.length >= 2) return;
+    let nx = player.x;
+    let ny = player.y;
 
-    const next = [...flipped, id];
-    setFlipped(next);
+    if (direction === "up") ny -= 1;
+    if (direction === "down") ny += 1;
+    if (direction === "left") nx -= 1;
+    if (direction === "right") nx += 1;
 
-    if (next.length === 2) {
-      const pair: [string, string] = [next[0], next[1]];
-      const nextMoves = [...moves, pair];
-      setMoves(nextMoves);
+    if (
+      nx < 0 ||
+      ny < 0 ||
+      nx >= maze.size ||
+      ny >= maze.size ||
+      maze.walls.includes(`${nx}-${ny}`)
+    ) {
+      return;
+    }
 
-      setTimeout(() => {
-        const first = cards.find((c) => c.id === pair[0]);
-        const second = cards.find((c) => c.id === pair[1]);
+    const nextMoves = [...moves, direction];
+    setMoves(nextMoves);
+    setPlayer({ x: nx, y: ny });
 
-        if (first && second && first.symbol === second.symbol) {
-          const nextMatched = [...matched, pair[0], pair[1]];
-          setMatched(nextMatched);
+    if (nx === maze.exit.x && ny === maze.exit.y) {
+      void finishGame(nextMoves);
+      return;
+    }
 
-          if (nextMatched.length === cards.length) {
-            finishNow(nextMoves);
-            return;
-          }
-        }
-
-        setFlipped([]);
-
-        if (nextMoves.length >= maxMoves) {
-          finishNow(nextMoves);
-        }
-      }, 700);
+    if (nextMoves.length >= maze.maxMoves) {
+      void finishGame(nextMoves);
     }
   }
 
   function resetGame() {
     setStake("");
     setSessionId("");
-    setCards([]);
-    setRevealed({});
-    setFlipped([]);
-    setMatched([]);
+    setMaze(null);
+    setPlayer({ x: 0, y: 0 });
     setMoves([]);
     setResult(null);
     setMessage("");
-    setTimeLeft(75);
+    setTimeLeft(60);
   }
-
-
-  const playing = cards.length > 0 && !result;
 
   useEffect(() => {
     if (!playing) return;
@@ -154,29 +150,24 @@ export default function MemoryMatchPage() {
       return;
     }
 
-    const timer = window.setTimeout(() => {
-      setTimeLeft((value) => value - 1);
-    }, 1000);
-
+    const timer = window.setTimeout(() => setTimeLeft((v) => v - 1), 1000);
     return () => window.clearTimeout(timer);
   }, [playing, loading, timeLeft, moves]);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center">
+      <div className="w-full max-w-xl rounded-3xl border border-lime-400/20 bg-white/5 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
-        <div className="text-5xl">🧠</div>
-        <h1 className="mt-3 text-3xl font-black text-pink-500">Memory Match</h1>
-        <p className="mt-2 text-sm text-white/60">
-          Match all hidden pairs within {maxMoves} moves.
-        </p>
+        <div className="text-5xl">🧭</div>
+        <h1 className="mt-3 text-3xl font-black text-lime-400">Maze Escape</h1>
+        <p className="mt-2 text-sm text-white/60">Reach the exit before time or moves run out.</p>
 
         {message && <div className="mt-4 rounded-xl bg-red-500/10 p-3 text-red-300">{message}</div>}
 
-        {!cards.length && !result && (
+        {!maze && !result && (
           <div className="mt-6">
             <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
               <p className="font-black text-white">
@@ -184,7 +175,7 @@ export default function MemoryMatchPage() {
               </p>
 
               <p className="mt-2 text-sm leading-6 text-white/70">
-                Flip the cards and find all 6 matching pairs. Complete the challenge within the allowed number of moves to win.
+                Move through the maze and reach the exit. Escape within the allowed number of moves to win.
               </p>
             </div>
 
@@ -212,56 +203,69 @@ export default function MemoryMatchPage() {
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 7}
-              className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-lime-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Now"}
             </button>
           </div>
         )}
 
-        {cards.length > 0 && !result && (
+        {maze && !result && (
           <div className="mt-6">
             <div className="flex justify-between text-sm text-white/60">
-              <span>Moves: {moves.length}/{maxMoves}</span>
-              <span className={timeLeft <= 10 ? "text-red-400" : "text-pink-500"}>
-                ⏱ {timeLeft}s
-              </span>
+              <span>Moves: {moves.length}/{maze.maxMoves}</span>
+              <span className={timeLeft <= 10 ? "text-red-400" : "text-lime-400"}>⏱ {timeLeft}s</span>
             </div>
 
-            <div className="mt-5 grid grid-cols-4 gap-3">
-              {cards.map((card) => {
-                const open = flipped.includes(card.id) || matched.includes(card.id);
+            <div className="mx-auto mt-5 grid max-w-sm grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
+              {Array.from({ length: maze.size * maze.size }, (_, i) => {
+                const x = i % maze.size;
+                const y = Math.floor(i / maze.size);
+                const isPlayer = player.x === x && player.y === y;
+                const isWall = maze.walls.includes(`${x}-${y}`);
+                const isExit = maze.exit.x === x && maze.exit.y === y;
+
                 return (
-                  <button
-                    key={card.id}
-                    onClick={() => flipCard(card.id)}
-                    className="flex aspect-square items-center justify-center rounded-2xl border border-pink-500/20 bg-black text-3xl font-black"
+                  <div
+                    key={i}
+                    className={`flex aspect-square items-center justify-center rounded-xl border text-xl font-black ${
+                      isWall
+                        ? "border-white/10 bg-white/20"
+                        : isExit
+                        ? "border-pink-400 bg-pink-500/20"
+                        : "border-white/10 bg-black"
+                    }`}
                   >
-                    {open ? card.symbol : "?"}
-                  </button>
+                    {isPlayer ? "🧍" : isExit ? "🏁" : isWall ? "■" : ""}
+                  </div>
                 );
               })}
             </div>
 
-            <p className="mt-4 text-xs text-white/40">
-              Secure mode: result is checked by server.
-            </p>
+            <div className="mx-auto mt-5 grid max-w-xs grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+              <div />
+              <button onClick={() => move("up")} className="rounded-xl bg-lime-400 py-3 font-black text-black">↑</button>
+              <div />
+              <button onClick={() => move("left")} className="rounded-xl bg-lime-400 py-3 font-black text-black">←</button>
+              <button onClick={() => move("down")} className="rounded-xl bg-lime-400 py-3 font-black text-black">↓</button>
+              <button onClick={() => move("right")} className="rounded-xl bg-lime-400 py-3 font-black text-black">→</button>
+            </div>
           </div>
         )}
 
         {result && (
           <div className="mt-6">
             <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
-              <div className="text-5xl">{result.won ? "🏆" : "🎯"}</div>
+              <div className="text-5xl">{result.won ? "🏆" : "🧭"}</div>
               <h2 className="mt-3 text-2xl font-black">
-                {result.won ? "Excellent Memory!" : "Challenge Complete"}
+                {result.won ? "You Escaped!" : "Maze Failed"}
               </h2>
-              <p className="mt-3">Score: {result.score}/{result.total}</p>
               {result.won && <p className="mt-3 font-black">You won GH₵{Number(result.payout).toFixed(2)}</p>}
+              {!result.won && <p className="mt-3">You did not reach the exit in time.</p>}
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-pink-500 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-lime-400 py-3 font-black text-black">
                 Play Again
               </button>
               <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">

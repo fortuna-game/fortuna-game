@@ -42,15 +42,21 @@ export async function POST(req: Request) {
       prizeDescription,
       prizeImage,
       ticketPrice,
+      status,
+      rules,
+      winnerCount,
+      startsAt,
+      selectionAt,
     } = await req.json();
 
-    const ticket = Number(ticketPrice);
-    const amount = Number(prizeAmount || 0);
-    const value = Number(prizeValue || amount || 0);
+    const cleanTitle = String(title || "").trim();
+    const finalPrizeType = String(prizeType || "").trim();
+    const finalTicketPrice = Number(ticketPrice);
+    const finalWinnerCount = Number(winnerCount || 1);
 
-    if (!Number.isFinite(ticket) || ticket <= 0) {
+    if (!cleanTitle) {
       return NextResponse.json(
-        { error: "Enter a valid ticket price." },
+        { error: "Lucky Draw title is required." },
         { status: 400 }
       );
     }
@@ -63,11 +69,51 @@ export async function POST(req: Request) {
       "other",
     ];
 
-    const type = validPrizeTypes.includes(prizeType)
-      ? prizeType
-      : "cash";
+    if (!validPrizeTypes.includes(finalPrizeType)) {
+      return NextResponse.json(
+        { error: "Select a valid prize type." },
+        { status: 400 }
+      );
+    }
 
-    if (type === "cash" && (!Number.isFinite(amount) || amount <= 0)) {
+    if (
+      !Number.isFinite(finalTicketPrice) ||
+      finalTicketPrice <= 0
+    ) {
+      return NextResponse.json(
+        { error: "Enter a valid ticket price." },
+        { status: 400 }
+      );
+    }
+
+    if (
+      !Number.isInteger(finalWinnerCount) ||
+      finalWinnerCount < 1
+    ) {
+      return NextResponse.json(
+        { error: "Number of winners must be at least 1." },
+        { status: 400 }
+      );
+    }
+
+    const validStatuses = [
+      "open",
+      "paused",
+      "suspended",
+    ];
+
+    const finalStatus = validStatuses.includes(String(status))
+      ? String(status)
+      : "open";
+
+    let finalPrizeAmount = Number(prizeAmount || 0);
+    let finalPrizeValue = Number(prizeValue || 0);
+
+    if (
+      finalPrizeType === "cash" &&
+      (!Number.isFinite(finalPrizeAmount) ||
+        finalPrizeAmount <= 0)
+    ) {
       return NextResponse.json(
         { error: "Enter a valid cash prize amount." },
         { status: 400 }
@@ -75,8 +121,9 @@ export async function POST(req: Request) {
     }
 
     if (
-      type !== "cash" &&
-      (!Number.isFinite(value) || value <= 0)
+      finalPrizeType !== "cash" &&
+      (!Number.isFinite(finalPrizeValue) ||
+        finalPrizeValue <= 0)
     ) {
       return NextResponse.json(
         { error: "Enter a valid prize value." },
@@ -84,25 +131,51 @@ export async function POST(req: Request) {
       );
     }
 
-    const finalPrizeAmount =
-      type === "cash" ? amount : value;
+    const finalStartsAt =
+      startsAt && !Number.isNaN(new Date(startsAt).getTime())
+        ? new Date(startsAt).toISOString()
+        : null;
 
-    const defaultTitle =
-      type === "cash"
-        ? `Cash Prize GH₵${amount}`
-        : prizeDescription || "Lucky Draw Prize";
+    const finalSelectionAt =
+      selectionAt &&
+      !Number.isNaN(new Date(selectionAt).getTime())
+        ? new Date(selectionAt).toISOString()
+        : null;
 
-    const { data, error } = await supabaseAdmin
+    if (
+      finalStartsAt &&
+      finalSelectionAt &&
+      new Date(finalSelectionAt) <= new Date(finalStartsAt)
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Winner selection time must be after the draw start time.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const { data: draw, error } = await supabaseAdmin
       .from("lucky_draws")
       .insert({
-        title: title?.trim() || defaultTitle,
-        prize_amount: finalPrizeAmount,
-        prize_type: type,
-        prize_description: prizeDescription?.trim() || null,
-        prize_image: prizeImage?.trim() || null,
-        prize_value: value,
-        ticket_price: ticket,
-        status: "open",
+        title: cleanTitle,
+        prize_type: finalPrizeType,
+        prize_amount:
+          finalPrizeType === "cash"
+            ? finalPrizeAmount
+            : finalPrizeValue,
+        prize_value: finalPrizeValue,
+        prize_description:
+          String(prizeDescription || "").trim() || null,
+        prize_image:
+          String(prizeImage || "").trim() || null,
+        ticket_price: finalTicketPrice,
+        status: finalStatus,
+        rules: String(rules || "").trim() || null,
+        winner_count: finalWinnerCount,
+        starts_at: finalStartsAt,
+        selection_at: finalSelectionAt,
       })
       .select("*")
       .single();
@@ -116,7 +189,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      draw: data,
+      draw,
+      message: "Lucky Draw created successfully.",
     });
   } catch (error) {
     console.error("CREATE LUCKY DRAW ERROR:", error);

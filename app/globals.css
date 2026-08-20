@@ -55,3 +55,94 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* ============================================
+   GLOBAL RESPONSIVE & FIXED BACKGROUND SYSTEM
+   ============================================ */
+
+html {
+  min-height: 100%;
+  overflow-x: hidden;
+  background: #071a2d;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  overflow-x: hidden;
+  background: #071a2d;
+}
+
+/* Keep the visual background fixed while content scrolls */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at top left, rgba(56, 189, 248, 0.10), transparent 32%),
+    radial-gradient(circle at top right, rgba(250, 204, 21, 0.07), transparent 28%),
+    linear-gradient(180deg, #0b2545 0%, #071a2d 55%, #061526 100%);
+}
+
+/* Prevent any element from causing sideways scrolling */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+}
+
+/* Long text, IDs and emails must not break layouts */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+a,
+button {
+  overflow-wrap: break-word;
+}
+
+/* Responsive containers */
+.responsive-container {
+  width: min(100% - 2rem, 1400px);
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .responsive-container {
+    width: min(100% - 1.25rem, 1400px);
+  }
+}
+
+/* Mobile spacing protection */
+@media (max-width: 640px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    max-width: 100%;
+  }
+}
+
+/* Tablet protection */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .responsive-container {
+    width: min(100% - 2rem, 1400px);
+  }
+}

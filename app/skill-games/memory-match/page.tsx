@@ -236,7 +236,7 @@ export default function MemoryMatchPage() {
               </span>
             </div>
 
-            <div className="mt-5 grid grid-cols-4 gap-3">
+            <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {cards.map((card) => {
                 const open = flipped.includes(card.id) || matched.includes(card.id);
                 return (

@@ -90,7 +90,7 @@ export default function AdminSupportPage() {
   if (denied) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
-        <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
+        <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
           <p className="mt-3 text-[#9AAAC1]">Login through /admin/login again.</p>
         </div>
@@ -116,7 +116,7 @@ export default function AdminSupportPage() {
           {tickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
+              className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
             >
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                 <div>
@@ -157,7 +157,7 @@ export default function AdminSupportPage() {
                   </p>
                 </div>
 
-                <div className="min-w-[220px] rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
+                <div className="min-w-[220px] min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
                   <p className="text-sm text-[#8295B0]">Status</p>
                   <p className="mt-1 text-xl font-black capitalize text-[#66A7FF]">
                     {ticket.status.replaceAll("_", " ")}
@@ -194,7 +194,7 @@ export default function AdminSupportPage() {
           ))}
 
           {tickets.length === 0 && (
-            <p className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-[#9AAAC1]">
+            <p className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-[#9AAAC1]">
               No support tickets yet.
             </p>
           )}

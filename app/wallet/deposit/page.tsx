@@ -63,9 +63,9 @@ export default function DepositPage() {
     <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
       <form
         onSubmit={startDeposit}
-        className="mx-auto max-w-xl rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-8"
+        className="mx-auto max-w-xl rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-5 sm:p-6 lg:p-8"
       >
-        <h1 className="text-4xl font-black text-[#66A7FF]">Deposit</h1>
+        <h1 className="text-3xl sm:text-4xl font-black text-[#66A7FF]">Deposit</h1>
         <p className="mt-3 text-[#9AAAC1]">Fund your Fortuna Play wallet.</p>
 
         <input

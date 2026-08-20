@@ -26,7 +26,7 @@ export default function AdminLuckyDrawPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <Link
             href="/admin/lucky-draw/manage"
-            className="group rounded-3xl border border-[#F5B700]/30 bg-zinc-950 p-8 transition hover:-translate-y-1 hover:border-[#FFD54A] hover:bg-zinc-900"
+            className="group min-w-0 rounded-3xl border border-[#F5B700]/30 bg-zinc-950 p-8 transition hover:-translate-y-1 hover:border-[#FFD54A] hover:bg-zinc-900"
           >
             <div className="text-5xl">🎟️</div>
 
@@ -46,7 +46,7 @@ export default function AdminLuckyDrawPage() {
 
           <Link
             href="/admin/lucky-draw/claims"
-            className="group rounded-3xl border border-[#32659D] bg-zinc-950 p-8 transition hover:-translate-y-1 hover:border-blue-400 hover:bg-zinc-900"
+            className="group min-w-0 rounded-3xl border border-[#32659D] bg-zinc-950 p-8 transition hover:-translate-y-1 hover:border-blue-400 hover:bg-zinc-900"
           >
             <div className="text-5xl">📦</div>
 

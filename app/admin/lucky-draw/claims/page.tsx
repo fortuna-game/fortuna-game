@@ -143,7 +143,7 @@ export default function PrizeClaimsPage() {
         )}
 
         {claims.length === 0 && !loadingClaims ? (
-          <div className="rounded-2xl border border-[#38BDF8]/15 bg-zinc-950 p-8 text-center text-blue-100/45">
+          <div className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-zinc-950 p-8 text-center text-blue-100/45">
             No prize claims loaded yet. Click "Load Prize Claims" to check for submitted claims.
           </div>
         ) : (
@@ -151,7 +151,7 @@ export default function PrizeClaimsPage() {
             {claims.map((claim) => (
               <div
                 key={claim.id}
-                className="rounded-2xl border border-[#38BDF8]/15 bg-zinc-950 p-6"
+                className="min-w-0 rounded-2xl border border-[#38BDF8]/15 bg-zinc-950 p-6"
               >
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
                   <div className="space-y-3">

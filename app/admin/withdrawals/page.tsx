@@ -142,7 +142,7 @@ export default function AdminWithdrawalsPage() {
   if (denied) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
-        <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
+        <div className="min-w-0 rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
           <p className="mt-3 text-[#9AAAC1]">Please login through /admin/login again.</p>
         </div>
@@ -159,8 +159,8 @@ export default function AdminWithdrawalsPage() {
 
         {message && <p className="mt-5 rounded-xl bg-[#0F2F57]/80 p-4">{message}</p>}
 
-        <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
-          <table className="w-full min-w-[1100px] text-left">
+        <div className="mt-8 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
+          <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1100px] text-left">
             <thead className="bg-[#3F82DD] text-black">
               <tr>
                 <th className="p-4">Username</th>
@@ -232,7 +232,7 @@ export default function AdminWithdrawalsPage() {
                 </tr>
               )}
             </tbody>
-          </table>
+          </table></div>
         </div>
       </div>
     </main>

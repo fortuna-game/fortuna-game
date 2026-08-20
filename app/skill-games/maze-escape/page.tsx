@@ -225,7 +225,7 @@ export default function MazeEscapePage() {
               <span className={timeLeft <= 10 ? "text-red-400" : "text-lime-400"}>⏱ {timeLeft}s</span>
             </div>
 
-            <div className="mx-auto mt-5 grid max-w-sm grid-cols-5 gap-2">
+            <div className="mx-auto mt-5 grid max-w-sm grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-2">
               {Array.from({ length: maze.size * maze.size }, (_, i) => {
                 const x = i % maze.size;
                 const y = Math.floor(i / maze.size);
@@ -250,7 +250,7 @@ export default function MazeEscapePage() {
               })}
             </div>
 
-            <div className="mx-auto mt-5 grid max-w-xs grid-cols-3 gap-2">
+            <div className="mx-auto mt-5 grid max-w-xs grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
               <div />
               <button onClick={() => move("up")} className="rounded-xl bg-lime-400 py-3 font-black text-black">↑</button>
               <div />

@@ -37,7 +37,7 @@ export default function AdminDashboardPage() {
   if (!data) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
-        <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center">
+        <div className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center">
           {message}
         </div>
       </main>
@@ -74,19 +74,19 @@ export default function AdminDashboardPage() {
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+            <div key={label} className="min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
               <p className="text-sm text-[#8295B0]">{label}</p>
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+        <div className="mt-10 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
           <h2 className="text-2xl font-black text-[#4D94F5]">Profit Overview</h2>
           <p className="mt-2 text-[#9AAAC1]">Today, 7 days, 30 days and all-time business movement.</p>
 
           <div className="mt-6 overflow-x-auto">
-            <table className="w-full min-w-[900px] text-left">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[900px] text-left">
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">Period</th>
@@ -117,16 +117,16 @@ export default function AdminDashboardPage() {
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </table></div>
           </div>
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+          <section className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
             <h2 className="text-2xl font-black text-[#4D94F5]">Recent Transactions</h2>
             <div className="mt-4 space-y-3">
               {data.recentTransactions.map((t: any) => (
-                <div key={t.id} className="rounded-2xl bg-[#071A33]/50 p-4">
+                <div key={t.id} className="min-w-0 rounded-2xl bg-[#071A33]/50 p-4">
                   <p className="font-bold">{String(t.type).replaceAll("_", " ")}</p>
                   <p className="text-sm text-[#9AAAC1]">GH₵{Number(t.amount).toFixed(2)} • {t.status}</p>
                 </div>
@@ -134,11 +134,11 @@ export default function AdminDashboardPage() {
             </div>
           </section>
 
-          <section className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+          <section className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
             <h2 className="text-2xl font-black text-[#4D94F5]">Recent Skill Games</h2>
             <div className="mt-4 space-y-3">
               {data.recentGames.map((g: any) => (
-                <div key={g.id} className="rounded-2xl bg-[#071A33]/50 p-4">
+                <div key={g.id} className="min-w-0 rounded-2xl bg-[#071A33]/50 p-4">
                   <p className="font-bold">{String(g.game_slug).replaceAll("-", " ")}</p>
                   <p className="text-sm text-[#9AAAC1]">
                     Stake GH₵{Number(g.stake || 0).toFixed(2)} • {g.result || g.status}

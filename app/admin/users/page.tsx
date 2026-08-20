@@ -48,11 +48,11 @@ export default function AdminUsersPage() {
           </Link>
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
+        {message && <div className="mt-8 min-w-0 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
-            <table className="w-full min-w-[1200px] text-left">
+          <div className="mt-8 overflow-x-auto min-w-0 rounded-3xl border border-[#2A5688]">
+            <div className="w-full overflow-x-auto rounded-xl"><table className="w-full min-w-[1200px] text-left">
               <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">User</th>
@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
                   </tr>
                 )}
               </tbody>
-            </table>
+            </table></div>
           </div>
         )}
       </div>
