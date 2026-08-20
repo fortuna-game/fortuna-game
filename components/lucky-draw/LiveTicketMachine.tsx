@@ -281,7 +281,9 @@ export default function LiveTicketMachine({
           <div className="rounded-xl bg-[#0B2545] p-3">
             <p className="text-[#8295B0]">Status</p>
             <p className="mt-1 whitespace-nowrap text-base font-black text-green-300 sm:text-lg">
-              {draw.status}
+              {revealing && winner?.ticket_number
+  ? "🏆 WINNER SELECTED"
+  : "�� SELECTING"}
             </p>
           </div>
         </div>
