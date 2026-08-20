@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { randomBytes } from "crypto";
 import { supabaseAdmin } from "@/lib/supabaseAdmin";
 
 export async function POST(req: Request) {
@@ -41,11 +42,11 @@ export async function POST(req: Request) {
       .toUpperCase()
       .replace(/[^A-Z0-9]/g, "");
 
-    const d = new Date();
-    const month = d.toLocaleString("en-US", { month: "short" });
-    const day = d.getDate();
-    const year = String(d.getFullYear()).slice(-2);
-    const reference = `FG-WITHDRAW-${safeUsername}-${month} ${day}-${year}`;
+    const uniqueCode = randomBytes(4)
+      .toString("hex")
+      .toUpperCase();
+
+    const reference = `FG-WD-${safeUsername}-${uniqueCode}`;
 
     const { data: withdrawResult, error: withdrawError } = await supabaseAdmin.rpc(
       "request_withdrawal_atomic",
