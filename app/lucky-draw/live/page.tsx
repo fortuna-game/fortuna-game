@@ -279,26 +279,66 @@ export default function LiveLuckyDrawPage() {
           })}
 
         {!loading && draws.length === 0 && (
-          <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5 sm:p-7 lg:p-10 text-center text-[#9AAAC1]">
-            There are currently no Lucky Draw results available.
-          </div>
+          <section className="mx-auto max-w-3xl rounded-[32px] border border-[#F5B700]/30 bg-gradient-to-br from-[#0B2545] via-[#071A33] to-[#111D3A] p-6 text-center shadow-2xl sm:p-10">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full border border-[#F5B700]/30 bg-[#F5B700]/10 text-4xl">
+              🎟️
+            </div>
+
+            <p className="mt-5 text-xs font-black uppercase tracking-[0.3em] text-[#FFD54A]">
+              NO LIVE DRAW
+            </p>
+
+            <h2 className="mt-3 text-3xl font-black sm:text-4xl">
+              There is no active draw right now
+            </h2>
+
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[#9AAAC1] sm:text-base">
+              The next Lucky Draw will appear here when it goes live.
+              You can watch a previous recorded draw or check the public winners list while you wait.
+            </p>
+
+            <div className="mt-8 grid gap-4 sm:grid-cols-3">
+              <a
+                href="/lucky-draw/replays"
+                className="rounded-2xl border border-[#4D94F5]/40 bg-[#4D94F5]/10 p-5 text-center transition hover:border-[#4D94F5] hover:bg-[#4D94F5]/20"
+              >
+                <div className="text-3xl">🎬</div>
+                <p className="mt-3 font-black text-white">
+                  Watch Previous
+                </p>
+                <p className="mt-1 text-xs text-[#8295B0]">
+                  Replay completed draws
+                </p>
+              </a>
+
+              <a
+                href="/winners"
+                className="rounded-2xl border border-[#F5B700]/40 bg-[#F5B700]/10 p-5 text-center transition hover:border-[#F5B700] hover:bg-[#F5B700]/20"
+              >
+                <div className="text-3xl">🏆</div>
+                <p className="mt-3 font-black text-white">
+                  View Winners
+                </p>
+                <p className="mt-1 text-xs text-[#8295B0]">
+                  See public winners
+                </p>
+              </a>
+
+              <a
+                href="/"
+                className="rounded-2xl border border-white/10 bg-white/5 p-5 text-center transition hover:border-white/30 hover:bg-white/10"
+              >
+                <div className="text-3xl">🏠</div>
+                <p className="mt-3 font-black text-white">
+                  Come Back Later
+                </p>
+                <p className="mt-1 text-xs text-[#8295B0]">
+                  Return when a draw is live
+                </p>
+              </a>
+            </div>
+          </section>
         )}
-
-        <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <a
-            href="/lucky-draw/replays"
-            className="rounded-full border border-[#4D94F5] px-6 py-3 font-black text-white transition hover:bg-[#4D94F5]"
-          >
-            🎬 Previous Draws & Replays
-          </a>
-
-          <a
-            href="/winners"
-            className="rounded-full border border-[#F5B700] px-6 py-3 font-black text-[#FFD54A] transition hover:bg-[#F5B700]/10"
-          >
-            🏆 View Winners
-          </a>
-        </div>
       </div>
     </main>
   );
