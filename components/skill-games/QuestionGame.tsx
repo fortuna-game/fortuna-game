@@ -196,15 +196,15 @@ export default function QuestionGame({
       <div className="mx-auto max-w-5xl px-4 pt-6 sm:px-6">
         <RewardsCard />
       </div>
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center shadow-2xl sm:p-7">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5 text-center shadow-2xl sm:p-7">
         <div className="text-5xl">{icon}</div>
 
-        <h1 className="mt-3 text-3xl font-black text-pink-500">
+        <h1 className="mt-3 text-3xl font-black text-[#4D94F5]">
           {name}
         </h1>
 
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-[#9AAAC1]">
           {description}
         </p>
 
@@ -216,26 +216,26 @@ export default function QuestionGame({
 
         {!playing && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Complete the challenge before time runs out. Get at least{" "}
-                <span className="font-black text-pink-400">
+                <span className="font-black text-[#66A7FF]">
                   {minScore} out of {total}
                 </span>{" "}
                 correct to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -248,11 +248,11 @@ export default function QuestionGame({
                             value={stake}
               onChange={(event) => setStake(event.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-pink-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold outline-none focus:border-blue-500"
             />
 
             {Number(stake) > 0 && (
-              <div className="mt-4 rounded-xl bg-pink-500/10 p-3 font-bold text-green-300">
+              <div className="mt-4 rounded-xl bg-[#3F82DD]/10 p-3 font-bold text-green-300">
                 Entry Fee GH₵{Number(stake).toFixed(2)} → Prize GH₵
                 {payout.toFixed(2)}
               </div>
@@ -266,12 +266,12 @@ export default function QuestionGame({
                 Number(stake) < 7 ||
                 false
               }
-              className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Now"}
             </button>
 
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-[#7185A3]">
               Your entry fee is deducted when the game starts.
             </p>
           </div>
@@ -280,22 +280,22 @@ export default function QuestionGame({
         {playing && question && (
           <div className="mt-6">
             <div className="flex items-center justify-between text-sm font-bold">
-              <span className="text-white/60">
+              <span className="text-[#9AAAC1]">
                 {current + 1}/{questions.length}
               </span>
 
               <span
                 className={
-                  timeLeft <= 10 ? "text-red-400" : "text-pink-500"
+                  timeLeft <= 10 ? "text-red-400" : "text-[#4D94F5]"
                 }
               >
                 ⏱ {timeLeft}s
               </span>
             </div>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#0F2F57]/80">
               <div
-                className="h-full bg-pink-500 transition-all duration-300"
+                className="h-full bg-[#3F82DD] transition-all duration-300"
                 style={{
                   width: `${((current + 1) / questions.length) * 100}%`,
                 }}
@@ -312,7 +312,7 @@ export default function QuestionGame({
                   key={option}
                   onClick={() => void chooseAnswer(option)}
                   disabled={loading}
-                  className="rounded-xl border border-white/10 bg-black/60 p-4 font-bold transition hover:border-pink-500 hover:bg-pink-500/10 active:scale-[0.98] disabled:opacity-50"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/60 p-4 font-bold transition hover:border-[#4D94F5] hover:bg-[#3F82DD]/10 active:scale-[0.98] disabled:opacity-50"
                 >
                   {option}
                 </button>
@@ -320,7 +320,7 @@ export default function QuestionGame({
             </div>
 
             {loading && (
-              <p className="mt-4 text-sm font-bold text-pink-400">
+              <p className="mt-4 text-sm font-bold text-[#66A7FF]">
                 Checking your result...
               </p>
             )}
@@ -330,10 +330,10 @@ export default function QuestionGame({
         {result && (
           <div className="mt-6">
             {result.won ? (
-              <div className="rounded-2xl border border-pink-400/30 bg-pink-500/10 p-6">
+              <div className="rounded-2xl border border-blue-400/30 bg-[#3F82DD]/10 p-6">
                 <div className="text-5xl">🏆</div>
 
-                <h2 className="mt-3 text-3xl font-black text-pink-400">
+                <h2 className="mt-3 text-3xl font-black text-[#66A7FF]">
                   Excellent Performance!
                 </h2>
 
@@ -346,18 +346,18 @@ export default function QuestionGame({
                 </p>
               </div>
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
                 <div className="text-5xl">🎯</div>
 
                 <h2 className="mt-3 text-2xl font-black">
                   Challenge Complete
                 </h2>
 
-                <p className="mt-3 text-white/70">
+                <p className="mt-3 text-[#B4C0D1]">
                   You scored {result.score}/{result.total}.
                 </p>
 
-                <p className="mt-2 text-white/50">
+                <p className="mt-2 text-[#8295B0]">
                   The target was {minScore} correct answers. Build your skill
                   and challenge yourself again.
                 </p>
@@ -367,14 +367,14 @@ export default function QuestionGame({
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button
                 onClick={resetGame}
-                className="rounded-xl bg-pink-500 py-3 font-black text-black"
+                className="rounded-xl bg-[#3F82DD] py-3 font-black text-black"
               >
                 Play Again
               </button>
 
               <Link
                 href="/skill-games"
-                className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold"
               >
                 All Games
               </Link>

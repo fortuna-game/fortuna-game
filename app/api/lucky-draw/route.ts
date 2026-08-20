@@ -22,15 +22,17 @@ export async function GET(req: Request) {
       return NextResponse.json({
         draws: [],
         myTicketCounts: {},
+        userId: null,
       });
     }
 
     const drawIds = drawList.map((draw) => draw.id);
 
-    const { data: tickets, error: ticketsError } = await supabaseAdmin
-      .from("lucky_draw_tickets")
-      .select("draw_id")
-      .in("draw_id", drawIds);
+    const { data: tickets, error: ticketsError } =
+      await supabaseAdmin
+        .from("lucky_draw_tickets")
+        .select("draw_id")
+        .in("draw_id", drawIds);
 
     if (ticketsError) {
       return NextResponse.json(
@@ -56,6 +58,7 @@ export async function GET(req: Request) {
     }));
 
     const myTicketCounts: Record<string, number> = {};
+    let userId: string | null = null;
 
     const token = req.headers
       .get("authorization")
@@ -67,6 +70,8 @@ export async function GET(req: Request) {
       } = await supabaseAdmin.auth.getUser(token);
 
       if (user) {
+        userId = user.id;
+
         const { data: myTickets, error: myTicketsError } =
           await supabaseAdmin
             .from("lucky_draw_tickets")
@@ -95,6 +100,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       draws: formattedDraws,
       myTicketCounts,
+      userId,
     });
   } catch (error) {
     console.error("LUCKY DRAW GET ERROR:", error);
@@ -140,11 +146,12 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: draw, error: drawError } = await supabaseAdmin
-      .from("lucky_draws")
-      .select("id, status, title")
-      .eq("id", drawId)
-      .maybeSingle();
+    const { data: draw, error: drawError } =
+      await supabaseAdmin
+        .from("lucky_draws")
+        .select("id, status, title")
+        .eq("id", drawId)
+        .maybeSingle();
 
     if (drawError || !draw) {
       return NextResponse.json(
@@ -183,26 +190,31 @@ export async function POST(req: Request) {
       );
     }
 
-    const { data: ticketId, error } = await supabaseAdmin.rpc(
-      "buy_lucky_draw_ticket_atomic",
-      {
-        p_user_id: user.id,
-        p_draw_id: drawId,
-      }
-    );
+    const { data: ticketId, error } =
+      await supabaseAdmin.rpc(
+        "buy_lucky_draw_ticket_atomic",
+        {
+          p_user_id: user.id,
+          p_draw_id: drawId,
+        }
+      );
 
     if (error || !ticketId) {
       return NextResponse.json(
-        { error: error?.message || "Could not buy ticket." },
+        {
+          error:
+            error?.message || "Could not buy ticket.",
+        },
         { status: 400 }
       );
     }
 
-    const { data: ticket, error: ticketError } = await supabaseAdmin
-      .from("lucky_draw_tickets")
-      .select("id, ticket_number, amount, created_at")
-      .eq("id", ticketId)
-      .single();
+    const { data: ticket, error: ticketError } =
+      await supabaseAdmin
+        .from("lucky_draw_tickets")
+        .select("id, ticket_number, amount, created_at")
+        .eq("id", ticketId)
+        .single();
 
     if (ticketError || !ticket) {
       return NextResponse.json(

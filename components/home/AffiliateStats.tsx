@@ -79,13 +79,13 @@ export default function AffiliateStats() {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="rounded-3xl border border-green-500/20 bg-black/50 p-5 text-center"
+          className="rounded-3xl border border-green-500/20 bg-[#071A33]/50 p-5 text-center"
         >
           <p className="text-3xl font-black text-green-400">
             {card.value}
           </p>
 
-          <p className="mt-2 text-sm font-bold uppercase tracking-wider text-white/50">
+          <p className="mt-2 text-sm font-bold uppercase tracking-wider text-[#8295B0]">
             {card.label}
           </p>
         </div>

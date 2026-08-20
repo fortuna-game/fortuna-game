@@ -1,9 +1,34 @@
 import Link from "next/link";
 import RewardsCard from "@/components/RewardsCard";
 
+const featuredGames = [
+  {
+    slug: "lucky-draw",
+    icon: "💰",
+    name: "Lucky Draw",
+    tagline: "Get in. Get lucky. Win big prizes.",
+    description:
+      "Buy a ticket, enter the draw and compete with other players for exciting prizes.",
+    button: "Enter Draw Now",
+    badge: "🔥 POPULAR",
+    accent: "border-[#F5B700]/60",
+    glow: "bg-[#F5B700]/10",
+  },
+  {
+    slug: "prize-vault",
+    icon: "🎁",
+    name: "Prize Vault",
+    tagline: "Pick your vault. Unlock a surprise prize.",
+    description:
+      "Choose a numbered box. Some boxes contain cash, phones, wigs, airtime, lunch and more.",
+    button: "Play Now",
+    badge: "🔥 HOT",
+    accent: "border-blue-500/60",
+    glow: "bg-blue-500/10",
+  },
+];
+
 const games = [
-  ["lucky-draw", "🎟️", "Lucky Draw", "Limited entries • Win exciting prizes"],
-  ["prize-vault", "🎁", "Prize Vault", "GH₵20 entry • Open a vault and reveal your prize"],
   ["trivia", "🧠", "Trivia Sprint", "Knowledge challenge"],
   ["math-rush", "➗", "Math Rush", "Fast calculations"],
   ["word-puzzle", "🔤", "Word Puzzle", "Word mastery"],
@@ -22,63 +47,152 @@ const games = [
 
 export default function SkillGamesPage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-black px-4 py-8 text-white sm:px-6">
+    <main className="min-h-screen overflow-hidden bg-[#071A33] px-4 py-8 text-white sm:px-6">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,#facc1530,transparent_35%),radial-gradient(circle_at_bottom_right,#7c3aed30,transparent_35%)]" />
 
       <div className="relative mx-auto max-w-7xl">
-
         <div className="mb-8">
           <RewardsCard />
         </div>
-        <section className="rounded-[2rem] border border-pink-500/20 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-10">
-          <p className="text-xs font-black uppercase tracking-[0.35em] text-pink-500">
-            Skill-Based Challenges
+
+        <section className="rounded-[2rem] border border-[#2A5688] bg-[#0B2545]/70 p-6 text-center shadow-2xl backdrop-blur-xl sm:p-10">
+          <p className="text-xs font-black uppercase tracking-[0.35em] text-[#4D94F5]">
+            Games & Challenges
           </p>
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-black leading-tight sm:text-6xl">
-            Play smarter. Test your skill. Win by performance.
+          <h1 className="mt-4 text-4xl font-black leading-tight sm:text-6xl">
+            Play. Challenge yourself. Win.
           </h1>
 
-          <p className="mt-4 max-w-2xl text-sm text-white/60 sm:text-lg">
-            Choose from professional skill games built around speed, memory,
-            logic, accuracy, focus, and problem solving.
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-[#9AAAC1] sm:text-lg">
+            Enter exciting draws, unlock prizes, and test your speed, memory,
+            logic, accuracy, focus, and problem-solving skills.
           </p>
         </section>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {games.map(([slug, icon, name, tag], index) => (
-            <Link
-              key={slug}
-              href={`/skill-games/${slug}`}
-              className="group relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-black p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-pink-500/60"
-            >
-              <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-pink-500/10 blur-2xl transition group-hover:bg-pink-500/25" />
+        <section className="mt-10">
+          <div className="mb-5">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-[#FFD54A]">
+              ◉ Featured Games
+            </p>
 
-              <div className="relative flex items-start justify-between gap-3">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-pink-500/20 bg-black/60 text-4xl shadow-lg transition group-hover:scale-110">
-                  {icon}
+            <h2 className="mt-2 text-2xl font-black sm:text-3xl">
+              Play for exciting prizes
+            </h2>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            {featuredGames.map((game) => (
+              <Link
+                key={game.slug}
+                href={`/skill-games/${game.slug}`}
+                className={`group relative overflow-hidden rounded-3xl border ${game.accent} bg-gradient-to-br from-white/[0.08] via-white/[0.04] to-[#071A33] p-6 shadow-2xl transition duration-300 hover:-translate-y-1`}
+              >
+                <div
+                  className={`absolute -right-16 -top-16 h-48 w-48 rounded-full ${game.glow} blur-3xl`}
+                />
+
+                <div className="relative">
+                  <div className="flex items-start justify-between gap-4">
+                    <div
+                      className={`flex h-24 w-24 items-center justify-center rounded-3xl border border-[#32659D] bg-[#071A33]/70 text-6xl shadow-xl ${
+                        game.slug === "lucky-draw"
+                          ? "animate-bounce"
+                          : "transition duration-300 group-hover:scale-110"
+                      }`}
+                    >
+                      {game.icon}
+                    </div>
+
+                    <span
+                      className={`rounded-full px-3 py-1.5 text-xs font-black ${
+                        game.slug === "lucky-draw"
+                          ? "bg-[#FFD54A] text-black"
+                          : "bg-blue-500 text-white"
+                      }`}
+                    >
+                      {game.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-6 text-3xl font-black text-white">
+                    {game.name}
+                  </h3>
+
+                  <p className="mt-2 text-base font-black text-blue-300">
+                    {game.tagline}
+                  </p>
+
+                  <div className="mt-4 h-px w-24 bg-[#163A63]/90" />
+
+                  <p className="mt-4 max-w-xl text-sm leading-6 text-white/65 sm:text-base">
+                    {game.description}
+                  </p>
+
+                  <div
+                    className={`mt-6 flex items-center justify-between rounded-2xl px-5 py-4 font-black text-black transition ${
+                      game.slug === "lucky-draw"
+                        ? "bg-[#FFD54A] group-hover:bg-yellow-300"
+                        : "bg-[#3F82DD] group-hover:bg-blue-400"
+                    }`}
+                  >
+                    <span>{game.button}</span>
+                    <span className="text-xl transition group-hover:translate-x-2">
+                      →
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-12">
+          <div className="mb-5">
+            <p className="text-xs font-black uppercase tracking-[0.25em] text-[#4D94F5]">
+              🎮 More Games
+            </p>
+
+            <h2 className="mt-2 text-2xl font-black sm:text-3xl">
+              Test your skills
+            </h2>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {games.map(([slug, icon, name, tag], index) => (
+              <Link
+                key={slug}
+                href={`/skill-games/${slug}`}
+                className="group relative overflow-hidden rounded-3xl border border-[#38BDF8]/15 bg-gradient-to-br from-white/10 via-white/5 to-[#071A33] p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-[#4D94F5]/60"
+              >
+                <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-[#3F82DD]/10 blur-2xl transition group-hover:bg-[#3F82DD]/25" />
+
+                <div className="relative flex items-start justify-between gap-3">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#2A5688] bg-[#071A33]/60 text-4xl shadow-lg transition group-hover:scale-110">
+                    {icon}
+                  </div>
+
+                  <span className="rounded-full border border-[#38BDF8]/15 bg-[#0B2545]/70 px-3 py-1 text-xs text-[#8295B0]">
+                    #{index + 1}
+                  </span>
                 </div>
 
-                <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50">
-                  #{index + 1}
-                </span>
-              </div>
+                <h3 className="relative mt-5 text-2xl font-black text-white">
+                  {name}
+                </h3>
 
-              <h2 className="relative mt-5 text-2xl font-black text-white">
-                {name}
-              </h2>
+                <p className="relative mt-2 text-sm text-[#66A7FF]">
+                  {tag}
+                </p>
 
-              <p className="relative mt-2 text-sm text-pink-400">
-                {tag}
-              </p>
-
-              <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-pink-500 px-4 py-3 font-black text-black">
-                <span>Open Game</span>
-                <span className="transition group-hover:translate-x-1">→</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+                <div className="relative mt-5 flex items-center justify-between rounded-2xl bg-[#3F82DD] px-4 py-3 font-black text-black">
+                  <span>Open Game</span>
+                  <span className="transition group-hover:translate-x-1">→</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );

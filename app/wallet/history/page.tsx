@@ -112,21 +112,21 @@ export default function AccountHistoryPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-4xl font-black text-pink-500">Account History</h1>
-        <p className="mt-2 text-white/60">
+        <h1 className="text-4xl font-black text-[#4D94F5]">Account History</h1>
+        <p className="mt-2 text-[#9AAAC1]">
           Completed deposits, failed payments, withdrawals, refunds, wins and entry fees.
         </p>
 
         <div className="mt-8 space-y-4">
           {items.map((item) => (
-            <div key={item.id} className="rounded-2xl border border-white/10 bg-white/5 p-5">
+            <div key={item.id} className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5">
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <p className="font-bold capitalize">{item.title}</p>
-                  <p className="mt-1 text-sm text-white/50">{item.reference || "No reference"}</p>
-                  <p className="mt-1 text-xs text-white/40">
+                  <p className="mt-1 text-sm text-[#8295B0]">{item.reference || "No reference"}</p>
+                  <p className="mt-1 text-xs text-[#7185A3]">
                     {new Date(item.date).toLocaleString()}
                   </p>
                 </div>
@@ -134,7 +134,7 @@ export default function AccountHistoryPage() {
                 <div className="text-right">
                   <p className={
                     item.amount >= 0
-                      ? "text-2xl font-black text-pink-400"
+                      ? "text-2xl font-black text-[#66A7FF]"
                       : "text-2xl font-black text-red-500"
                   }>
                     {item.amount >= 0 ? "+" : "-"}GH₵{Math.abs(item.amount).toFixed(2)}
@@ -153,7 +153,7 @@ export default function AccountHistoryPage() {
           ))}
 
           {items.length === 0 && (
-            <p className="rounded-2xl border border-white/10 bg-white/5 p-6 text-white/60">
+            <p className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6 text-[#9AAAC1]">
               No account history yet.
             </p>
           )}

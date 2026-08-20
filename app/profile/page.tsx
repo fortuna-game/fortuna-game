@@ -45,19 +45,19 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading profile...
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-4xl">
-        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-6 md:p-8">
+        <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6 md:p-8">
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-center">
             <div>
-              <p className="text-sm font-bold uppercase tracking-widest text-pink-500">
+              <p className="text-sm font-bold uppercase tracking-widest text-[#4D94F5]">
                 Fortuna Play Account
               </p>
 
@@ -65,7 +65,7 @@ export default function ProfilePage() {
                 @{profile?.username || "Player"}
               </h1>
 
-              <p className="mt-2 text-white/50">
+              <p className="mt-2 text-[#8295B0]">
                 Manage and view your account information.
               </p>
             </div>
@@ -73,8 +73,8 @@ export default function ProfilePage() {
             <span
               className={`w-fit rounded-full px-4 py-2 text-sm font-bold ${
                 profile?.is_verified
-                  ? "bg-pink-500/15 text-green-300"
-                  : "bg-pink-600/15 text-pink-400"
+                  ? "bg-[#3F82DD]/15 text-green-300"
+                  : "bg-[#2C63B3]/15 text-[#66A7FF]"
               }`}
             >
               {profile?.is_verified ? "Verified Account" : "Not Verified"}
@@ -82,8 +82,8 @@ export default function ProfilePage() {
           </div>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
-              <p className="text-sm text-white/40">Full Name</p>
+            <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+              <p className="text-sm text-[#7185A3]">Full Name</p>
               <p className="mt-2 font-bold">
                 {[profile?.first_name, profile?.last_name]
                   .filter(Boolean)
@@ -91,22 +91,22 @@ export default function ProfilePage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
-              <p className="text-sm text-white/40">Username</p>
+            <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+              <p className="text-sm text-[#7185A3]">Username</p>
               <p className="mt-2 font-bold">
                 @{profile?.username || "Player"}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
-              <p className="text-sm text-white/40">Email Address</p>
+            <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+              <p className="text-sm text-[#7185A3]">Email Address</p>
               <p className="mt-2 break-all font-bold">
                 {email || "Not provided"}
               </p>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/40 p-5">
-              <p className="text-sm text-white/40">Phone Number</p>
+            <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+              <p className="text-sm text-[#7185A3]">Phone Number</p>
               <p className="mt-2 font-bold">
                 {profile?.phone || "Not provided"}
               </p>
@@ -116,21 +116,21 @@ export default function ProfilePage() {
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <Link
               href="/dashboard"
-              className="rounded-xl bg-pink-500 py-3 text-center font-black text-black"
+              className="rounded-xl bg-[#3F82DD] py-3 text-center font-black text-black"
             >
               Dashboard
             </Link>
 
             <Link
               href="/wallet/history"
-              className="rounded-xl border border-white/10 bg-white/5 py-3 text-center font-bold"
+              className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 text-center font-bold"
             >
               Account History
             </Link>
 
             <Link
               href="/game-history"
-              className="rounded-xl border border-white/10 bg-white/5 py-3 text-center font-bold"
+              className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 text-center font-bold"
             >
               Game History
             </Link>

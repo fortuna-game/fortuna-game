@@ -31,7 +31,7 @@ export default function ProtectedRoute({
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading...
       </main>
     );

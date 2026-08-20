@@ -62,28 +62,28 @@ export default function VerifyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-12 text-white">
-      <div className="mx-auto max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-8">
-        <h1 className="text-4xl font-black text-pink-500">Verify Account</h1>
-        <p className="mt-3 text-white/60">Verify your phone number before withdrawals.</p>
+    <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
+      <div className="mx-auto max-w-xl rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8">
+        <h1 className="text-4xl font-black text-[#4D94F5]">Verify Account</h1>
+        <p className="mt-3 text-[#9AAAC1]">Verify your phone number before withdrawals.</p>
 
         <input
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
           placeholder="Mobile Number e.g. 0531128932"
-          className="mt-8 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none"
+          className="mt-8 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none"
         />
 
         <button
           onClick={sendCode}
           disabled={loading || !phone}
-          className="mt-4 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:opacity-60"
         >
           {loading ? "Please wait..." : "Send OTP"}
         </button>
 
         {prefix && (
-          <p className="mt-4 rounded-xl bg-pink-500/10 p-3 text-pink-400">
+          <p className="mt-4 rounded-xl bg-[#3F82DD]/10 p-3 text-[#66A7FF]">
             OTP Prefix: {prefix}
           </p>
         )}
@@ -92,19 +92,19 @@ export default function VerifyPage() {
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="Enter OTP Code"
-          className="mt-6 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none"
+          className="mt-6 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none"
         />
 
         <button
           onClick={verifyCode}
           disabled={loading || !code || !requestId || !prefix}
-          className="mt-4 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
+          className="mt-4 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:opacity-60"
         >
           Verify Account
         </button>
 
         {message && (
-          <p className="mt-5 rounded-xl bg-white/10 p-4 text-white">{message}</p>
+          <p className="mt-5 rounded-xl bg-[#0F2F57]/80 p-4 text-white">{message}</p>
         )}
       </div>
     </main>

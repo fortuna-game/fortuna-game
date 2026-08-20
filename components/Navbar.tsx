@@ -49,7 +49,9 @@ export default function Navbar() {
 
     void loadUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
       void loadUser();
     });
 
@@ -65,10 +67,8 @@ export default function Navbar() {
 
   const userLinks = [
     ["Games", "/skill-games"],
-    ["Wins", "/game-history?tab=wins"],
-    ["History", "/game-history"],
+    ["My Results", "/game-history"],
     ["Transactions", "/wallet/history"],
-    ["Wallet", "/wallet"],
     ["Support", "/support"],
   ];
 

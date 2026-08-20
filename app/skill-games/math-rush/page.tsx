@@ -159,19 +159,19 @@ export default function MathRushPage() {
   const payout = Number(stake || 0) * 2;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-white/5 p-5 text-center shadow-2xl sm:p-6">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-[#0B2545]/70 p-5 text-center shadow-2xl sm:p-6">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">➗</div>
 
-        <h1 className="mt-3 text-3xl font-black text-blue-400">
+        <h1 className="mt-3 text-3xl font-black text-[#66A7FF]">
           Math Rush
         </h1>
 
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-[#9AAAC1]">
           Solve at least 13 out of 20 math challenges correctly to win a 2x prize.
         </p>
 
@@ -183,22 +183,22 @@ export default function MathRushPage() {
 
         {!playing && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Solve the math questions before time runs out. Get at least 13 out of 20 answers correct to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -211,11 +211,11 @@ export default function MathRushPage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold outline-none focus:border-blue-400"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold outline-none focus:border-blue-400"
             />
 
             {Number(stake) > 0 && (
-              <div className="mt-4 rounded-xl bg-pink-500/10 p-3 text-green-300">
+              <div className="mt-4 rounded-xl bg-[#3F82DD]/10 p-3 text-green-300">
                 Entry Fee GH₵{Number(stake).toFixed(2)} → Possible Win GH₵{payout.toFixed(2)}
               </div>
             )}
@@ -228,7 +228,7 @@ export default function MathRushPage() {
               {loading ? "Starting..." : "Start Now"}
             </button>
 
-            <p className="mt-3 text-xs text-white/40">
+            <p className="mt-3 text-xs text-[#7185A3]">
               Your entry fee is deducted from your wallet when the game starts.
             </p>
           </div>
@@ -236,14 +236,14 @@ export default function MathRushPage() {
 
         {playing && q && (
           <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/50">
+            <div className="flex justify-between text-sm text-[#8295B0]">
               <span>Question {current + 1}/{questions.length}</span>
               <span className={timeLeft <= 20 ? "text-red-300" : "text-blue-300"}>
                 Time: {timeLeft}s
               </span>
             </div>
 
-            <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#0F2F57]/80">
               <div
                 className="h-full bg-blue-400 transition-all"
                 style={{ width: `${((current + 1) / questions.length) * 100}%` }}
@@ -260,7 +260,7 @@ export default function MathRushPage() {
                   key={option}
                   disabled={loading}
                   onClick={() => void chooseAnswer(option)}
-                  className="rounded-xl border border-white/10 bg-black/60 p-4 font-bold transition hover:border-blue-400 hover:bg-blue-400/10 disabled:opacity-50"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/60 p-4 font-bold transition hover:border-blue-400 hover:bg-blue-400/10 disabled:opacity-50"
                 >
                   {option}
                 </button>
@@ -278,9 +278,9 @@ export default function MathRushPage() {
         {result && (
           <div className="mt-6">
             {result.won ? (
-              <div className="rounded-2xl border border-pink-400/30 bg-pink-500/10 p-6">
+              <div className="rounded-2xl border border-blue-400/30 bg-[#3F82DD]/10 p-6">
                 <div className="text-5xl">🏆</div>
-                <h2 className="mt-3 text-3xl font-black text-pink-400">
+                <h2 className="mt-3 text-3xl font-black text-[#66A7FF]">
                   Congratulations!
                 </h2>
                 <p className="mt-3">
@@ -291,15 +291,15 @@ export default function MathRushPage() {
                 </p>
               </div>
             ) : (
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+              <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
                 <div className="text-5xl">🎮</div>
                 <h2 className="mt-3 text-2xl font-black">
                   Good Attempt
                 </h2>
-                <p className="mt-3 text-white/70">
+                <p className="mt-3 text-[#B4C0D1]">
                   You scored {result.score}/{result.total}.
                 </p>
-                <p className="mt-2 text-white/50">
+                <p className="mt-2 text-[#8295B0]">
                   You needed 13 correct answers to win. Sharpen your speed and try again.
                 </p>
               </div>
@@ -315,7 +315,7 @@ export default function MathRushPage() {
 
               <Link
                 href="/skill-games"
-                className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold"
               >
                 Skill Games
               </Link>

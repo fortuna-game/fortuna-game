@@ -38,8 +38,8 @@ export default function AdminUserDetailsPage() {
 
   if (!data) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-8">{message}</div>
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
+        <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8">{message}</div>
       </main>
     );
   }
@@ -48,39 +48,39 @@ export default function AdminUserDetailsPage() {
   const wallet = data.wallet || {};
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
-        <Link href="/admin/users" className="text-pink-500">← Back to Users</Link>
+        <Link href="/admin/users" className="text-[#4D94F5]">← Back to Users</Link>
 
-        <h1 className="mt-6 text-4xl font-black text-pink-500">@{profile.username || "Player"}</h1>
-        <p className="mt-2 text-white/60">{profile.first_name || ""} {profile.last_name || ""}</p>
+        <h1 className="mt-6 text-4xl font-black text-[#4D94F5]">@{profile.username || "Player"}</h1>
+        <p className="mt-2 text-[#9AAAC1]">{profile.first_name || ""} {profile.last_name || ""}</p>
 
         <div className="mt-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-6">
-            <p className="text-sm text-white/60">Wallet Balance</p>
+          <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+            <p className="text-sm text-[#9AAAC1]">Wallet Balance</p>
             <h2 className="mt-2 text-3xl font-black">GH₵{Number(wallet.balance || 0).toFixed(2)}</h2>
           </div>
-          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
-            <p className="text-sm text-white/60">Deposits</p>
+          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+            <p className="text-sm text-[#9AAAC1]">Deposits</p>
             <h2 className="mt-2 text-3xl font-black text-green-300">{data.deposits.length}</h2>
           </div>
           <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
-            <p className="text-sm text-white/60">Withdrawals</p>
+            <p className="text-sm text-[#9AAAC1]">Withdrawals</p>
             <h2 className="mt-2 text-3xl font-black text-red-300">{data.withdrawals.length}</h2>
           </div>
-          <div className="rounded-3xl border border-blue-400/20 bg-blue-500/10 p-6">
-            <p className="text-sm text-white/60">Games Played</p>
+          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+            <p className="text-sm text-[#9AAAC1]">Games Played</p>
             <h2 className="mt-2 text-3xl font-black text-blue-300">{data.games.length}</h2>
           </div>
         </div>
 
-        <section className="mt-8 rounded-3xl border border-white/10 bg-white/5 p-6">
-          <h2 className="text-2xl font-black text-pink-500">Profile</h2>
+        <section className="mt-8 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+          <h2 className="text-2xl font-black text-[#4D94F5]">Profile</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-3">
-            <div><p className="text-white/50">Phone</p><p className="font-bold">{profile.phone || "-"}</p></div>
-            <div><p className="text-white/50">Verified</p><p className="font-bold">{profile.is_verified ? "Yes" : "No"}</p></div>
-            <div><p className="text-white/50">Username</p><p className="font-bold text-pink-400">@{profile.username || "Player"}</p></div>
+            <div><p className="text-[#8295B0]">Phone</p><p className="font-bold">{profile.phone || "-"}</p></div>
+            <div><p className="text-[#8295B0]">Verified</p><p className="font-bold">{profile.is_verified ? "Yes" : "No"}</p></div>
+            <div><p className="text-[#8295B0]">Username</p><p className="font-bold text-[#66A7FF]">@{profile.username || "Player"}</p></div>
           </div>
         </section>
       </div>

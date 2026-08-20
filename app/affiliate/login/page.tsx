@@ -59,8 +59,8 @@ export default function AffiliateLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-5 py-10 text-white">
-      <div className="w-full max-w-md rounded-3xl border border-green-500/20 bg-white/5 p-7">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-5 py-10 text-white">
+      <div className="w-full max-w-md rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-7">
         <div className="text-center">
           <div className="text-6xl">🤝</div>
 
@@ -68,7 +68,7 @@ export default function AffiliateLoginPage() {
             Affiliate Login
           </h1>
 
-          <p className="mt-2 text-white/50">
+          <p className="mt-2 text-[#8295B0]">
             Access your referral links, qualified players and earnings.
           </p>
         </div>
@@ -86,7 +86,7 @@ export default function AffiliateLoginPage() {
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Email Address"
             required
-            className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+            className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
           />
 
           <div className="relative">
@@ -96,13 +96,13 @@ export default function AffiliateLoginPage() {
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Password"
               required
-              className="w-full rounded-xl border border-white/10 bg-black p-4 pr-12 outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 pr-12 outline-none focus:border-green-500"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword((value) => !value)}
-              className="absolute right-4 top-4 text-white/50"
+              className="absolute right-4 top-4 text-[#8295B0]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -116,7 +116,7 @@ export default function AffiliateLoginPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-white/60">
+        <div className="mt-6 text-center text-[#9AAAC1]">
           New affiliate?{" "}
           <Link
             href="/affiliate/register"

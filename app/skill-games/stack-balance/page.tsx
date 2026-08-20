@@ -151,36 +151,36 @@ export default function StackBalancePage() {
   }, [playing]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-amber-400/20 bg-white/5 p-5 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-amber-400/20 bg-[#0B2545]/70 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">📦</div>
         <h1 className="mt-3 text-3xl font-black text-amber-400">Stack Balance</h1>
-        <p className="mt-2 text-sm text-white/60">Drop moving blocks carefully. Build {targetBlocks} stable blocks to win.</p>
+        <p className="mt-2 text-sm text-[#9AAAC1]">Drop moving blocks carefully. Build {targetBlocks} stable blocks to win.</p>
 
         {message && <div className="mt-4 rounded-xl bg-red-500/10 p-3 text-red-300">{message}</div>}
 
         {!started && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Drop each moving block carefully and keep the stack balanced. Successfully stack all 10 blocks to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -193,7 +193,7 @@ export default function StackBalancePage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold"
             />
 
             {Number(stake) > 0 && (
@@ -216,12 +216,12 @@ export default function StackBalancePage() {
 
         {playing && (
           <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/60">
+            <div className="flex justify-between text-sm text-[#9AAAC1]">
               <span>Blocks: {placements.length}/{targetBlocks}</span>
               <span className={timeLeft <= 10 ? "text-red-400" : "text-amber-400"}>⏱ {timeLeft}s</span>
             </div>
 
-            <div className="relative mt-5 h-80 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-slate-900 to-black">
+            <div className="relative mt-5 h-80 overflow-hidden rounded-3xl border border-[#38BDF8]/15 bg-gradient-to-b from-slate-900 to-[#071A33]">
               <div
                 className="absolute top-8 h-10 w-28 -translate-x-1/2 rounded-xl bg-amber-400 shadow-lg"
                 style={{ left: `${position}%` }}
@@ -250,7 +250,7 @@ export default function StackBalancePage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-[#3F82DD]/10 p-6 text-green-300" : "rounded-2xl bg-[#0B2545]/70 p-6 text-[#B4C0D1]"}>
               <div className="text-5xl">{result.won ? "🏆" : "📦"}</div>
               <h2 className="mt-3 text-2xl font-black">{result.won ? "Perfect Stack!" : "Stack Collapsed"}</h2>
               <p className="mt-3">Score: {result.score}/{result.total}</p>
@@ -259,7 +259,7 @@ export default function StackBalancePage() {
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <button onClick={resetGame} className="rounded-xl bg-amber-400 py-3 font-black text-black">Play Again</button>
-              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">All Games</Link>
+              <Link href="/skill-games" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold">All Games</Link>
             </div>
           </div>
         )}

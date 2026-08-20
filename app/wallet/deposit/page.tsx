@@ -60,13 +60,13 @@ export default function DepositPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-12 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
       <form
         onSubmit={startDeposit}
-        className="mx-auto max-w-xl rounded-3xl border border-pink-400/20 bg-pink-500/10 p-8"
+        className="mx-auto max-w-xl rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-8"
       >
-        <h1 className="text-4xl font-black text-pink-400">Deposit</h1>
-        <p className="mt-3 text-white/60">Fund your Fortuna Play wallet.</p>
+        <h1 className="text-4xl font-black text-[#66A7FF]">Deposit</h1>
+        <p className="mt-3 text-[#9AAAC1]">Fund your Fortuna Play wallet.</p>
 
         <input
           value={amount}
@@ -74,7 +74,7 @@ export default function DepositPage() {
           placeholder="Amount e.g. 50"
           type="number"
           min="1"
-          className="mt-8 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none"
+          className="mt-8 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none"
         />
 
         {message && (
@@ -85,7 +85,7 @@ export default function DepositPage() {
 
         <button
           disabled={loading}
-          className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-60"
+          className="mt-5 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:opacity-60"
         >
           {loading ? "Starting Payment..." : "Continue to Payment"}
         </button>

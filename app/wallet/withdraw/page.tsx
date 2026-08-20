@@ -62,18 +62,18 @@ export default function WithdrawPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <form
         onSubmit={requestWithdrawal}
-        className="mx-auto max-w-md rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6"
+        className="mx-auto max-w-md rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6"
       >
-        <h1 className="text-3xl font-black text-pink-400">Withdraw</h1>
+        <h1 className="text-3xl font-black text-[#66A7FF]">Withdraw</h1>
 
-        <p className="mt-2 text-sm text-white/60">
+        <p className="mt-2 text-sm text-[#9AAAC1]">
           Withdraw your winnings securely to your Mobile Money account.
         </p>
 
-        <div className="mt-5 rounded-xl border border-pink-500/20 bg-pink-500/10 p-3 text-sm text-white">
+        <div className="mt-5 rounded-xl border border-[#2A5688] bg-[#3F82DD]/10 p-3 text-sm text-white">
           Please ensure that the Mobile Money number and network provided are correct. Fortuna Play will not be responsible for payments sent to an incorrect number as a result of inaccurate information submitted by the user.
         </div>
 
@@ -82,20 +82,20 @@ export default function WithdrawPage() {
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Amount"
           type="number"
-          className="mt-6 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none"
+          className="mt-6 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none"
         />
 
         <input
           value={momoNumber}
           onChange={(e) => setMomoNumber(e.target.value)}
           placeholder="Mobile Money Number"
-          className="mt-4 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none"
+          className="mt-4 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none"
         />
 
         <select
           value={network}
           onChange={(e) => setNetwork(e.target.value)}
-          className="mt-4 w-full rounded-xl border border-white/10 bg-black p-4 outline-none"
+          className="mt-4 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none"
         >
           <option value="">Select Network</option>
           <option value="MTN">MTN</option>
@@ -105,7 +105,7 @@ export default function WithdrawPage() {
 
         <button
           disabled={loading || submitted}
-          className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-white disabled:opacity-60"
+          className="mt-5 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-white disabled:opacity-60"
         >
           {submitted ? "Withdrawal Request Sent" : loading ? "Submitting..." : "Request Withdrawal"}
         </button>
@@ -120,14 +120,14 @@ export default function WithdrawPage() {
               setNetwork("");
               setMessage("");
             }}
-            className="mt-3 w-full rounded-xl border border-white/10 bg-white/5 py-3 font-bold text-white"
+            className="mt-3 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold text-white"
           >
             Make Another Withdrawal
           </button>
         )}
 
         {message && (
-          <p className="mt-5 whitespace-pre-line rounded-xl bg-white/10 p-4 text-sm text-white">
+          <p className="mt-5 whitespace-pre-line rounded-xl bg-[#0F2F57]/80 p-4 text-sm text-white">
             {message}
           </p>
         )}

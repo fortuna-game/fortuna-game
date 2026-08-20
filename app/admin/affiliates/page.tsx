@@ -244,7 +244,7 @@ export default function AdminAffiliatesPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading Affiliates...
       </main>
     );
@@ -274,7 +274,7 @@ export default function AdminAffiliatesPage() {
     : [];
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
 
@@ -282,7 +282,7 @@ export default function AdminAffiliatesPage() {
           Affiliate Management
         </h1>
 
-        <p className="mt-2 text-white/60">
+        <p className="mt-2 text-[#9AAAC1]">
           Manage affiliates, payment details and withdrawal requests.
         </p>
 
@@ -302,16 +302,16 @@ export default function AdminAffiliatesPage() {
           {summaryCards.map(([label, value]) => (
             <div
               key={String(label)}
-              className="rounded-3xl border border-green-500/20 bg-white/5 p-6"
+              className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
             >
-              <p className="text-sm text-white/50">{label}</p>
+              <p className="text-sm text-[#8295B0]">{label}</p>
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
             </div>
           ))}
         </section>
 
         <section className="mt-10">
-          <h2 className="text-3xl font-black text-yellow-300">
+          <h2 className="text-3xl font-black text-[#FFE08A]">
             Affiliate Withdrawal Requests
           </h2>
 
@@ -319,11 +319,11 @@ export default function AdminAffiliatesPage() {
             {payouts.map((payout) => (
               <article
                 key={payout.id}
-                className="rounded-3xl border border-yellow-500/20 bg-white/5 p-6"
+                className="rounded-3xl border border-[#F5B700]/20 bg-[#0B2545]/70 p-6"
               >
                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <p className="text-xs uppercase text-white/40">
+                    <p className="text-xs uppercase text-[#7185A3]">
                       Affiliate
                     </p>
 
@@ -331,23 +331,23 @@ export default function AdminAffiliatesPage() {
                       {payout.affiliate_name}
                     </p>
 
-                    <p className="text-sm text-white/50">
+                    <p className="text-sm text-[#8295B0]">
                       {payout.affiliate_phone}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-xs uppercase text-white/40">
+                    <p className="text-xs uppercase text-[#7185A3]">
                       Amount
                     </p>
 
-                    <p className="mt-1 text-2xl font-black text-yellow-300">
+                    <p className="mt-1 text-2xl font-black text-[#FFE08A]">
                       GH₵{Number(payout.amount).toFixed(2)}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-xs uppercase text-white/40">
+                    <p className="text-xs uppercase text-[#7185A3]">
                       Payment Details
                     </p>
 
@@ -359,7 +359,7 @@ export default function AdminAffiliatesPage() {
                             "-"}
                         </p>
 
-                        <p className="text-sm text-white/60">
+                        <p className="text-sm text-[#9AAAC1]">
                           {payout.payment_details?.number ||
                             payout.payment_details?.momo_number ||
                             "-"}
@@ -371,13 +371,13 @@ export default function AdminAffiliatesPage() {
                           {payout.payment_details?.bank_name || "-"}
                         </p>
 
-                        <p className="text-sm text-white/60">
+                        <p className="text-sm text-[#9AAAC1]">
                           {payout.payment_details?.account_name ||
                             payout.payment_details?.bank_account_name ||
                             "-"}
                         </p>
 
-                        <p className="text-sm text-white/60">
+                        <p className="text-sm text-[#9AAAC1]">
                           {payout.payment_details?.account_number ||
                             payout.payment_details?.bank_account_number ||
                             "-"}
@@ -387,7 +387,7 @@ export default function AdminAffiliatesPage() {
                   </div>
 
                   <div>
-                    <p className="text-xs uppercase text-white/40">
+                    <p className="text-xs uppercase text-[#7185A3]">
                       Status
                     </p>
 
@@ -398,8 +398,8 @@ export default function AdminAffiliatesPage() {
                           : payout.status === "failed"
                           ? "bg-red-500/15 text-red-300"
                           : payout.status === "processing"
-                          ? "bg-blue-500/15 text-blue-300"
-                          : "bg-yellow-500/15 text-yellow-300"
+                          ? "bg-[#3F82DD]/15 text-blue-300"
+                          : "bg-[#F5B700]/15 text-[#FFE08A]"
                       }`}
                     >
                       {payout.status}
@@ -407,7 +407,7 @@ export default function AdminAffiliatesPage() {
                   </div>
                 </div>
 
-                <p className="mt-4 text-xs text-white/40">
+                <p className="mt-4 text-xs text-[#7185A3]">
                   Requested:{" "}
                   {new Date(payout.requested_at).toLocaleString()}
                 </p>
@@ -418,7 +418,7 @@ export default function AdminAffiliatesPage() {
                       Failure Reason
                     </p>
 
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-[#9AAAC1]">
                       {payout.failure_reason ||
                         payout.admin_note ||
                         "Payment failed."}
@@ -439,7 +439,7 @@ export default function AdminAffiliatesPage() {
                           void processPayout(payout, "processing")
                         }
                         disabled={Boolean(actionLoading)}
-                        className="rounded-xl bg-blue-500 px-5 py-3 font-black text-white disabled:opacity-40"
+                        className="rounded-xl bg-[#3F82DD] px-5 py-3 font-black text-white disabled:opacity-40"
                       >
                         {actionLoading ===
                         `${payout.id}-processing`
@@ -477,7 +477,7 @@ export default function AdminAffiliatesPage() {
             ))}
 
             {payouts.length === 0 && (
-              <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center text-white/50">
+              <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
                 No affiliate withdrawal requests yet.
               </div>
             )}
@@ -493,14 +493,14 @@ export default function AdminAffiliatesPage() {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search name, phone, email or referral code"
-            className="mt-5 w-full rounded-xl border border-white/10 bg-white/5 p-4 outline-none focus:border-green-500"
+            className="mt-5 w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 outline-none focus:border-green-500"
           />
 
           <div className="mt-6 grid gap-5">
             {visibleAffiliates.map((affiliate) => (
               <article
                 key={affiliate.id}
-                className="rounded-3xl border border-green-500/20 bg-white/5 p-6"
+                className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6"
               >
                 <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                   <div>
@@ -508,17 +508,17 @@ export default function AdminAffiliatesPage() {
                       {affiliate.full_name}
                     </p>
 
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-[#9AAAC1]">
                       {affiliate.phone}
                     </p>
 
-                    <p className="text-sm text-white/60">
+                    <p className="text-sm text-[#9AAAC1]">
                       {affiliate.email || "No email"}
                     </p>
                   </div>
 
                   <div>
-                    <p className="text-xs text-white/40">
+                    <p className="text-xs text-[#7185A3]">
                       REFERRAL CODE
                     </p>
 
@@ -542,20 +542,20 @@ export default function AdminAffiliatesPage() {
                   </div>
 
                   <div>
-                    <p className="font-bold text-yellow-300">
+                    <p className="font-bold text-[#FFE08A]">
                       Available: GH₵
                       {Number(affiliate.available_balance).toFixed(2)}
                     </p>
 
-                    <p className="text-white/60">
+                    <p className="text-[#9AAAC1]">
                       Paid: GH₵
                       {Number(affiliate.total_paid).toFixed(2)}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-5 rounded-2xl border border-white/10 bg-black/40 p-5">
-                  <p className="text-xs uppercase text-white/40">
+                <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+                  <p className="text-xs uppercase text-[#7185A3]">
                     Preferred Payment Method
                   </p>
 
@@ -565,11 +565,11 @@ export default function AdminAffiliatesPage() {
                         🏦 {affiliate.bank_name || "Bank Account"}
                       </p>
 
-                      <p className="text-sm text-white/60">
+                      <p className="text-sm text-[#9AAAC1]">
                         {affiliate.bank_account_name || "-"}
                       </p>
 
-                      <p className="text-sm text-white/60">
+                      <p className="text-sm text-[#9AAAC1]">
                         {affiliate.bank_account_number || "-"}
                       </p>
                     </div>
@@ -579,7 +579,7 @@ export default function AdminAffiliatesPage() {
                         📱 {affiliate.momo_network || "Mobile Money"}
                       </p>
 
-                      <p className="text-sm text-white/60">
+                      <p className="text-sm text-[#9AAAC1]">
                         {affiliate.momo_number || "-"}
                       </p>
                     </div>

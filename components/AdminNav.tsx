@@ -10,9 +10,9 @@ export default function AdminNav() {
   }
 
   return (
-    <div className="mb-8 rounded-3xl border border-pink-500/20 bg-white/5 p-4">
+    <div className="mb-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="/admin" className="text-2xl font-black text-pink-500">
+        <Link href="/admin" className="text-2xl font-black text-[#4D94F5]">
           Fortuna Admin
         </Link>
 
@@ -23,15 +23,15 @@ export default function AdminNav() {
           >
             🤝 Affiliates
           </Link>
-          <Link href="/admin/users" className="rounded-xl bg-white/10 px-4 py-2">Users</Link>
-          <Link href="/admin/deposits" className="rounded-xl bg-white/10 px-4 py-2">Deposits</Link>
-          <Link href="/admin/games" className="rounded-xl bg-white/10 px-4 py-2">Games</Link>
-          <Link href="/admin/lucky-draw" className="rounded-xl bg-yellow-400/20 px-4 py-2 text-yellow-300">🎟️ Lucky Draw</Link>
-          <Link href="/admin/prize-vault" className="rounded-xl bg-pink-500/20 px-4 py-2 text-pink-300">🎁 Prize Vault</Link>
-          <Link href="/admin/transactions" className="rounded-xl bg-white/10 px-4 py-2">Transactions</Link>
-          <Link href="/admin/support" className="rounded-xl bg-white/10 px-4 py-2">Support</Link>
-          <Link href="/admin/withdrawals" className="rounded-xl bg-pink-500 px-4 py-2 text-black">Withdrawals</Link>
-          <button onClick={logout} className="rounded-xl bg-pink-600 px-4 py-2 text-white">
+          <Link href="/admin/users" className="rounded-xl bg-[#0F2F57]/80 px-4 py-2">Users</Link>
+          <Link href="/admin/deposits" className="rounded-xl bg-[#0F2F57]/80 px-4 py-2">Deposits</Link>
+          <Link href="/admin/games" className="rounded-xl bg-[#0F2F57]/80 px-4 py-2">Games</Link>
+          <Link href="/admin/lucky-draw" className="rounded-xl bg-[#FFD54A]/20 px-4 py-2 text-[#FFE08A]">🎟️ Lucky Draw</Link>
+          <Link href="/admin/prize-vault" className="rounded-xl bg-[#3F82DD]/20 px-4 py-2 text-blue-300">🎁 Prize Vault</Link>
+          <Link href="/admin/transactions" className="rounded-xl bg-[#0F2F57]/80 px-4 py-2">Transactions</Link>
+          <Link href="/admin/support" className="rounded-xl bg-[#0F2F57]/80 px-4 py-2">Support</Link>
+          <Link href="/admin/withdrawals" className="rounded-xl bg-[#3F82DD] px-4 py-2 text-black">Withdrawals</Link>
+          <button onClick={logout} className="rounded-xl bg-[#2C63B3] px-4 py-2 text-white">
             Logout
           </button>
         </div>

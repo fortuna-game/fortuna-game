@@ -159,20 +159,20 @@ export default function SessionTimeout() {
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 px-5 backdrop-blur-sm">
-      <div className="w-full max-w-md rounded-3xl border border-yellow-400/30 bg-zinc-950 p-7 text-center text-white shadow-2xl">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#071A33]/80 px-5 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-3xl border border-[#FFD54A]/30 bg-zinc-950 p-7 text-center text-white shadow-2xl">
         <div className="text-5xl">⏳</div>
 
-        <h2 className="mt-4 text-3xl font-black text-yellow-300">
+        <h2 className="mt-4 text-3xl font-black text-[#FFE08A]">
           Your session is about to expire
         </h2>
 
-        <p className="mt-4 leading-7 text-white/60">
+        <p className="mt-4 leading-7 text-[#9AAAC1]">
           You have been inactive for a while. For your security, you will be
           logged out in:
         </p>
 
-        <p className="mt-4 text-5xl font-black text-yellow-300">
+        <p className="mt-4 text-5xl font-black text-[#FFE08A]">
           {secondsLeft}s
         </p>
 
@@ -186,7 +186,7 @@ export default function SessionTimeout() {
 
           <button
             onClick={() => void logout()}
-            className="rounded-xl border border-white/15 bg-white/5 px-5 py-4 font-black text-white hover:bg-white/10"
+            className="rounded-xl border border-white/15 bg-[#0B2545]/70 px-5 py-4 font-black text-white hover:bg-[#0F2F57]/80"
           >
             Log Out Now
           </button>

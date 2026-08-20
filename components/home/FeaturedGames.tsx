@@ -40,7 +40,7 @@ export default function FeaturedGames() {
         {games.map((game) => (
           <div
             key={game.name}
-            className="rounded-3xl border border-pink-500/30 bg-white/5 p-6"
+            className="rounded-3xl border border-[#32659D] bg-[#0B2545]/70 p-6"
           >
             <div className="text-5xl">{game.icon}</div>
 
@@ -51,7 +51,7 @@ export default function FeaturedGames() {
             <button
               type="button"
               onClick={() => startGame(game.href)}
-              className="mt-6 block w-full rounded-xl bg-pink-500 py-4 text-center font-black text-black hover:bg-pink-400"
+              className="mt-6 block w-full rounded-xl bg-[#3F82DD] py-4 text-center font-black text-black hover:bg-blue-400"
             >
               Start Now
             </button>

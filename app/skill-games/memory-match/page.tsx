@@ -162,15 +162,15 @@ export default function MemoryMatchPage() {
   }, [playing, loading, timeLeft, moves]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-pink-500/20 bg-white/5 p-5 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">🧠</div>
-        <h1 className="mt-3 text-3xl font-black text-pink-500">Memory Match</h1>
-        <p className="mt-2 text-sm text-white/60">
+        <h1 className="mt-3 text-3xl font-black text-[#4D94F5]">Memory Match</h1>
+        <p className="mt-2 text-sm text-[#9AAAC1]">
           Match all hidden pairs within {maxMoves} moves.
         </p>
 
@@ -178,22 +178,22 @@ export default function MemoryMatchPage() {
 
         {!cards.length && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Flip the cards and find all 8 matching pairs. Complete the challenge within 18 moves to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -206,7 +206,7 @@ export default function MemoryMatchPage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold"
             />
 
             {Number(stake) > 0 && (
@@ -220,7 +220,7 @@ export default function MemoryMatchPage() {
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 7}
-              className="mt-5 w-full rounded-xl bg-pink-500 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Now"}
             </button>
@@ -229,9 +229,9 @@ export default function MemoryMatchPage() {
 
         {cards.length > 0 && !result && (
           <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/60">
+            <div className="flex justify-between text-sm text-[#9AAAC1]">
               <span>Moves: {moves.length}/{maxMoves}</span>
-              <span className={timeLeft <= 10 ? "text-red-400" : "text-pink-500"}>
+              <span className={timeLeft <= 10 ? "text-red-400" : "text-[#4D94F5]"}>
                 ⏱ {timeLeft}s
               </span>
             </div>
@@ -243,7 +243,7 @@ export default function MemoryMatchPage() {
                   <button
                     key={card.id}
                     onClick={() => flipCard(card.id)}
-                    className="flex aspect-square items-center justify-center rounded-2xl border border-pink-500/20 bg-black text-3xl font-black"
+                    className="flex aspect-square items-center justify-center rounded-2xl border border-[#2A5688] bg-[#071A33] text-3xl font-black"
                   >
                     {open ? card.symbol : "?"}
                   </button>
@@ -251,7 +251,7 @@ export default function MemoryMatchPage() {
               })}
             </div>
 
-            <p className="mt-4 text-xs text-white/40">
+            <p className="mt-4 text-xs text-[#7185A3]">
               Secure mode: result is checked by server.
             </p>
           </div>
@@ -259,7 +259,7 @@ export default function MemoryMatchPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-[#3F82DD]/10 p-6 text-green-300" : "rounded-2xl bg-[#0B2545]/70 p-6 text-[#B4C0D1]"}>
               <div className="text-5xl">{result.won ? "🏆" : "🎯"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "Excellent Memory!" : "Challenge Complete"}
@@ -269,10 +269,10 @@ export default function MemoryMatchPage() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-pink-500 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-[#3F82DD] py-3 font-black text-black">
                 Play Again
               </button>
-              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">
+              <Link href="/skill-games" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold">
                 All Games
               </Link>
             </div>

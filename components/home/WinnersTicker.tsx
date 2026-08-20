@@ -10,8 +10,8 @@ const winners = [
 
 export default function WinnersTicker() {
   return (
-    <div className="overflow-hidden border-y border-pink-500/20 bg-pink-600/10 py-4">
-      <div className="animate-pulse whitespace-nowrap text-center text-lg font-bold text-pink-400">
+    <div className="overflow-hidden border-y border-[#2A5688] bg-[#2C63B3]/10 py-4">
+      <div className="animate-pulse whitespace-nowrap text-center text-lg font-bold text-[#66A7FF]">
         {winners.join("   •   ")}
       </div>
     </div>

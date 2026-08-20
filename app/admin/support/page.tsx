@@ -81,7 +81,7 @@ export default function AdminSupportPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading support tickets...
       </main>
     );
@@ -89,34 +89,34 @@ export default function AdminSupportPage() {
 
   if (denied) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
-          <p className="mt-3 text-white/60">Login through /admin/login again.</p>
+          <p className="mt-3 text-[#9AAAC1]">Login through /admin/login again.</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
 
-        <h1 className="text-4xl font-black text-pink-500">Support Tickets</h1>
-        <p className="mt-2 text-white/60">
+        <h1 className="text-4xl font-black text-[#4D94F5]">Support Tickets</h1>
+        <p className="mt-2 text-[#9AAAC1]">
           View and manage player and affiliate support requests.
         </p>
 
         {message && (
-          <p className="mt-5 rounded-xl bg-white/10 p-4 text-white">{message}</p>
+          <p className="mt-5 rounded-xl bg-[#0F2F57]/80 p-4 text-white">{message}</p>
         )}
 
         <div className="mt-8 grid gap-5">
           {tickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="rounded-3xl border border-pink-500/20 bg-white/5 p-5"
+              className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
             >
               <div className="flex flex-col justify-between gap-4 md:flex-row md:items-start">
                 <div>
@@ -125,7 +125,7 @@ export default function AdminSupportPage() {
                       className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest ${
                         ticket.issue_type.startsWith("Affiliate —")
                           ? "bg-green-500/20 text-green-300"
-                          : "bg-pink-500/20 text-pink-300"
+                          : "bg-[#3F82DD]/20 text-blue-300"
                       }`}
                     >
                       {ticket.issue_type.startsWith("Affiliate —")
@@ -133,21 +133,21 @@ export default function AdminSupportPage() {
                         : "Player"}
                     </span>
 
-                    <p className="text-sm font-bold uppercase tracking-widest text-pink-400">
+                    <p className="text-sm font-bold uppercase tracking-widest text-[#66A7FF]">
                       {ticket.issue_type.replace("Affiliate — ", "")}
                     </p>
                   </div>
 
-                  <Link href={`/admin/support/${ticket.id}`} className="mt-2 block text-2xl font-black hover:text-pink-400">
+                  <Link href={`/admin/support/${ticket.id}`} className="mt-2 block text-2xl font-black hover:text-[#66A7FF]">
                     @{ticket.username || (ticket.issue_type.startsWith("Affiliate —") ? "Affiliate" : "Player")}
                   </Link>
 
-                  <p className="mt-2 text-sm text-white/50">
+                  <p className="mt-2 text-sm text-[#8295B0]">
                     {new Date(ticket.created_at).toLocaleString()}
                   </p>
 
                   {ticket.reference && (
-                    <p className="mt-3 rounded-xl bg-black/50 p-3 text-sm font-bold text-pink-300">
+                    <p className="mt-3 rounded-xl bg-[#071A33]/50 p-3 text-sm font-bold text-blue-300">
                       Reference: {ticket.reference}
                     </p>
                   )}
@@ -157,9 +157,9 @@ export default function AdminSupportPage() {
                   </p>
                 </div>
 
-                <div className="min-w-[220px] rounded-2xl border border-white/10 bg-black/40 p-4">
-                  <p className="text-sm text-white/50">Status</p>
-                  <p className="mt-1 text-xl font-black capitalize text-pink-400">
+                <div className="min-w-[220px] rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
+                  <p className="text-sm text-[#8295B0]">Status</p>
+                  <p className="mt-1 text-xl font-black capitalize text-[#66A7FF]">
                     {ticket.status.replaceAll("_", " ")}
                   </p>
 
@@ -167,7 +167,7 @@ export default function AdminSupportPage() {
                     <button
                       disabled={busyId === ticket.id}
                       onClick={() => void updateTicket(ticket.id, "open")}
-                      className="rounded-xl bg-white/10 px-4 py-2 font-bold text-white disabled:opacity-50"
+                      className="rounded-xl bg-[#0F2F57]/80 px-4 py-2 font-bold text-white disabled:opacity-50"
                     >
                       Open
                     </button>
@@ -175,7 +175,7 @@ export default function AdminSupportPage() {
                     <button
                       disabled={busyId === ticket.id}
                       onClick={() => void updateTicket(ticket.id, "in_progress")}
-                      className="rounded-xl bg-pink-500 px-4 py-2 font-bold text-white disabled:opacity-50"
+                      className="rounded-xl bg-[#3F82DD] px-4 py-2 font-bold text-white disabled:opacity-50"
                     >
                       In Progress
                     </button>
@@ -194,7 +194,7 @@ export default function AdminSupportPage() {
           ))}
 
           {tickets.length === 0 && (
-            <p className="rounded-3xl border border-white/10 bg-white/5 p-8 text-white/60">
+            <p className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-[#9AAAC1]">
               No support tickets yet.
             </p>
           )}

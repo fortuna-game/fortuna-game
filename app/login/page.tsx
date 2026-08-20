@@ -34,18 +34,18 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-yellow-950 px-6">
-      <div className="w-full max-w-md rounded-3xl border border-pink-600/20 bg-black/60 p-8 backdrop-blur-xl shadow-2xl">
+      <div className="w-full max-w-md rounded-3xl border border-blue-700/20 bg-[#071A33]/60 p-8 backdrop-blur-xl shadow-2xl">
 
         <div className="mb-8 text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-pink-600 text-black">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[#2C63B3] text-black">
             <Trophy size={40} />
           </div>
 
-          <h1 className="mt-5 text-4xl font-black text-pink-500">
+          <h1 className="mt-5 text-4xl font-black text-[#4D94F5]">
             Fortuna Play
           </h1>
 
-          <p className="mt-2 text-white/60">
+          <p className="mt-2 text-[#9AAAC1]">
             Play. Win. Celebrate.
           </p>
         </div>
@@ -55,7 +55,7 @@ export default function LoginPage() {
           <input
             type="email"
             placeholder="Email Address"
-            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white outline-none focus:border-pink-500"
+            className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-4 py-3 text-white outline-none focus:border-blue-500"
             value={email}
             onChange={(e)=>setEmail(e.target.value)}
             required
@@ -65,7 +65,7 @@ export default function LoginPage() {
             <input
               type={showPassword ? "text" : "password"}
               placeholder="Password"
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white outline-none focus:border-pink-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-4 py-3 pr-12 text-white outline-none focus:border-blue-500"
               value={password}
               onChange={(e)=>setPassword(e.target.value)}
               required
@@ -74,7 +74,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={()=>setShowPassword(!showPassword)}
-              className="absolute right-4 top-3 text-white/60"
+              className="absolute right-4 top-3 text-[#9AAAC1]"
             >
               {showPassword ? <EyeOff/> : <Eye/>}
             </button>
@@ -83,7 +83,7 @@ export default function LoginPage() {
           <div className="text-right">
             <Link
               href="/forgot-password"
-              className="text-sm font-bold text-pink-500 hover:text-pink-400"
+              className="text-sm font-bold text-[#4D94F5] hover:text-[#66A7FF]"
             >
               Forgot Password?
             </Link>
@@ -95,14 +95,14 @@ export default function LoginPage() {
 
           <button
             disabled={loading}
-            className="w-full rounded-xl bg-pink-500 py-3 font-black text-black transition hover:bg-pink-400"
+            className="w-full rounded-xl bg-[#3F82DD] py-3 font-black text-black transition hover:bg-blue-400"
           >
             {loading ? "Signing In..." : "Login"}
           </button>
 
-          <div className="text-center text-white/60">
+          <div className="text-center text-[#9AAAC1]">
             Don't have an account?{" "}
-            <Link href="/signup" className="font-bold text-pink-500">
+            <Link href="/signup" className="font-bold text-[#4D94F5]">
               Sign Up
             </Link>
           </div>

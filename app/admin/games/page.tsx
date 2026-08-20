@@ -86,24 +86,24 @@ export default function AdminGamesPage() {
   }, [games, filter]);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
 
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-pink-500">
+            <h1 className="text-4xl font-black text-[#4D94F5]">
               Game Management
             </h1>
 
-            <p className="mt-2 text-white/60">
+            <p className="mt-2 text-[#9AAAC1]">
               Monitor games, stakes, payouts and platform profit.
             </p>
           </div>
 
           <Link
             href="/admin"
-            className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black"
+            className="rounded-xl bg-[#3F82DD] px-5 py-3 font-black text-black"
           >
             Back to Admin
           </Link>
@@ -111,8 +111,8 @@ export default function AdminGamesPage() {
 
         <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <p className="text-sm text-white/60">
+          <div className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+            <p className="text-sm text-[#9AAAC1]">
               Total Games
             </p>
 
@@ -121,8 +121,8 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-blue-400/20 bg-blue-500/10 p-6">
-            <p className="text-sm text-white/60">
+          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+            <p className="text-sm text-[#9AAAC1]">
               Total Stakes
             </p>
 
@@ -132,7 +132,7 @@ export default function AdminGamesPage() {
           </div>
 
           <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-6">
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-[#9AAAC1]">
               Total Payouts
             </p>
 
@@ -141,8 +141,8 @@ export default function AdminGamesPage() {
             </h2>
           </div>
 
-          <div className="rounded-3xl border border-pink-400/20 bg-pink-500/10 p-6">
-            <p className="text-sm text-white/60">
+          <div className="rounded-3xl border border-blue-400/20 bg-[#3F82DD]/10 p-6">
+            <p className="text-sm text-[#9AAAC1]">
               Game Profit
             </p>
 
@@ -167,8 +167,8 @@ export default function AdminGamesPage() {
               onClick={() => setFilter(item)}
               className={`rounded-full px-5 py-2 font-bold ${
                 filter === item
-                  ? "bg-pink-500 text-black"
-                  : "bg-white/10 text-white"
+                  ? "bg-[#3F82DD] text-black"
+                  : "bg-[#0F2F57]/80 text-white"
               }`}
             >
               {item.toUpperCase()}
@@ -178,17 +178,17 @@ export default function AdminGamesPage() {
         </div>
 
         {message && (
-          <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
+          <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
             {message}
           </div>
         )}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
 
             <table className="w-full min-w-[1300px] text-left">
 
-              <thead className="bg-pink-500 text-black">
+              <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">Player</th>
                   <th className="p-4">Game</th>
@@ -207,7 +207,7 @@ export default function AdminGamesPage() {
 
                   <tr
                     key={game.id}
-                    className="border-t border-white/10"
+                    className="border-t border-[#38BDF8]/15"
                   >
 
                     <td className="p-4">
@@ -215,7 +215,7 @@ export default function AdminGamesPage() {
                         @{game.username}
                       </p>
 
-                      <p className="text-sm text-white/50">
+                      <p className="text-sm text-[#8295B0]">
                         {game.first_name}
                       </p>
                     </td>
@@ -239,7 +239,7 @@ export default function AdminGamesPage() {
                             ? "font-black text-green-300"
                             : game.result === "lost"
                             ? "font-black text-red-300"
-                            : "font-black text-pink-400"
+                            : "font-black text-[#66A7FF]"
                         }
                       >
                         {game.result.toUpperCase()}
@@ -274,7 +274,7 @@ export default function AdminGamesPage() {
                   <tr>
                     <td
                       colSpan={8}
-                      className="p-6 text-white/60"
+                      className="p-6 text-[#9AAAC1]"
                     >
                       No games found.
                     </td>

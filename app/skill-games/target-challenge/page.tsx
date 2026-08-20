@@ -160,36 +160,36 @@ export default function ArrowTargetPage() {
   }, [playing]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-purple-400/20 bg-white/5 p-5 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-[#0B2545]/70 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">🏹</div>
-        <h1 className="mt-3 text-3xl font-black text-purple-400">Arrow Target</h1>
-        <p className="mt-2 text-sm text-white/60">Hit the moving arrow on the target number.</p>
+        <h1 className="mt-3 text-3xl font-black text-blue-400">Arrow Target</h1>
+        <p className="mt-2 text-sm text-[#9AAAC1]">Hit the moving arrow on the target number.</p>
 
         {message && <div className="mt-4 rounded-xl bg-red-500/10 p-3 text-red-300">{message}</div>}
 
         {!started && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Aim carefully and take your shot. Land on the target number shown to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -202,7 +202,7 @@ export default function ArrowTargetPage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold"
             />
 
             {Number(stake) > 0 && (
@@ -216,7 +216,7 @@ export default function ArrowTargetPage() {
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 7}
-              className="mt-5 w-full rounded-xl bg-purple-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-blue-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Arrow Target"}
             </button>
@@ -225,17 +225,17 @@ export default function ArrowTargetPage() {
 
         {playing && (
           <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/60">
+            <div className="flex justify-between text-sm text-[#9AAAC1]">
               <span>Target: {targetNumber}</span>
-              <span className={timeLeft <= 10 ? "text-red-400" : "text-purple-400"}>⏱ {timeLeft}s</span>
+              <span className={timeLeft <= 10 ? "text-red-400" : "text-blue-400"}>⏱ {timeLeft}s</span>
             </div>
 
-            <div className="mt-4 rounded-2xl border border-purple-400/20 bg-purple-500/10 p-4">
-              <p className="text-sm text-white/60">Hit this number</p>
-              <div className="mt-1 text-5xl font-black text-purple-300">{targetNumber}</div>
+            <div className="mt-4 rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
+              <p className="text-sm text-[#9AAAC1]">Hit this number</p>
+              <div className="mt-1 text-5xl font-black text-blue-300">{targetNumber}</div>
             </div>
 
-            <div className="relative mt-6 h-44 rounded-3xl border border-purple-400/20 bg-gradient-to-b from-purple-950/40 to-black p-3">
+            <div className="relative mt-6 h-44 rounded-3xl border border-blue-400/20 bg-gradient-to-b from-purple-950/40 to-[#071A33] p-3">
               <div
                 className="absolute top-2 z-20 -translate-x-1/2 text-5xl drop-shadow-lg"
                 style={{ left: `${aim}%` }}
@@ -244,18 +244,18 @@ export default function ArrowTargetPage() {
               </div>
 
               <div
-                className="absolute bottom-4 top-14 z-10 w-1 -translate-x-1/2 rounded-full bg-purple-300 shadow-lg shadow-purple-400/70"
+                className="absolute bottom-4 top-14 z-10 w-1 -translate-x-1/2 rounded-full bg-blue-300 shadow-lg shadow-purple-400/70"
                 style={{ left: `${aim}%` }}
               />
 
-              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-7 overflow-hidden rounded-2xl border border-white/10">
+              <div className="absolute bottom-4 left-3 right-3 grid h-24 grid-cols-7 overflow-hidden rounded-2xl border border-[#38BDF8]/15">
                 {zones.map((zone) => (
                   <div
                     key={zone}
-                    className={`flex items-center justify-center border-r border-white/10 text-4xl font-black ${
+                    className={`flex items-center justify-center border-r border-[#38BDF8]/15 text-4xl font-black ${
                       zone === targetNumber
-                        ? "bg-pink-500/20 text-green-300"
-                        : "bg-black text-white"
+                        ? "bg-[#3F82DD]/20 text-green-300"
+                        : "bg-[#071A33] text-white"
                     }`}
                   >
                     {zone}
@@ -267,7 +267,7 @@ export default function ArrowTargetPage() {
             <button
               onClick={() => void shoot()}
               disabled={loading}
-              className="mt-5 w-full rounded-xl bg-purple-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-blue-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Finishing..." : "Shoot"}
             </button>
@@ -276,7 +276,7 @@ export default function ArrowTargetPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-[#3F82DD]/10 p-6 text-green-300" : "rounded-2xl bg-[#0B2545]/70 p-6 text-[#B4C0D1]"}>
               <div className="text-5xl">{result.won ? "🏆" : "🏹"}</div>
               <h2 className="mt-3 text-2xl font-black">{result.won ? "Perfect Shot!" : "Missed Target"}</h2>
               <p className="mt-3">Target: {result.targetNumber} | Landed: {result.landedNumber}</p>
@@ -284,10 +284,10 @@ export default function ArrowTargetPage() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-purple-400 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-blue-400 py-3 font-black text-black">
                 Play Again
               </button>
-              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">
+              <Link href="/skill-games" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold">
                 All Games
               </Link>
             </div>

@@ -155,36 +155,36 @@ export default function MazeEscapePage() {
   }, [playing, loading, timeLeft, moves]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-lime-400/20 bg-white/5 p-5 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-lime-400/20 bg-[#0B2545]/70 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">🧭</div>
         <h1 className="mt-3 text-3xl font-black text-lime-400">Maze Escape</h1>
-        <p className="mt-2 text-sm text-white/60">Reach the exit before time or moves run out.</p>
+        <p className="mt-2 text-sm text-[#9AAAC1]">Reach the exit before time or moves run out.</p>
 
         {message && <div className="mt-4 rounded-xl bg-red-500/10 p-3 text-red-300">{message}</div>}
 
         {!maze && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Move through the maze and reach the exit within 14 moves and 60 seconds to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -197,7 +197,7 @@ export default function MazeEscapePage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold"
             />
 
             {Number(stake) > 0 && (
@@ -220,7 +220,7 @@ export default function MazeEscapePage() {
 
         {maze && !result && (
           <div className="mt-6">
-            <div className="flex justify-between text-sm text-white/60">
+            <div className="flex justify-between text-sm text-[#9AAAC1]">
               <span>Moves: {moves.length}/{maze.maxMoves}</span>
               <span className={timeLeft <= 10 ? "text-red-400" : "text-lime-400"}>⏱ {timeLeft}s</span>
             </div>
@@ -238,10 +238,10 @@ export default function MazeEscapePage() {
                     key={i}
                     className={`flex aspect-square items-center justify-center rounded-xl border text-xl font-black ${
                       isWall
-                        ? "border-white/10 bg-white/20"
+                        ? "border-[#38BDF8]/15 bg-[#163A63]/90"
                         : isExit
-                        ? "border-pink-400 bg-pink-500/20"
-                        : "border-white/10 bg-black"
+                        ? "border-blue-400 bg-[#3F82DD]/20"
+                        : "border-[#38BDF8]/15 bg-[#071A33]"
                     }`}
                   >
                     {isPlayer ? "🧍" : isExit ? "🏁" : isWall ? "■" : ""}
@@ -263,7 +263,7 @@ export default function MazeEscapePage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-[#3F82DD]/10 p-6 text-green-300" : "rounded-2xl bg-[#0B2545]/70 p-6 text-[#B4C0D1]"}>
               <div className="text-5xl">{result.won ? "🏆" : "🧭"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "You Escaped!" : "Maze Failed"}
@@ -276,7 +276,7 @@ export default function MazeEscapePage() {
               <button onClick={resetGame} className="rounded-xl bg-lime-400 py-3 font-black text-black">
                 Play Again
               </button>
-              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">
+              <Link href="/skill-games" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold">
                 All Games
               </Link>
             </div>

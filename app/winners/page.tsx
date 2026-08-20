@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
-type LuckyDrawResult = {
+type LuckyDrawWin = {
   id: string;
   title: string;
   prize_amount: number;
@@ -12,45 +14,51 @@ type LuckyDrawResult = {
   prize_value: number | null;
   draw_at: string | null;
   created_at: string;
-  winner_username: string;
 };
 
 export default function WinnersPage() {
-  const [results, setResults] = useState<LuckyDrawResult[]>([]);
+  const [wins, setWins] = useState<LuckyDrawWin[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function loadResults() {
+    async function loadWins() {
+      setLoading(true);
+      setError("");
+
       try {
-        setLoading(true);
-        setError("");
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-        const response = await fetch("/api/winners");
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.error || "Could not load Lucky Draw results."
-          );
+        if (!session) {
+          setError("Please log in to view your wins.");
+          return;
         }
 
-        setResults(data.results || []);
-      } catch (error) {
-        console.error("LOAD PUBLIC WINNERS ERROR:", error);
+        const res = await fetch("/api/my-wins", {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          cache: "no-store",
+        });
 
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Could not load Lucky Draw results."
-        );
+        const data = await res.json();
+
+        if (!res.ok) {
+          setError(data.error || "Could not load your wins.");
+          return;
+        }
+
+        setWins(Array.isArray(data.wins) ? data.wins : []);
+      } catch {
+        setError("Could not load your wins.");
       } finally {
         setLoading(false);
       }
     }
 
-    loadResults();
+    void loadWins();
   }, []);
 
   function formatMoney(amount: number) {
@@ -67,141 +75,137 @@ export default function WinnersPage() {
     });
   }
 
-  function getPrizeName(result: LuckyDrawResult) {
-    const prizeType = result.prize_type || "cash";
-
-    if (prizeType === "cash") {
-      return `${formatMoney(result.prize_amount)} Cash Prize`;
+  function getPrizeText(win: LuckyDrawWin) {
+    if (win.prize_type === "cash") {
+      return formatMoney(win.prize_amount);
     }
 
-    if (prizeType === "rent") {
-      return `${formatMoney(result.prize_amount)} Rent Support`;
-    }
-
-    return result.title;
+    return win.title;
   }
 
   return (
-    <main className="min-h-screen bg-black px-4 py-8 text-white sm:px-6 sm:py-12">
-      <div className="mx-auto max-w-6xl">
-        <div className="text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-pink-400">
-            Fortuna Play
-          </p>
+    <main className="min-h-screen bg-[#071A33] px-4 py-8 text-white sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-5xl">
+        <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6 sm:p-8">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-[#66A7FF]">
+              Fortuna Play
+            </p>
 
-          <h1 className="mt-2 text-3xl font-black sm:text-5xl">
-            Lucky Draw Winners 
-          </h1>
+            <h1 className="mt-2 text-3xl font-black sm:text-4xl">
+              My Wins 🏆
+            </h1>
 
-          <p className="mx-auto mt-4 max-w-2xl text-white/60">
-            Every completed Lucky Draw and winner is published here
-            to promote transparency while protecting winner privacy.
-          </p>
-        </div>
-
-        {loading && (
-          <div className="py-20 text-center text-white/60">
-            Loading Lucky Draw results...
-          </div>
-        )}
-
-        {!loading && error && (
-          <div className="mx-auto mt-10 max-w-xl rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-center text-red-300">
-            {error}
-          </div>
-        )}
-
-        {!loading && !error && results.length === 0 && (
-          <div className="mx-auto mt-10 max-w-xl rounded-3xl border border-white/10 bg-white/5 p-10 text-center">
-            <div className="text-5xl text-yellow-400">TROPHY</div>
-
-            <h2 className="mt-4 text-xl font-bold">
-              No completed draws yet
-            </h2>
-
-            <p className="mt-2 text-white/50">
-              Completed Lucky Draw winners will automatically
-              appear here.
+            <p className="mt-3 text-[#9AAAC1]">
+              Your Lucky Draw wins are saved here, so you can still see them when you log in later.
             </p>
           </div>
-        )}
 
-        {!loading && !error && results.length > 0 && (
-          <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {results.map((result) => {
-              const prizeType = result.prize_type || "cash";
+          {loading && (
+            <div className="py-16 text-center text-[#9AAAC1]">
+              Loading your wins...
+            </div>
+          )}
 
-              const isCashBased =
-                prizeType === "cash" || prizeType === "rent";
+          {!loading && error && (
+            <div className="mt-8 rounded-2xl border border-red-500/30 bg-red-500/10 p-5 text-center text-red-300">
+              {error}
+            </div>
+          )}
 
-              return (
-                <article
-                  key={result.id}
-                  className="overflow-hidden rounded-3xl border border-white/10 bg-white/5"
+          {!loading && !error && wins.length === 0 && (
+            <div className="mt-8 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-8 text-center">
+              <p className="text-lg font-bold">No wins yet</p>
+              <p className="mt-2 text-sm text-[#8295B0]">
+                When you win a Lucky Draw, your winning result will appear here.
+              </p>
+            </div>
+          )}
+
+          {!loading && wins.length > 0 && (
+            <div className="mt-8 space-y-6">
+              {wins.map((win) => (
+                <div
+                  key={win.id}
+                  className="overflow-hidden rounded-3xl border border-green-400/30 bg-green-500/5"
                 >
-                  {!isCashBased && result.prize_image && (
-                    <div className="aspect-[16/10] w-full overflow-hidden bg-black/40">
-                      <img
-                        src={result.prize_image}
-                        alt={result.title}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
+                  {win.prize_image && (
+                    <img
+                      src={win.prize_image}
+                      alt={win.title}
+                      className="h-56 w-full object-cover"
+                    />
                   )}
 
                   <div className="p-6">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="rounded-full bg-green-500/15 px-3 py-1 text-xs font-black text-green-300">
-                        ✓ COMPLETED
-                      </span>
+                    <div className="rounded-2xl border border-green-400/30 bg-green-500/10 p-5">
+                      <p className="text-2xl font-black text-green-300">
+                        🎉 Congratulations! You won {getPrizeText(win)}!
+                      </p>
 
-                      <span className="text-sm text-white/40">
-                        {formatDate(
-                          result.draw_at || result.created_at
-                        )}
-                      </span>
+                      <p className="mt-3 leading-6 text-white/75">
+                        You were selected as a winner of this Lucky Draw.
+                        Your win is saved here, so you can return at any time
+                        to view your result and continue with your prize claim.
+                      </p>
                     </div>
 
-                    <h2 className="mt-5 text-2xl font-black">
-                      {getPrizeName(result)}
-                    </h2>
-
-                    {!isCashBased &&
-                      result.prize_description && (
-                        <p className="mt-3 text-sm leading-6 text-white/60">
-                          {result.prize_description}
+                    <div className="mt-6 flex flex-col gap-5 sm:flex-row">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm text-[#8295B0]">
+                          Winning Prize
                         </p>
+
+                        <h2 className="mt-1 text-2xl font-black text-[#FFE08A]">
+                          {getPrizeText(win)}
+                        </h2>
+
+                        {win.prize_description && (
+                          <p className="mt-3 text-sm leading-6 text-[#9AAAC1]">
+                            {win.prize_description}
+                          </p>
+                        )}
+
+                        <p className="mt-4 text-sm text-[#7185A3]">
+                          Draw completed: {formatDate(
+                            win.draw_at || win.created_at
+                          )}
+                        </p>
+                      </div>
+
+                      {win.prize_type !== "cash" && (
+                        <div className="sm:flex sm:items-end">
+                          <Link
+                            href={`/lucky-draw/claim-prize?drawId=${win.id}`}
+                            className="inline-flex w-full items-center justify-center rounded-xl bg-[#3F82DD] px-6 py-4 text-center font-black text-white transition hover:bg-blue-400 sm:w-auto"
+                          >
+                            Submit Prize Details
+                          </Link>
+                        </div>
                       )}
-
-                    <div className="mt-6 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4">
-                      <p className="text-xs font-bold uppercase tracking-wider text-pink-300">
-                        WINNER
-                      </p>
-
-                      <p className="mt-2 text-lg font-black">
-                        @{result.winner_username}
-                      </p>
-
-                      <p className="mt-1 text-xs text-white/40">
-                        Username partially hidden for privacy
-                      </p>
                     </div>
 
-                    {isCashBased ? (
-                      <p className="mt-5 text-sm text-green-300">
-                        ✓ Prize credited to winner&apos;s Fortuna wallet
-                      </p>
-                    ) : (
-                      <p className="mt-5 text-sm text-yellow-300">
-                        🎁 Physical prize delivery or collection in progress
-                      </p>
+                    {win.prize_type === "cash" && (
+                      <div className="mt-6 rounded-xl border border-green-400/20 bg-green-500/10 p-4 text-sm text-green-200">
+                        Your cash prize is handled according to the Lucky Draw
+                        payout process.
+                      </div>
                     )}
                   </div>
-                </article>
-              );
-            })}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-8">
+            <Link
+              href="/lucky-draw"
+              className="font-bold text-[#FFE08A]"
+            >
+              ← Back to Lucky Draws
+            </Link>
           </div>
-        )}
+        </div>
       </div>
     </main>
   );

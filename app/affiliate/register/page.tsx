@@ -145,8 +145,8 @@ export default function AffiliateRegisterPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-5 py-10 text-white">
-      <div className="w-full max-w-2xl rounded-3xl border border-green-500/20 bg-white/5 p-7 shadow-2xl">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-5 py-10 text-white">
+      <div className="w-full max-w-2xl rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-7 shadow-2xl">
         <div className="text-center">
           <div className="text-6xl">🤝</div>
 
@@ -154,13 +154,13 @@ export default function AffiliateRegisterPage() {
             Join Fortuna Affiliate Program
           </h1>
 
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-[#9AAAC1]">
             Create your affiliate account, receive your unique referral link
             and earn GH₵5 for every qualified player.
           </p>
         </div>
 
-        <div className="mt-6 rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm leading-7 text-white/70">
+        <div className="mt-6 rounded-2xl border border-green-500/20 bg-green-500/10 p-4 text-sm leading-7 text-[#B4C0D1]">
           A qualified player must register through your link, make a successful
           deposit and play at least GH₵20 worth of games.
         </div>
@@ -180,7 +180,7 @@ export default function AffiliateRegisterPage() {
             onChange={(event) => setFullName(event.target.value)}
             placeholder="Full Name"
             required
-            className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500 md:col-span-2"
+            className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500 md:col-span-2"
           />
 
           <input
@@ -188,7 +188,7 @@ export default function AffiliateRegisterPage() {
             onChange={(event) => setPhone(event.target.value)}
             placeholder="Phone Number"
             required
-            className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+            className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
           />
 
           <input
@@ -197,7 +197,7 @@ export default function AffiliateRegisterPage() {
             onChange={(event) => setEmail(event.target.value)}
             placeholder="Email Address"
             required
-            className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+            className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
           />
 
           <div className="md:col-span-2">
@@ -212,7 +212,7 @@ export default function AffiliateRegisterPage() {
                 className={`rounded-xl border p-4 font-black ${
                   paymentMethod === "momo"
                     ? "border-green-500 bg-green-500 text-black"
-                    : "border-white/10 bg-black text-white"
+                    : "border-[#38BDF8]/15 bg-[#071A33] text-white"
                 }`}
               >
                 📱 Mobile Money
@@ -224,7 +224,7 @@ export default function AffiliateRegisterPage() {
                 className={`rounded-xl border p-4 font-black ${
                   paymentMethod === "bank"
                     ? "border-green-500 bg-green-500 text-black"
-                    : "border-white/10 bg-black text-white"
+                    : "border-[#38BDF8]/15 bg-[#071A33] text-white"
                 }`}
               >
                 🏦 Bank Account
@@ -237,7 +237,7 @@ export default function AffiliateRegisterPage() {
               <select
                 value={momoNetwork}
                 onChange={(event) => setMomoNetwork(event.target.value)}
-                className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
               >
                 <option value="MTN">MTN Mobile Money</option>
                 <option value="Telecel">Telecel Cash</option>
@@ -249,7 +249,7 @@ export default function AffiliateRegisterPage() {
                 onChange={(event) => setMomoNumber(event.target.value)}
                 placeholder="Mobile Money Number"
                 required={paymentMethod === "momo"}
-                className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
               />
             </>
           )}
@@ -261,7 +261,7 @@ export default function AffiliateRegisterPage() {
                 onChange={(event) => setBankName(event.target.value)}
                 placeholder="Bank Name"
                 required={paymentMethod === "bank"}
-                className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
               />
 
               <input
@@ -269,7 +269,7 @@ export default function AffiliateRegisterPage() {
                 onChange={(event) => setBankAccountName(event.target.value)}
                 placeholder="Account Holder Name"
                 required={paymentMethod === "bank"}
-                className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
               />
 
               <input
@@ -277,7 +277,7 @@ export default function AffiliateRegisterPage() {
                 onChange={(event) => setBankAccountNumber(event.target.value)}
                 placeholder="Bank Account Number"
                 required={paymentMethod === "bank"}
-                className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500 md:col-span-2"
+                className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500 md:col-span-2"
               />
             </>
           )}
@@ -289,13 +289,13 @@ export default function AffiliateRegisterPage() {
               onChange={(event) => setPassword(event.target.value)}
               placeholder="Password"
               required
-              className="w-full rounded-xl border border-white/10 bg-black p-4 pr-12 outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 pr-12 outline-none focus:border-green-500"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword((value) => !value)}
-              className="absolute right-4 top-4 text-white/50"
+              className="absolute right-4 top-4 text-[#8295B0]"
             >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
@@ -308,13 +308,13 @@ export default function AffiliateRegisterPage() {
               onChange={(event) => setConfirmPassword(event.target.value)}
               placeholder="Confirm Password"
               required
-              className="w-full rounded-xl border border-white/10 bg-black p-4 pr-12 outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 pr-12 outline-none focus:border-green-500"
             />
 
             <button
               type="button"
               onClick={() => setShowConfirmPassword((value) => !value)}
-              className="absolute right-4 top-4 text-white/50"
+              className="absolute right-4 top-4 text-[#8295B0]"
             >
               {showConfirmPassword ? (
                 <EyeOff size={20} />
@@ -324,7 +324,7 @@ export default function AffiliateRegisterPage() {
             </button>
           </div>
 
-          <label className="flex items-start gap-3 text-sm text-white/60 md:col-span-2">
+          <label className="flex items-start gap-3 text-sm text-[#9AAAC1] md:col-span-2">
             <input
               type="checkbox"
               checked={agree}
@@ -349,7 +349,7 @@ export default function AffiliateRegisterPage() {
           </button>
         </form>
 
-        <div className="mt-6 text-center text-white/60">
+        <div className="mt-6 text-center text-[#9AAAC1]">
           Already an affiliate?{" "}
           <Link
             href="/affiliate/login"
@@ -360,7 +360,7 @@ export default function AffiliateRegisterPage() {
         </div>
 
         <div className="mt-3 text-center">
-          <Link href="/" className="text-sm text-white/40">
+          <Link href="/" className="text-sm text-[#7185A3]">
             ← Back to Fortuna Play
           </Link>
         </div>

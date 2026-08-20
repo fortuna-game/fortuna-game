@@ -7,7 +7,7 @@ import AffiliateStats from "@/components/home/AffiliateStats";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#071A33] text-white">
 
       <Hero />
 
@@ -22,7 +22,7 @@ export default function Home() {
       <FeaturedGames />
 
       <section className="mx-auto mt-20 max-w-7xl px-6">
-        <div className="rounded-[40px] border border-green-500/20 bg-gradient-to-r from-green-600/10 via-black to-emerald-900/20 p-10">
+        <div className="rounded-[40px] border border-green-500/20 bg-gradient-to-r from-green-600/10 via-[#071A33] to-emerald-900/20 p-10">
 
           <div className="mx-auto max-w-4xl text-center">
 
@@ -34,13 +34,13 @@ export default function Home() {
               Turn Your Network Into Daily Income
             </h2>
 
-            <p className="mx-auto mt-6 max-w-3xl text-lg text-white/70">
+            <p className="mx-auto mt-6 max-w-3xl text-lg text-[#B4C0D1]">
               Earn up to GH₵100 every day by inviting players to Fortuna Play.
               Share your unique referral link, track your referrals and earnings in real time,
               and withdraw your commissions whenever you're eligible.
             </p>
 
-            <p className="mt-5 text-sm text-white/40">
+            <p className="mt-5 text-sm text-[#7185A3]">
               Qualified referrals only. Terms and conditions apply.
             </p>
 
@@ -48,32 +48,32 @@ export default function Home() {
 
             <div className="mt-10 grid gap-5 md:grid-cols-3">
 
-              <div className="rounded-3xl border border-green-500/20 bg-black/40 p-6 text-left">
+              <div className="rounded-3xl border border-green-500/20 bg-[#071A33]/40 p-6 text-left">
                 <div className="text-4xl">💸</div>
                 <h3 className="mt-4 text-2xl font-black">
                   Earn Daily
                 </h3>
-                <p className="mt-3 text-white/60">
+                <p className="mt-3 text-[#9AAAC1]">
                   Earn up to GH₵100 every day by referring qualified players.
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-green-500/20 bg-black/40 p-6 text-left">
+              <div className="rounded-3xl border border-green-500/20 bg-[#071A33]/40 p-6 text-left">
                 <div className="text-4xl">📊</div>
                 <h3 className="mt-4 text-2xl font-black">
                   Real-Time Dashboard
                 </h3>
-                <p className="mt-3 text-white/60">
+                <p className="mt-3 text-[#9AAAC1]">
                   Track referrals, commissions, withdrawals and your progress instantly.
                 </p>
               </div>
 
-              <div className="rounded-3xl border border-green-500/20 bg-black/40 p-6 text-left">
+              <div className="rounded-3xl border border-green-500/20 bg-[#071A33]/40 p-6 text-left">
                 <div className="text-4xl">⚡</div>
                 <h3 className="mt-4 text-2xl font-black">
                   Fast Withdrawals
                 </h3>
-                <p className="mt-3 text-white/60">
+                <p className="mt-3 text-[#9AAAC1]">
                   Withdraw your affiliate earnings directly to your Mobile Money account once you're eligible.
                 </p>
               </div>
@@ -106,13 +106,13 @@ export default function Home() {
 
 
       <section className="mx-auto max-w-7xl px-6 pb-24">
-        <div className="rounded-[40px] border border-pink-500/20 bg-gradient-to-r from-pink-600/10 via-black to-purple-900/20 p-10 text-center">
+        <div className="rounded-[40px] border border-[#2A5688] bg-gradient-to-r from-blue-700/10 via-[#071A33] to-[#0B2345]/40 p-10 text-center">
 
           <h2 className="text-5xl font-black">
             Ready to Play?
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg text-white/60">
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-[#9AAAC1]">
             Create your account, fund your wallet securely and enjoy exciting
             games with amazing prizes on Fortuna Play.
           </p>
@@ -121,14 +121,14 @@ export default function Home() {
 
             <a
               href="/signup"
-              className="rounded-full bg-pink-500 px-8 py-4 font-black text-black"
+              className="rounded-full bg-[#3F82DD] px-8 py-4 font-black text-black"
             >
               Create Account
             </a>
 
             <a
               href="/skill-games"
-              className="rounded-full border border-pink-500 px-8 py-4 font-bold"
+              className="rounded-full border border-blue-500 px-8 py-4 font-bold"
             >
               Browse Games
             </a>

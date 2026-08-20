@@ -124,15 +124,15 @@ export default function ReactionRushPage() {
   }, [playing]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-black px-4 py-6 text-white">
-      <div className="w-full max-w-xl rounded-3xl border border-pink-400/20 bg-white/5 p-5 text-center">
+    <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-4 py-6 text-white">
+      <div className="w-full max-w-xl rounded-3xl border border-blue-400/20 bg-[#0B2545]/70 p-5 text-center">
 
         <div className="mb-6">
           <RewardsCard />
         </div>
         <div className="text-5xl">⚡</div>
-        <h1 className="mt-3 text-3xl font-black text-pink-400">Reaction Rush</h1>
-        <p className="mt-2 text-sm text-white/60">
+        <h1 className="mt-3 text-3xl font-black text-[#66A7FF]">Reaction Rush</h1>
+        <p className="mt-2 text-sm text-[#9AAAC1]">
           Wait for green, then tap as fast as possible. Beat {targetMs}ms to win.
         </p>
 
@@ -142,22 +142,22 @@ export default function ReactionRushPage() {
 
         {status === "idle" && !result && (
           <div className="mt-6">
-            <div className="mb-5 rounded-2xl border border-white/10 bg-white/5 p-4 text-left">
+            <div className="mb-5 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-left">
               <p className="font-black text-white">
                 📋 How to Play
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 Wait for the signal, then tap as quickly as you can. Do not tap too early. React within the required time to win.
               </p>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-pink-500/20 bg-pink-500/10 p-4 text-left">
-              <p className="font-black text-pink-400">
+            <div className="mb-5 rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-4 text-left">
+              <p className="font-black text-[#66A7FF]">
                 🏆 Prize Information
               </p>
 
-              <p className="mt-2 text-sm leading-6 text-white/70">
+              <p className="mt-2 text-sm leading-6 text-[#B4C0D1]">
                 A minimum entry fee of GH₵7 is required to play. You may enter
                 GH₵7 or any higher amount. Complete the challenge successfully
                 to win a prize equal to 2x your entry fee.
@@ -170,13 +170,13 @@ export default function ReactionRushPage() {
                             value={stake}
               onChange={(e) => setStake(e.target.value)}
               placeholder="Enter entry fee GH₵7 or above"
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-center text-xl font-bold"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-center text-xl font-bold"
             />
 
             <button
               onClick={() => void startGame()}
               disabled={loading || !stake || Number(stake) < 7}
-              className="mt-5 w-full rounded-xl bg-pink-400 py-4 font-black text-black disabled:opacity-40"
+              className="mt-5 w-full rounded-xl bg-blue-400 py-4 font-black text-black disabled:opacity-40"
             >
               {loading ? "Starting..." : "Start Now"}
             </button>
@@ -189,7 +189,7 @@ export default function ReactionRushPage() {
             disabled={loading}
             className={`mt-8 flex h-72 w-full items-center justify-center rounded-3xl text-4xl font-black transition ${
               status === "ready"
-                ? "bg-pink-500 text-black"
+                ? "bg-[#3F82DD] text-black"
                 : "bg-red-500/20 text-red-300"
             }`}
           >
@@ -199,7 +199,7 @@ export default function ReactionRushPage() {
 
         {result && (
           <div className="mt-6">
-            <div className={result.won ? "rounded-2xl bg-pink-500/10 p-6 text-green-300" : "rounded-2xl bg-white/5 p-6 text-white/70"}>
+            <div className={result.won ? "rounded-2xl bg-[#3F82DD]/10 p-6 text-green-300" : "rounded-2xl bg-[#0B2545]/70 p-6 text-[#B4C0D1]"}>
               <div className="text-5xl">{result.won ? "🏆" : "⚡"}</div>
               <h2 className="mt-3 text-2xl font-black">
                 {result.won ? "Lightning Fast!" : "Reaction Complete"}
@@ -217,10 +217,10 @@ export default function ReactionRushPage() {
             </div>
 
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              <button onClick={resetGame} className="rounded-xl bg-pink-400 py-3 font-black text-black">
+              <button onClick={resetGame} className="rounded-xl bg-blue-400 py-3 font-black text-black">
                 Play Again
               </button>
-              <Link href="/skill-games" className="rounded-xl border border-white/10 bg-white/5 py-3 font-bold">
+              <Link href="/skill-games" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 font-bold">
                 All Games
               </Link>
             </div>

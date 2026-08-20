@@ -36,8 +36,8 @@ export default function AdminDashboardPage() {
 
   if (!data) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-        <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-8 text-center">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
+        <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center">
           {message}
         </div>
       </main>
@@ -61,33 +61,33 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-pink-500">Fortuna Admin</h1>
-            <p className="mt-2 text-white/60">Business overview and money flow dashboard.</p>
+            <h1 className="text-4xl font-black text-[#4D94F5]">Fortuna Admin</h1>
+            <p className="mt-2 text-[#9AAAC1]">Business overview and money flow dashboard.</p>
           </div>
 
         </div>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {cards.map(([label, value]) => (
-            <div key={label} className="rounded-3xl border border-pink-500/20 bg-white/5 p-6">
-              <p className="text-sm text-white/50">{label}</p>
+            <div key={label} className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+              <p className="text-sm text-[#8295B0]">{label}</p>
               <h2 className="mt-2 text-3xl font-black">{value}</h2>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
-          <h2 className="text-2xl font-black text-pink-500">Profit Overview</h2>
-          <p className="mt-2 text-white/60">Today, 7 days, 30 days and all-time business movement.</p>
+        <div className="mt-10 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+          <h2 className="text-2xl font-black text-[#4D94F5]">Profit Overview</h2>
+          <p className="mt-2 text-[#9AAAC1]">Today, 7 days, 30 days and all-time business movement.</p>
 
           <div className="mt-6 overflow-x-auto">
             <table className="w-full min-w-[900px] text-left">
-              <thead className="bg-pink-500 text-black">
+              <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">Period</th>
                   <th className="p-4">Deposits</th>
@@ -101,7 +101,7 @@ export default function AdminDashboardPage() {
               </thead>
               <tbody>
                 {(data.ranges || []).map((r: any) => (
-                  <tr key={r.label} className="border-t border-white/10">
+                  <tr key={r.label} className="border-t border-[#38BDF8]/15">
                     <td className="p-4 font-black">{r.label}</td>
                     <td className="p-4 text-green-300">GH₵{Number(r.deposits).toFixed(2)}</td>
                     <td className="p-4 text-red-300">GH₵{Number(r.withdrawals).toFixed(2)}</td>
@@ -122,25 +122,25 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-black text-pink-500">Recent Transactions</h2>
+          <section className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+            <h2 className="text-2xl font-black text-[#4D94F5]">Recent Transactions</h2>
             <div className="mt-4 space-y-3">
               {data.recentTransactions.map((t: any) => (
-                <div key={t.id} className="rounded-2xl bg-black/50 p-4">
+                <div key={t.id} className="rounded-2xl bg-[#071A33]/50 p-4">
                   <p className="font-bold">{String(t.type).replaceAll("_", " ")}</p>
-                  <p className="text-sm text-white/60">GH₵{Number(t.amount).toFixed(2)} • {t.status}</p>
+                  <p className="text-sm text-[#9AAAC1]">GH₵{Number(t.amount).toFixed(2)} • {t.status}</p>
                 </div>
               ))}
             </div>
           </section>
 
-          <section className="rounded-3xl border border-white/10 bg-white/5 p-6">
-            <h2 className="text-2xl font-black text-pink-500">Recent Skill Games</h2>
+          <section className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
+            <h2 className="text-2xl font-black text-[#4D94F5]">Recent Skill Games</h2>
             <div className="mt-4 space-y-3">
               {data.recentGames.map((g: any) => (
-                <div key={g.id} className="rounded-2xl bg-black/50 p-4">
+                <div key={g.id} className="rounded-2xl bg-[#071A33]/50 p-4">
                   <p className="font-bold">{String(g.game_slug).replaceAll("-", " ")}</p>
-                  <p className="text-sm text-white/60">
+                  <p className="text-sm text-[#9AAAC1]">
                     Stake GH₵{Number(g.stake || 0).toFixed(2)} • {g.result || g.status}
                   </p>
                 </div>

@@ -27,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F5B700",
+  themeColor: "#07111F",
   colorScheme: "dark",
 };
 
@@ -45,7 +45,7 @@ export default function RootLayout({
           href="/apple-touch-icon.png"
         />
       </head>
-      <body className="bg-black text-white">
+      <body className="bg-fortuna-navy text-white">
         <VisitorTracker />
         <SessionTimeout />
         <Navbar />

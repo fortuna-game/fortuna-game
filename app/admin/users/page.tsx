@@ -34,26 +34,26 @@ export default function AdminUsersPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-pink-500">Users Management</h1>
-            <p className="mt-2 text-white/60">View users, wallet balances, deposits, withdrawals and game activity.</p>
+            <h1 className="text-4xl font-black text-[#4D94F5]">Users Management</h1>
+            <p className="mt-2 text-[#9AAAC1]">View users, wallet balances, deposits, withdrawals and game activity.</p>
           </div>
 
-          <Link href="/admin" className="rounded-xl bg-pink-500 px-5 py-3 font-black text-black">
+          <Link href="/admin" className="rounded-xl bg-[#3F82DD] px-5 py-3 font-black text-black">
             Back to Admin
           </Link>
         </div>
 
-        {message && <div className="mt-8 rounded-3xl border border-pink-500/20 bg-white/5 p-6">{message}</div>}
+        {message && <div className="mt-8 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">{message}</div>}
 
         {!message && (
-          <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
+          <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
             <table className="w-full min-w-[1200px] text-left">
-              <thead className="bg-pink-500 text-black">
+              <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">User</th>
                   <th className="p-4">Phone</th>
@@ -69,10 +69,10 @@ export default function AdminUsersPage() {
 
               <tbody>
                 {users.map((u) => (
-                  <tr key={u.user_id} className="border-t border-white/10">
+                  <tr key={u.user_id} className="border-t border-[#38BDF8]/15">
                     <td className="p-4">
-                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-pink-400 hover:underline">@{u.username}</Link>
-                      <p className="text-sm text-white/50">{u.first_name}</p>
+                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-[#66A7FF] hover:underline">@{u.username}</Link>
+                      <p className="text-sm text-[#8295B0]">{u.first_name}</p>
                     </td>
                     <td className="p-4">{u.phone || "-"}</td>
                     <td className="p-4 font-bold">GH₵{Number(u.balance).toFixed(2)}</td>
@@ -87,7 +87,7 @@ export default function AdminUsersPage() {
 
                 {users.length === 0 && (
                   <tr>
-                    <td className="p-6 text-white/60" colSpan={9}>No users found.</td>
+                    <td className="p-6 text-[#9AAAC1]" colSpan={9}>No users found.</td>
                   </tr>
                 )}
               </tbody>

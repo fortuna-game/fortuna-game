@@ -148,9 +148,9 @@ export default function SupportPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
-        <div className="rounded-3xl border border-green-500/20 bg-white/5 p-6 md:p-8">
+        <div className="rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6 md:p-8">
           <p className="text-sm font-bold uppercase tracking-widest text-green-400">
             Fortuna Affiliate Support
           </p>
@@ -159,7 +159,7 @@ export default function SupportPage() {
             Affiliate Support Centre
           </h1>
 
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-[#9AAAC1]">
             Contact our team about referrals, earnings, withdrawals or your affiliate account.
           </p>
 
@@ -167,7 +167,7 @@ export default function SupportPage() {
             <select
               value={issueType}
               onChange={(e) => setIssueType(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-black p-4 text-white outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-white outline-none focus:border-green-500"
             >
               <option value="">Select issue type</option>
               {issues.map((issue) => (
@@ -179,7 +179,7 @@ export default function SupportPage() {
               value={reference}
               onChange={(e) => setReference(e.target.value)}
               placeholder="Reference number, if any"
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-white outline-none focus:border-green-500"
             />
 
             <textarea
@@ -187,14 +187,14 @@ export default function SupportPage() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Explain the issue..."
               rows={6}
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white outline-none focus:border-green-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-white outline-none focus:border-green-500"
             />
 
             <input
               type="file"
               accept="image/*"
               onChange={(e) => setScreenshot(e.target.files?.[0] || null)}
-              className="w-full rounded-xl border border-white/10 bg-white/5 p-4 text-white"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-white"
             />
 
             <button
@@ -205,7 +205,7 @@ export default function SupportPage() {
             </button>
 
             {status && (
-              <p className="rounded-xl bg-white/10 p-4 text-center text-sm text-white">
+              <p className="rounded-xl bg-[#0F2F57]/80 p-4 text-center text-sm text-white">
                 {status}
               </p>
             )}
@@ -217,11 +217,11 @@ export default function SupportPage() {
 
           <div className="mt-5 grid gap-5">
             {tickets.map((ticket) => (
-              <div key={ticket.id} className="rounded-3xl border border-white/10 bg-white/5 p-5">
+              <div key={ticket.id} className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5">
                 <div className="flex flex-wrap justify-between gap-3">
                   <div>
                     <p className="font-black text-green-400">{ticket.issue_type}</p>
-                    <p className="mt-1 text-sm text-white/50">
+                    <p className="mt-1 text-sm text-[#8295B0]">
                       {new Date(ticket.created_at).toLocaleString()}
                     </p>
                   </div>
@@ -232,7 +232,7 @@ export default function SupportPage() {
                 </div>
 
                 {ticket.reference && (
-                  <p className="mt-3 text-sm font-bold text-white/70">
+                  <p className="mt-3 text-sm font-bold text-[#B4C0D1]">
                     Reference: {ticket.reference}
                   </p>
                 )}
@@ -243,7 +243,7 @@ export default function SupportPage() {
                   <a
                     href={ticket.screenshot_url}
                     target="_blank"
-                    className="mt-4 inline-block rounded-xl bg-white/10 px-4 py-2 font-bold text-green-300"
+                    className="mt-4 inline-block rounded-xl bg-[#0F2F57]/80 px-4 py-2 font-bold text-green-300"
                   >
                     View Screenshot
                   </a>
@@ -254,7 +254,7 @@ export default function SupportPage() {
                     <p className="font-black text-green-300">Admin Update</p>
                     <p className="mt-2 whitespace-pre-line text-white/80">{ticket.admin_reply}</p>
                     {ticket.replied_at && (
-                      <p className="mt-2 text-xs text-white/40">
+                      <p className="mt-2 text-xs text-[#7185A3]">
                         {new Date(ticket.replied_at).toLocaleString()}
                       </p>
                     )}
@@ -264,7 +264,7 @@ export default function SupportPage() {
             ))}
 
             {tickets.length === 0 && (
-              <p className="rounded-3xl border border-white/10 bg-white/5 p-6 text-white/60">
+              <p className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6 text-[#9AAAC1]">
                 No affiliate support tickets yet.
               </p>
             )}

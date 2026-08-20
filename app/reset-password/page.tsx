@@ -52,12 +52,12 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-zinc-950 to-yellow-950 px-6">
-      <div className="w-full max-w-md rounded-3xl border border-pink-600/20 bg-black/60 p-8 shadow-2xl backdrop-blur-xl">
-        <h1 className="text-center text-3xl font-black text-pink-500">
+      <div className="w-full max-w-md rounded-3xl border border-blue-700/20 bg-[#071A33]/60 p-8 shadow-2xl backdrop-blur-xl">
+        <h1 className="text-center text-3xl font-black text-[#4D94F5]">
           Create New Password
         </h1>
 
-        <p className="mt-3 text-center text-white/60">
+        <p className="mt-3 text-center text-[#9AAAC1]">
           Enter and confirm your new Fortuna Play password.
         </p>
 
@@ -69,13 +69,13 @@ export default function ResetPasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white outline-none focus:border-pink-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-4 py-3 pr-12 text-white outline-none focus:border-blue-500"
             />
 
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-3 text-white/60"
+              className="absolute right-4 top-3 text-[#9AAAC1]"
             >
               {showPassword ? <EyeOff /> : <Eye />}
             </button>
@@ -88,13 +88,13 @@ export default function ResetPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 pr-12 text-white outline-none focus:border-pink-500"
+              className="w-full rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-4 py-3 pr-12 text-white outline-none focus:border-blue-500"
             />
 
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-3 text-white/60"
+              className="absolute right-4 top-3 text-[#9AAAC1]"
             >
               {showConfirmPassword ? <EyeOff /> : <Eye />}
             </button>
@@ -102,13 +102,13 @@ export default function ResetPasswordPage() {
 
           <button
             disabled={loading}
-            className="w-full rounded-xl bg-pink-500 py-3 font-black text-black hover:bg-pink-400 disabled:opacity-60"
+            className="w-full rounded-xl bg-[#3F82DD] py-3 font-black text-black hover:bg-blue-400 disabled:opacity-60"
           >
             {loading ? "Updating Password..." : "Update Password"}
           </button>
 
           {message && (
-            <p className="rounded-xl bg-white/10 p-4 text-center text-sm text-white">
+            <p className="rounded-xl bg-[#0F2F57]/80 p-4 text-center text-sm text-white">
               {message}
             </p>
           )}

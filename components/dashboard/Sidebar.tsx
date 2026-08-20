@@ -14,8 +14,8 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-72 border-r border-pink-500/10 bg-zinc-950 p-6">
-      <h2 className="mb-8 text-3xl font-black text-pink-500">
+    <aside className="w-72 border-r border-blue-500/10 bg-zinc-950 p-6">
+      <h2 className="mb-8 text-3xl font-black text-[#4D94F5]">
         Fortuna Play
       </h2>
 
@@ -24,7 +24,7 @@ export default function Sidebar() {
           <Link
             key={title}
             href={href}
-            className="flex items-center gap-4 rounded-xl px-4 py-4 transition hover:bg-pink-600/10"
+            className="flex items-center gap-4 rounded-xl px-4 py-4 transition hover:bg-[#2C63B3]/10"
           >
             <span className="text-2xl">{icon}</span>
             <span>{title}</span>

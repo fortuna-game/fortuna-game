@@ -15,6 +15,7 @@ type Draw = {
   ticket_price: number;
   status: string;
   totalTickets: number;
+  winner_user_id?: string | null;
 };
 
 type Ticket = {
@@ -29,6 +30,7 @@ export default function LuckyDrawPage() {
   const [myTicketCounts, setMyTicketCounts] = useState<
     Record<string, number>
   >({});
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [buyingId, setBuyingId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
@@ -45,6 +47,8 @@ export default function LuckyDrawPage() {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+
+        setCurrentUserId(session?.user?.id || null);
 
         const headers: HeadersInit = {};
 
@@ -152,9 +156,7 @@ export default function LuckyDrawPage() {
             ? {
                 ...currentDraw,
                 totalTickets:
-                  Number(
-                    currentDraw.totalTickets || 0
-                  ) + 1,
+                  Number(currentDraw.totalTickets || 0) + 1,
               }
             : currentDraw
         )
@@ -194,23 +196,27 @@ export default function LuckyDrawPage() {
     }
 
     if (status === "paused") {
-      return "border-yellow-400/30 bg-yellow-500/10 text-yellow-300";
+      return "border-[#FFD54A]/30 bg-[#F5B700]/10 text-[#FFE08A]";
+    }
+
+    if (status === "completed") {
+      return "border-blue-400/30 bg-[#3F82DD]/10 text-blue-300";
     }
 
     return "border-red-400/30 bg-red-500/10 text-red-300";
   }
 
+  function getStatusText(status: string) {
+    if (status === "open") return "Open";
+    if (status === "paused") return "Paused";
+    if (status === "suspended") return "Suspended";
+    if (status === "completed") return "Completed";
+    return status;
+  }
+
   function getButtonText(draw: Draw) {
     if (buyingId === draw.id) {
       return "Buying Ticket...";
-    }
-
-    if (draw.status === "paused") {
-      return "Lucky Draw Paused";
-    }
-
-    if (draw.status === "suspended") {
-      return "Lucky Draw Suspended";
     }
 
     const myTickets = Number(
@@ -229,12 +235,12 @@ export default function LuckyDrawPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-4 py-6 text-white sm:py-8">
+    <main className="min-h-screen bg-[#071A33] px-4 py-6 text-white sm:py-8">
       <section className="mx-auto max-w-4xl">
         <div className="mb-6 text-center">
           <div className="text-3xl">🎟️</div>
 
-          <h1 className="mt-2 text-3xl font-black text-yellow-400 sm:text-4xl">
+          <h1 className="mt-2 text-3xl font-black text-[#FFD54A] sm:text-4xl">
             Lucky Draws
           </h1>
 
@@ -246,12 +252,12 @@ export default function LuckyDrawPage() {
         </div>
 
         {loading ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-white/60">
+          <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#9AAAC1]">
             Loading Lucky Draws...
           </div>
         ) : draws.length === 0 ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center">
-            <p className="text-white/60">
+          <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center">
+            <p className="text-[#9AAAC1]">
               No Lucky Draw is currently available.
             </p>
 
@@ -263,7 +269,7 @@ export default function LuckyDrawPage() {
 
             <Link
               href="/skill-games"
-              className="mt-5 inline-block text-sm font-bold text-yellow-300"
+              className="mt-5 inline-block text-sm font-bold text-[#FFE08A]"
             >
               Back to Games
             </Link>
@@ -275,17 +281,27 @@ export default function LuckyDrawPage() {
                 myTicketCounts[draw.id] || 0
               );
 
+              const isCompleted =
+                draw.status === "completed";
+
+              const participated = myTickets > 0;
+
+              const isWinner =
+                isCompleted &&
+                !!currentUserId &&
+                draw.winner_user_id === currentUserId;
+
               return (
                 <div
                   key={draw.id}
-                  className="overflow-hidden rounded-2xl border border-yellow-400/25 bg-white/[0.04]"
+                  className="overflow-hidden rounded-2xl border border-[#FFD54A]/25 bg-white/[0.04]"
                 >
                   {draw.prize_image && (
                     <div className="px-5 pt-5 sm:px-6">
                       <img
                         src={draw.prize_image}
                         alt={draw.title}
-                        className="h-48 w-full rounded-xl border border-white/10 object-cover sm:h-64"
+                        className="h-48 w-full rounded-xl border border-[#38BDF8]/15 object-cover sm:h-64"
                       />
                     </div>
                   )}
@@ -293,11 +309,11 @@ export default function LuckyDrawPage() {
                   <div className="px-5 py-6 sm:px-6">
                     <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
                       <div>
-                        <p className="text-xs font-bold uppercase tracking-wider text-yellow-300/70">
-                          🎁 Current Prize
+                        <p className="text-xs font-bold uppercase tracking-wider text-[#FFE08A]/70">
+                          🎁 Lucky Draw Prize
                         </p>
 
-                        <h2 className="mt-2 text-2xl font-black text-yellow-400 sm:text-3xl">
+                        <h2 className="mt-2 text-2xl font-black text-[#FFD54A] sm:text-3xl">
                           {draw.title}
                         </h2>
 
@@ -310,7 +326,7 @@ export default function LuckyDrawPage() {
                         {draw.prize_description &&
                           draw.prize_description !==
                             draw.title && (
-                            <p className="mt-2 text-sm text-white/60">
+                            <p className="mt-2 text-sm text-[#9AAAC1]">
                               {draw.prize_description}
                             </p>
                           )}
@@ -321,202 +337,212 @@ export default function LuckyDrawPage() {
                           draw.status
                         )}`}
                       >
-                        {draw.status}
+                        {getStatusText(draw.status)}
                       </div>
                     </div>
 
-                    <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                      <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
-                        <p className="text-xs text-white/50">
-                          Prize
-                        </p>
+                    {isCompleted ? (
+                      <div className="mt-6 space-y-4">
+                        {isWinner ? (
+                          <div className="rounded-2xl border border-green-400/40 bg-green-500/10 p-5">
+                            <p className="text-xl font-black text-green-300">
+                              🎉 Congratulations! You won{" "}
+                              {draw.title}!
+                            </p>
 
-                        <p className="mt-1 text-lg font-black text-green-400">
-                          {draw.prize_type === "physical"
-                            ? draw.title
-                            : getPrizeText(draw)}
-                        </p>
+                            <p className="mt-2 text-sm leading-6 text-white/75">
+                              You were selected as the winner of
+                              this Lucky Draw.
+                              {draw.prize_type === "physical"
+                                ? " Please submit your delivery details so we can arrange your prize."
+                                : " Your prize will be processed according to the applicable payout procedure."}
+                            </p>
+
+                            {draw.prize_type === "physical" && (
+                              <Link
+                                href={`/lucky-draw/claim?draw=${draw.id}`}
+                                className="mt-4 inline-flex rounded-xl bg-[#FFD54A] px-5 py-3 text-sm font-black text-black transition hover:bg-yellow-300"
+                              >
+                                Submit Delivery Details
+                              </Link>
+                            )}
+                          </div>
+                        ) : participated ? (
+                          <div className="rounded-2xl border border-blue-400/30 bg-[#3F82DD]/10 p-4">
+                            <p className="font-bold text-blue-200">
+                              ℹ️ You participated in this draw.
+                            </p>
+
+                            <p className="mt-1 text-sm text-white/65">
+                              You purchased{" "}
+                              {myTickets} ticket
+                              {myTickets === 1 ? "" : "s"}.
+                              This draw has now been completed.
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-4 text-sm text-[#9AAAC1]">
+                            This Lucky Draw has been completed.
+                          </div>
+                        )}
                       </div>
+                    ) : (
+                      <>
+                        {participated && (
+                          <div className="mt-5 rounded-xl border border-[#FFD54A]/20 bg-[#FFD54A]/5 p-4">
+                            <p className="text-sm font-bold text-yellow-200">
+                              You currently have {myTickets} ticket
+                              {myTickets === 1 ? "" : "s"} in this draw.
+                            </p>
+                          </div>
+                        )}
 
-                      <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
-                        <p className="text-xs text-white/50">
-                          Ticket Price
-                        </p>
+                        <div className="mt-5 rounded-xl border border-orange-400/20 bg-orange-500/5 p-4">
+                          <p className="text-sm font-black text-orange-200">
+                            �� Limited Entry Draw
+                          </p>
 
-                        <p className="mt-1 text-lg font-black text-yellow-400">
-                          GH₵
-                          {Number(
-                            draw.ticket_price
-                          ).toFixed(2)}
-                        </p>
-                      </div>
+                          <p className="mt-1 text-sm leading-6 text-white/65">
+                            Ticket sales may close once enough
+                            entries are received. More tickets
+                            increase your chances, but winning is
+                            not guaranteed.
+                          </p>
+                        </div>
 
-                      <div className="rounded-xl border border-white/10 bg-black/30 p-4 text-center">
-                        <p className="text-xs text-white/50">
-                          Tickets Purchased
-                        </p>
-
-                        <p className="mt-1 text-lg font-black text-blue-300">
-                          {Number(
-                            draw.totalTickets || 0
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    {myTickets > 0 && (
-                      <div className="mt-3 rounded-xl border border-blue-400/20 bg-blue-500/10 px-4 py-3 text-center">
-                        <p className="text-sm font-bold text-blue-200">
-                          You currently have {myTickets}{" "}
-                          {myTickets === 1
-                            ? "ticket"
-                            : "tickets"}{" "}
-                          in this draw.
-                        </p>
-                      </div>
+                        {draw.status === "open" && (
+                          <button
+                            onClick={() =>
+                              openPurchaseConfirmation(draw)
+                            }
+                            disabled={buyingId === draw.id}
+                            className="mt-5 w-full rounded-xl bg-[#FFD54A] px-5 py-4 font-black text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {getButtonText(draw)}
+                          </button>
+                        )}
+                      </>
                     )}
-
-                    <div className="mt-4 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-3">
-                      <p className="text-sm font-bold text-yellow-300">
-                        🔥 Limited Entry Draw
-                      </p>
-
-                      <p className="mt-1 text-xs leading-5 text-white/65">
-                        Ticket sales may close once enough
-                        entries are received. More tickets
-                        increase your chances, but winning is
-                        not guaranteed.
-                      </p>
-                    </div>
-
-                    {draw.status === "paused" && (
-                      <div className="mt-4 rounded-xl border border-yellow-400/20 bg-yellow-400/10 px-4 py-3 text-center text-sm font-bold text-yellow-300">
-                        ⏸ This Lucky Draw is currently paused.
-                        Ticket purchases are temporarily
-                        unavailable.
-                      </div>
-                    )}
-
-                    {draw.status === "suspended" && (
-                      <div className="mt-4 rounded-xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-center text-sm font-bold text-red-300">
-                        ⚠️ This Lucky Draw has been suspended.
-                        Ticket purchases are unavailable.
-                      </div>
-                    )}
-
-                    <button
-                      onClick={() =>
-                        openPurchaseConfirmation(draw)
-                      }
-                      disabled={
-                        buyingId !== null ||
-                        draw.status !== "open"
-                      }
-                      className={`mt-5 w-full rounded-xl py-3.5 text-base font-black transition disabled:cursor-not-allowed ${
-                        draw.status === "open"
-                          ? "bg-yellow-400 text-black hover:bg-yellow-300 disabled:opacity-50"
-                          : "bg-white/10 text-white/45"
-                      }`}
-                    >
-                      {getButtonText(draw)}
-                    </button>
                   </div>
                 </div>
               );
             })}
 
-            {message && (
-              <div className="rounded-xl border border-white/10 bg-white/5 p-4 text-center text-sm">
-                {message}
+            <section className="rounded-2xl border border-[#38BDF8]/15 bg-white/[0.04] p-5 sm:p-6">
+              <h2 className="text-xl font-black text-[#FFD54A]">
+                How Lucky Draw Works
+              </h2>
+
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                  <p className="font-bold">1. Buy Tickets</p>
+                  <p className="mt-1 text-sm leading-6 text-[#9AAAC1]">
+                    Purchase one or more tickets to enter an
+                    available Lucky Draw.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                  <p className="font-bold">2. Draw Is Completed</p>
+                  <p className="mt-1 text-sm leading-6 text-[#9AAAC1]">
+                    When the draw closes, one eligible ticket is
+                    selected as the winner.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                  <p className="font-bold">3. Check Your Result</p>
+                  <p className="mt-1 text-sm leading-6 text-[#9AAAC1]">
+                    Completed draws remain visible so participants
+                    can return later and check whether they won.
+                  </p>
+                </div>
+
+                <div className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                  <p className="font-bold">4. Claim Your Prize</p>
+                  <p className="mt-1 text-sm leading-6 text-[#9AAAC1]">
+                    Winners of physical prizes submit their delivery
+                    details so our team can arrange the prize.
+                  </p>
+                </div>
               </div>
-            )}
-
-            {ticket && (
-              <div className="rounded-xl border border-green-400/30 bg-green-500/10 p-4 text-center">
-                <p className="text-xs text-green-300">
-                  Your Latest Ticket Number
-                </p>
-
-                <p className="mt-1 text-xl font-black">
-                  {ticket.ticket_number}
-                </p>
-              </div>
-            )}
-
-            <Link
-              href="/skill-games"
-              className="block py-2 text-center text-sm font-bold text-yellow-300"
-            >
-              Back to Games
-            </Link>
+            </section>
           </div>
         )}
-      </section>
 
-      {confirmDraw && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-md rounded-2xl border border-yellow-400/30 bg-[#111] p-6 shadow-2xl">
-            <div className="text-center">
-              <div className="text-4xl">🎟️</div>
-
-              <h2 className="mt-3 text-2xl font-black text-yellow-400">
+        {confirmDraw && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071A33]/80 px-4">
+            <div className="w-full max-w-md rounded-2xl border border-[#FFD54A]/25 bg-zinc-950 p-6">
+              <h2 className="text-xl font-black text-[#FFD54A]">
                 Confirm Ticket Purchase
               </h2>
 
-              <p className="mt-3 text-sm leading-6 text-white/70">
-                {Number(
-                  myTicketCounts[confirmDraw.id] || 0
-                ) > 0
-                  ? `You already have ${
-                      myTicketCounts[confirmDraw.id]
-                    } ${
-                      Number(
-                        myTicketCounts[
-                          confirmDraw.id
-                        ] || 0
-                      ) === 1
-                        ? "ticket"
-                        : "tickets"
-                    } for ${confirmDraw.title}.`
-                  : `You are about to buy your first ticket for ${confirmDraw.title}.`}
-              </p>
-
-              <div className="mt-4 rounded-xl border border-white/10 bg-black/40 p-4">
-                <p className="text-xs text-white/50">
-                  Ticket Price
-                </p>
-
-                <p className="mt-1 text-2xl font-black text-yellow-400">
-                  GH₵
-                  {Number(
+              <p className="mt-3 text-sm leading-6 text-[#B4C0D1]">
+                Buy a ticket for{" "}
+                <span className="font-bold text-white">
+                  {confirmDraw.title}
+                </span>{" "}
+                for{" "}
+                <span className="font-bold text-[#FFE08A]">
+                  GH₵{Number(
                     confirmDraw.ticket_price
                   ).toFixed(2)}
-                </p>
-              </div>
-
-              <p className="mt-4 text-sm font-semibold text-white/80">
-                Do you want to continue with this purchase?
+                </span>
+                ?
               </p>
 
-              <div className="mt-6 grid grid-cols-2 gap-3">
+              <div className="mt-6 flex gap-3">
                 <button
                   onClick={() => setConfirmDraw(null)}
-                  className="rounded-xl border border-white/15 bg-white/5 py-3 font-black text-white transition hover:bg-white/10"
+                  className="flex-1 rounded-xl border border-white/15 px-4 py-3 font-bold text-white/75"
                 >
                   Cancel
                 </button>
 
                 <button
                   onClick={() => buyTicket(confirmDraw)}
-                  className="rounded-xl bg-yellow-400 py-3 font-black text-black transition hover:bg-yellow-300"
+                  className="flex-1 rounded-xl bg-[#FFD54A] px-4 py-3 font-black text-black"
                 >
-                  Yes, Buy Ticket
+                  Confirm Purchase
                 </button>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {ticket && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#071A33]/80 px-4">
+            <div className="w-full max-w-md rounded-2xl border border-[#FFD54A]/25 bg-zinc-950 p-6 text-center">
+              <div className="text-4xl">🎟️</div>
+
+              <h2 className="mt-3 text-xl font-black text-[#FFD54A]">
+                Ticket Purchased!
+              </h2>
+
+              <p className="mt-3 text-sm text-white/65">
+                Your ticket number is
+              </p>
+
+              <p className="mt-2 text-2xl font-black text-white">
+                {ticket.ticket_number}
+              </p>
+
+              <button
+                onClick={() => setTicket(null)}
+                className="mt-6 w-full rounded-xl bg-[#FFD54A] px-5 py-3 font-black text-black"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        )}
+
+        {message && !ticket && (
+          <div className="mt-5 rounded-xl border border-[#FFD54A]/20 bg-[#FFD54A]/5 p-4 text-center text-sm text-yellow-100">
+            {message}
+          </div>
+        )}
+      </section>
     </main>
   );
 }

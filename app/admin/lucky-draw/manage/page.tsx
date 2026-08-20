@@ -645,15 +645,15 @@ No cash will automatically be credited. Delivery or collection details will be r
 
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-4xl font-black text-yellow-400">
+            <h1 className="text-4xl font-black text-[#FFD54A]">
               Lucky Draw Admin
             </h1>
 
-            <p className="mt-2 text-white/60">
+            <p className="mt-2 text-[#9AAAC1]">
               Create, edit and manage Lucky Draw prizes,
               tickets and winners.
             </p>
@@ -661,34 +661,34 @@ No cash will automatically be credited. Delivery or collection details will be r
 
           <Link
             href="/admin"
-            className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 font-bold"
+            className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-5 py-3 font-bold"
           >
             Back to Admin
           </Link>
         </div>
 
         {message && (
-          <div className="mt-8 rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-5 text-yellow-200">
+          <div className="mt-8 rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-5 text-yellow-200">
             {message}
           </div>
         )}
 
         {loading && (
-          <p className="mt-8 text-white/60">
+          <p className="mt-8 text-[#9AAAC1]">
             Loading Lucky Draw...
           </p>
         )}
 
         {!loading && (
           <>
-            <section className="mt-8 rounded-3xl border border-yellow-400/30 bg-yellow-400/10 p-6">
-              <h2 className="text-2xl font-black text-yellow-400">
+            <section className="mt-8 rounded-3xl border border-[#FFD54A]/30 bg-[#FFD54A]/10 p-6">
+              <h2 className="text-2xl font-black text-[#FFD54A]">
                 Create New Lucky Draw
               </h2>
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <div>
-                  <label className="text-sm font-bold text-white/60">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Prize Title
                   </label>
 
@@ -698,12 +698,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                       setTitle(e.target.value)
                     }
                     placeholder="Example: iPhone 16 Pro Max"
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-bold text-white/60">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Prize Type
                   </label>
 
@@ -714,7 +714,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                         e.target.value as PrizeType
                       )
                     }
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                   >
                     <option value="cash">Cash</option>
                     <option value="rent">Rent Support</option>
@@ -728,7 +728,7 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                 {isAutoPaidPrize ? (
                   <div>
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Prize Amount
                     </label>
 
@@ -739,12 +739,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                         setPrizeAmount(e.target.value)
                       }
                       placeholder="Example: 1000"
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                     />
                   </div>
                 ) : (
                   <div>
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Estimated Prize Value
                     </label>
 
@@ -755,13 +755,13 @@ No cash will automatically be credited. Delivery or collection details will be r
                         setPrizeValue(e.target.value)
                       }
                       placeholder="Example: 5000"
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="text-sm font-bold text-white/60">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Ticket Price
                   </label>
 
@@ -772,12 +772,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                       setTicketPrice(e.target.value)
                     }
                     placeholder="Example: 10"
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="text-sm font-bold text-white/60">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Prize Description
                   </label>
 
@@ -787,12 +787,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                       setPrizeDescription(e.target.value)
                     }
                     placeholder="Describe the prize"
-                    className="mt-2 min-h-28 w-full rounded-xl border border-white/10 bg-black px-4 py-3 outline-none focus:border-yellow-400"
+                    className="mt-2 min-h-28 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                   />
                 </div>
 
                 <div>
-                  <label className="text-sm font-bold text-white/60">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Prize Image
                   </label>
 
@@ -804,7 +804,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                         e.target.files?.[0] || null
                       )
                     }
-                    className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                   />
                 </div>
 
@@ -813,7 +813,7 @@ No cash will automatically be credited. Delivery or collection details will be r
               <button
                 onClick={createDraw}
                 disabled={creating || uploadingImage}
-                className="mt-6 rounded-xl bg-yellow-400 px-6 py-3 font-black text-black disabled:opacity-50"
+                className="mt-6 rounded-xl bg-[#FFD54A] px-6 py-3 font-black text-black disabled:opacity-50"
               >
                 {creating || uploadingImage
                   ? "Please wait..."
@@ -822,13 +822,13 @@ No cash will automatically be credited. Delivery or collection details will be r
             </section>
 
             {editingDraw && (
-              <section className="mt-8 rounded-3xl border border-blue-400/30 bg-blue-500/10 p-6">
+              <section className="mt-8 rounded-3xl border border-blue-400/30 bg-[#3F82DD]/10 p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
                     <h2 className="text-2xl font-black text-blue-300">
                       Edit Lucky Draw
                     </h2>
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-[#9AAAC1]">
                       Correct any mistake before completing
                       the draw.
                     </p>
@@ -836,7 +836,7 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                   <button
                     onClick={cancelEdit}
-                    className="rounded-xl border border-white/20 px-4 py-2 font-bold"
+                    className="rounded-xl border border-[#38BDF8]/20 px-4 py-2 font-bold"
                   >
                     Cancel Edit
                   </button>
@@ -844,7 +844,7 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                 <div className="mt-6 grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Prize Title
                     </label>
 
@@ -853,12 +853,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                       onChange={(e) =>
                         setEditTitle(e.target.value)
                       }
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Prize Type
                     </label>
 
@@ -869,7 +869,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                           e.target.value as PrizeType
                         )
                       }
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                     >
                       <option value="cash">Cash</option>
                       <option value="rent">
@@ -887,7 +887,7 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                   {isEditAutoPaidPrize ? (
                     <div>
-                      <label className="text-sm font-bold text-white/60">
+                      <label className="text-sm font-bold text-[#9AAAC1]">
                         Prize Amount
                       </label>
 
@@ -899,12 +899,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                             e.target.value
                           )
                         }
-                        className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                        className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                       />
                     </div>
                   ) : (
                     <div>
-                      <label className="text-sm font-bold text-white/60">
+                      <label className="text-sm font-bold text-[#9AAAC1]">
                         Estimated Prize Value
                       </label>
 
@@ -916,13 +916,13 @@ No cash will automatically be credited. Delivery or collection details will be r
                             e.target.value
                           )
                         }
-                        className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                        className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                       />
                     </div>
                   )}
 
                   <div className="md:col-span-2">
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Prize Description
                     </label>
 
@@ -933,12 +933,12 @@ No cash will automatically be credited. Delivery or collection details will be r
                           e.target.value
                         )
                       }
-                      className="mt-2 min-h-28 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      className="mt-2 min-h-28 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                     />
                   </div>
 
                   <div>
-                    <label className="text-sm font-bold text-white/60">
+                    <label className="text-sm font-bold text-[#9AAAC1]">
                       Replace Prize Image
                     </label>
 
@@ -950,7 +950,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                           e.target.files?.[0] || null
                         )
                       }
-                      className="mt-2 w-full rounded-xl border border-white/10 bg-black px-4 py-3"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                     />
                   </div>
 
@@ -970,11 +970,11 @@ No cash will automatically be credited. Delivery or collection details will be r
 
             <section className="mt-8">
               <div className="flex flex-wrap items-center justify-between gap-4">
-                <h2 className="text-2xl font-black text-yellow-400">
+                <h2 className="text-2xl font-black text-[#FFD54A]">
                   All Active Lucky Draws
                 </h2>
 
-                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70">
+                <div className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 px-4 py-2 text-sm text-[#B4C0D1]">
                   Total Revenue: GH₵
                   {totalRevenue.toFixed(2)}
                 </div>
@@ -1002,7 +1002,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                   return (
                     <div
                       key={draw.id}
-                      className="rounded-3xl border border-white/10 bg-white/5 p-6"
+                      className="rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6"
                     >
                       {draw.prize_image && (
                         <img
@@ -1014,15 +1014,15 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                       <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm font-bold text-white/50">
+                          <p className="text-sm font-bold text-[#8295B0]">
                             {getPrizeLabel(draw)}
                           </p>
 
-                          <h3 className="mt-1 text-2xl font-black text-yellow-400">
+                          <h3 className="mt-1 text-2xl font-black text-[#FFD54A]">
                             {draw.title}
                           </h3>
 
-                          <p className="mt-2 text-sm text-white/60">
+                          <p className="mt-2 text-sm text-[#9AAAC1]">
                             Status:{" "}
                             <span className="font-bold">
                               {draw.status}
@@ -1040,7 +1040,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                       </div>
 
                       {draw.prize_description && (
-                        <p className="mt-4 text-sm text-white/70">
+                        <p className="mt-4 text-sm text-[#B4C0D1]">
                           {draw.prize_description}
                         </p>
                       )}
@@ -1055,7 +1055,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                                   "paused"
                                 )
                               }
-                              className="rounded-xl bg-yellow-400 px-4 py-2 font-black text-black"
+                              className="rounded-xl bg-[#FFD54A] px-4 py-2 font-black text-black"
                             >
                               ⏸ Pause
                             </button>
@@ -1118,17 +1118,17 @@ No cash will automatically be credited. Delivery or collection details will be r
                       </div>
 
                       <div className="mt-6 grid gap-4 md:grid-cols-4">
-                        <div className="rounded-2xl border border-yellow-400/20 bg-yellow-400/10 p-4">
-                          <p className="text-sm text-white/60">
+                        <div className="rounded-2xl border border-[#FFD54A]/20 bg-[#FFD54A]/10 p-4">
+                          <p className="text-sm text-[#9AAAC1]">
                             Prize
                           </p>
-                          <h3 className="mt-2 text-xl font-black text-yellow-400">
+                          <h3 className="mt-2 text-xl font-black text-[#FFD54A]">
                             {prizeText}
                           </h3>
                         </div>
 
-                        <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
-                          <p className="text-sm text-white/60">
+                        <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/20 p-4">
+                          <p className="text-sm text-[#9AAAC1]">
                             Ticket Price
                           </p>
                           <h3 className="mt-2 text-xl font-black">
@@ -1139,8 +1139,8 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </h3>
                         </div>
 
-                        <div className="rounded-2xl border border-blue-400/20 bg-blue-500/10 p-4">
-                          <p className="text-sm text-white/60">
+                        <div className="rounded-2xl border border-blue-400/20 bg-[#3F82DD]/10 p-4">
+                          <p className="text-sm text-[#9AAAC1]">
                             Tickets Sold
                           </p>
                           <h3 className="mt-2 text-xl font-black text-blue-300">
@@ -1149,7 +1149,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                         </div>
 
                         <div className="rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
-                          <p className="text-sm text-white/60">
+                          <p className="text-sm text-[#9AAAC1]">
                             Revenue
                           </p>
                           <h3 className="mt-2 text-xl font-black text-green-300">
@@ -1183,7 +1183,7 @@ No cash will automatically be credited. Delivery or collection details will be r
               </div>
 
               {draws.length === 0 && (
-                <div className="mt-6 rounded-2xl border border-white/10 bg-white/5 p-8 text-center text-white/60">
+                <div className="mt-6 rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-8 text-center text-[#9AAAC1]">
                   No active Lucky Draws yet.
                 </div>
               )}

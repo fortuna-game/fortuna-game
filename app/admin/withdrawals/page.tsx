@@ -133,7 +133,7 @@ export default function AdminWithdrawalsPage() {
 
   if (checkingAdmin) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Checking admin access...
       </main>
     );
@@ -141,27 +141,27 @@ export default function AdminWithdrawalsPage() {
 
   if (denied) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
         <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">Access Denied</h1>
-          <p className="mt-3 text-white/60">Please login through /admin/login again.</p>
+          <p className="mt-3 text-[#9AAAC1]">Please login through /admin/login again.</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-12 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
-        <h1 className="text-4xl font-black text-pink-500">Admin Withdrawals</h1>
-        <p className="mt-2 text-white/60">Live withdrawal requests.</p>
+        <h1 className="text-4xl font-black text-[#4D94F5]">Admin Withdrawals</h1>
+        <p className="mt-2 text-[#9AAAC1]">Live withdrawal requests.</p>
 
-        {message && <p className="mt-5 rounded-xl bg-white/10 p-4">{message}</p>}
+        {message && <p className="mt-5 rounded-xl bg-[#0F2F57]/80 p-4">{message}</p>}
 
-        <div className="mt-8 overflow-x-auto rounded-3xl border border-pink-500/20">
+        <div className="mt-8 overflow-x-auto rounded-3xl border border-[#2A5688]">
           <table className="w-full min-w-[1100px] text-left">
-            <thead className="bg-pink-500 text-black">
+            <thead className="bg-[#3F82DD] text-black">
               <tr>
                 <th className="p-4">Username</th>
                 <th className="p-4">Reference</th>
@@ -180,9 +180,9 @@ export default function AdminWithdrawalsPage() {
                 const pending = w.status === "sending";
 
                 return (
-                  <tr key={w.id} className="border-t border-white/10">
+                  <tr key={w.id} className="border-t border-[#38BDF8]/15">
                     <td className="p-4 font-bold">@{profiles[w.user_id] || "Player"}</td>
-                    <td className="p-4 font-bold text-pink-400">{w.reference}</td>
+                    <td className="p-4 font-bold text-[#66A7FF]">{w.reference}</td>
                     <td className="p-4">GH₵{Number(w.amount).toFixed(2)}</td>
                     <td className="p-4">{w.network}</td>
                     <td className="p-4">{w.momo_number}</td>
@@ -191,7 +191,7 @@ export default function AdminWithdrawalsPage() {
 
                     <td className="flex flex-wrap gap-2 p-4">
                       {processed ? (
-                        <span className="rounded-xl bg-white/10 px-4 py-2 font-bold text-white/60">
+                        <span className="rounded-xl bg-[#0F2F57]/80 px-4 py-2 font-bold text-[#9AAAC1]">
                           Completed
                         </span>
                       ) : (
@@ -199,7 +199,7 @@ export default function AdminWithdrawalsPage() {
                           <button
                             disabled={pending || busyId === w.id}
                             onClick={() => void updateStatus(w.id, "sending")}
-                            className="rounded-xl bg-pink-500 px-4 py-2 font-bold text-black disabled:opacity-40"
+                            className="rounded-xl bg-[#3F82DD] px-4 py-2 font-bold text-black disabled:opacity-40"
                           >
                             Send Payment
                           </button>
@@ -207,7 +207,7 @@ export default function AdminWithdrawalsPage() {
                           <button
                             disabled={busyId === w.id}
                             onClick={() => void updateStatus(w.id, "paid")}
-                            className="rounded-xl bg-pink-500 px-4 py-2 font-bold text-black disabled:opacity-40"
+                            className="rounded-xl bg-[#3F82DD] px-4 py-2 font-bold text-black disabled:opacity-40"
                           >
                             Mark Paid
                           </button>
@@ -228,7 +228,7 @@ export default function AdminWithdrawalsPage() {
 
               {withdrawals.length === 0 && (
                 <tr>
-                  <td className="p-6 text-white/60" colSpan={8}>No withdrawals found.</td>
+                  <td className="p-6 text-[#9AAAC1]" colSpan={8}>No withdrawals found.</td>
                 </tr>
               )}
             </tbody>

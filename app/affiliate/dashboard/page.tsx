@@ -352,7 +352,7 @@ export default function AffiliatePage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-black p-8 text-white">
+      <main className="min-h-screen bg-[#071A33] p-8 text-white">
         Loading Affiliate Dashboard...
       </main>
     );
@@ -380,10 +380,10 @@ export default function AffiliatePage() {
       : "";
 
   return (
-    <main className="min-h-screen bg-black px-5 py-8 text-white">
+    <main className="min-h-screen bg-[#071A33] px-5 py-8 text-white">
       <div className="mx-auto max-w-6xl">
 
-        <header className="flex flex-col gap-4 rounded-2xl border border-green-500/20 bg-white/5 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <header className="flex flex-col gap-4 rounded-2xl border border-green-500/20 bg-[#0B2545]/70 p-4 sm:flex-row sm:items-center sm:justify-between">
           <Link
             href="/affiliate/dashboard"
             className="text-2xl font-black text-green-400"
@@ -408,8 +408,8 @@ export default function AffiliatePage() {
           </div>
         </header>
 
-        <section className="mt-6 rounded-3xl border border-pink-500/20 bg-gradient-to-br from-pink-600/15 via-black to-purple-950/30 p-6">
-          <p className="text-xs font-black uppercase tracking-widest text-pink-400">
+        <section className="mt-6 rounded-3xl border border-[#2A5688] bg-gradient-to-br from-blue-700/15 via-[#071A33] to-[#0B2345]/60 p-6">
+          <p className="text-xs font-black uppercase tracking-widest text-[#66A7FF]">
             Fortuna Affiliate Program
           </p>
 
@@ -417,7 +417,7 @@ export default function AffiliatePage() {
             Welcome, {affiliate.full_name}
           </h1>
 
-          <p className="mt-2 text-white/50">
+          <p className="mt-2 text-[#8295B0]">
             Share your link. Bring real players. Earn GH₵5 per qualified player.
           </p>
         </section>
@@ -435,8 +435,8 @@ export default function AffiliatePage() {
         )}
 
         <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/50">
+          <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5">
+            <p className="text-sm text-[#8295B0]">
               Total Referrals
             </p>
 
@@ -446,7 +446,7 @@ export default function AffiliatePage() {
           </div>
 
           <div className="rounded-2xl border border-green-500/20 bg-green-500/10 p-5">
-            <p className="text-sm text-white/50">
+            <p className="text-sm text-[#8295B0]">
               Qualified Players
             </p>
 
@@ -455,18 +455,18 @@ export default function AffiliatePage() {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-pink-500/20 bg-pink-500/10 p-5">
-            <p className="text-sm text-white/50">
+          <div className="rounded-2xl border border-[#2A5688] bg-[#3F82DD]/10 p-5">
+            <p className="text-sm text-[#8295B0]">
               Available Earnings
             </p>
 
-            <p className="mt-2 text-3xl font-black text-pink-500">
+            <p className="mt-2 text-3xl font-black text-[#4D94F5]">
               GH₵{Number(affiliate.available_balance).toFixed(2)}
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-            <p className="text-sm text-white/50">
+          <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-5">
+            <p className="text-sm text-[#8295B0]">
               Total Paid
             </p>
 
@@ -476,36 +476,36 @@ export default function AffiliatePage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
-          <h2 className="text-xl font-black text-pink-500">
+        <section className="mt-6 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
+          <h2 className="text-xl font-black text-[#4D94F5]">
             Your Referral Link
           </h2>
 
-          <div className="mt-4 break-all rounded-xl bg-black p-4 text-sm text-white/70">
+          <div className="mt-4 break-all rounded-xl bg-[#071A33] p-4 text-sm text-[#B4C0D1]">
             {referralLink}
           </div>
 
           <button
             onClick={() => void copyLink()}
-            className="mt-4 w-full rounded-xl bg-pink-500 py-4 font-black text-black sm:w-auto sm:px-8"
+            className="mt-4 w-full rounded-xl bg-[#3F82DD] py-4 font-black text-black sm:w-auto sm:px-8"
           >
             {copied ? "✓ Link Copied" : "Copy Referral Link"}
           </button>
         </section>
 
-        <section className="mt-6 rounded-3xl border border-blue-500/20 bg-white/5 p-6">
+        <section className="mt-6 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h2 className="text-2xl font-black text-blue-300">
                 Referral Progress
               </h2>
 
-              <p className="mt-2 text-sm text-white/50">
+              <p className="mt-2 text-sm text-[#8295B0]">
                 Track every referred player’s deposit, gameplay and GH₵5 qualification progress.
               </p>
             </div>
 
-            <p className="text-sm font-bold text-white/50">
+            <p className="text-sm font-bold text-[#8295B0]">
               {qualified} of {referrals.length} qualified
             </p>
           </div>
@@ -585,12 +585,12 @@ export default function AffiliatePage() {
                   className={`rounded-3xl border p-5 ${
                     referral.qualified
                       ? "border-green-500/30 bg-green-500/10"
-                      : "border-white/10 bg-black/50"
+                      : "border-[#38BDF8]/15 bg-[#071A33]/50"
                   }`}
                 >
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-white/40">
+                      <p className="text-xs font-black uppercase tracking-widest text-[#7185A3]">
                         Referred Player
                       </p>
 
@@ -598,7 +598,7 @@ export default function AffiliatePage() {
                         @{playerName}
                       </h3>
 
-                      <p className="mt-1 text-xs text-white/40">
+                      <p className="mt-1 text-xs text-[#7185A3]">
                         Joined{" "}
                         {new Date(
                           referral.created_at
@@ -610,7 +610,7 @@ export default function AffiliatePage() {
                       className={`w-fit rounded-full px-4 py-2 text-sm font-black ${
                         referral.qualified
                           ? "bg-green-500 text-black"
-                          : "bg-yellow-400/15 text-yellow-300"
+                          : "bg-[#FFD54A]/15 text-[#FFE08A]"
                       }`}
                     >
                       {referral.qualified
@@ -620,7 +620,7 @@ export default function AffiliatePage() {
                   </div>
 
                   <div className="mt-6 grid gap-5 md:grid-cols-2">
-                    <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                    <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="font-black">
                           💰 Successful Deposits
@@ -631,7 +631,7 @@ export default function AffiliatePage() {
                         </p>
                       </div>
 
-                      <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/10">
+                      <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#0F2F57]/80">
                         <div
                           className="h-full rounded-full bg-green-500 transition-all"
                           style={{
@@ -640,7 +640,7 @@ export default function AffiliatePage() {
                         />
                       </div>
 
-                      <p className="mt-2 text-xs text-white/50">
+                      <p className="mt-2 text-xs text-[#8295B0]">
                         {depositAmount >= 20
                           ? "Deposit requirement completed."
                           : `GH₵${depositRemaining.toFixed(
@@ -649,7 +649,7 @@ export default function AffiliatePage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl border border-white/10 bg-black/40 p-4">
+                    <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-4">
                       <div className="flex items-center justify-between gap-3">
                         <p className="font-black">
                           🎮 Real-Money Gameplay
@@ -660,16 +660,16 @@ export default function AffiliatePage() {
                         </p>
                       </div>
 
-                      <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/10">
+                      <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#0F2F57]/80">
                         <div
-                          className="h-full rounded-full bg-blue-500 transition-all"
+                          className="h-full rounded-full bg-[#3F82DD] transition-all"
                           style={{
                             width: `${gameProgress}%`,
                           }}
                         />
                       </div>
 
-                      <p className="mt-2 text-xs text-white/50">
+                      <p className="mt-2 text-xs text-[#8295B0]">
                         {gameAmount >= 20
                           ? "Gameplay requirement completed."
                           : `GH₵${gameRemaining.toFixed(
@@ -683,14 +683,14 @@ export default function AffiliatePage() {
                     className={`mt-5 rounded-2xl p-4 ${
                       referral.qualified
                         ? "bg-green-500/15"
-                        : "bg-yellow-500/10"
+                        : "bg-[#F5B700]/10"
                     }`}
                   >
                     <p
                       className={`font-bold ${
                         referral.qualified
                           ? "text-green-300"
-                          : "text-yellow-300"
+                          : "text-[#FFE08A]"
                       }`}
                     >
                       {progressMessage}
@@ -699,7 +699,7 @@ export default function AffiliatePage() {
                     {referral.qualified && (
                       <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-green-500/20 pt-3">
                         <div>
-                          <p className="text-xs uppercase text-white/40">
+                          <p className="text-xs uppercase text-[#7185A3]">
                             Commission Earned
                           </p>
 
@@ -712,7 +712,7 @@ export default function AffiliatePage() {
                         </div>
 
                         {referral.qualified_at && (
-                          <p className="text-xs text-white/40">
+                          <p className="text-xs text-[#7185A3]">
                             Qualified{" "}
                             {new Date(
                               referral.qualified_at
@@ -727,12 +727,12 @@ export default function AffiliatePage() {
             })}
 
             {referrals.length === 0 && (
-              <div className="rounded-2xl border border-white/10 bg-black/40 p-8 text-center">
+              <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-8 text-center">
                 <p className="text-lg font-black">
                   No referrals yet
                 </p>
 
-                <p className="mt-2 text-sm text-white/50">
+                <p className="mt-2 text-sm text-[#8295B0]">
                   Share your referral link. New players who register through it will appear here.
                 </p>
               </div>
@@ -740,7 +740,7 @@ export default function AffiliatePage() {
           </div>
         </section>
 
-                <section className="mt-6 rounded-3xl border border-green-500/20 bg-white/5 p-6">
+                <section className="mt-6 rounded-3xl border border-green-500/20 bg-[#0B2545]/70 p-6">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
             <div>
               <p className="text-sm font-black uppercase tracking-widest text-green-400">
@@ -771,8 +771,8 @@ export default function AffiliatePage() {
 
           {affiliate.payment_method === "momo" && (
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+              <div className="rounded-2xl bg-[#071A33]/50 p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                   Network
                 </p>
                 <p className="mt-2 text-lg font-black">
@@ -780,8 +780,8 @@ export default function AffiliatePage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+              <div className="rounded-2xl bg-[#071A33]/50 p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                   Mobile Money Number
                 </p>
                 <p className="mt-2 text-lg font-black">
@@ -793,8 +793,8 @@ export default function AffiliatePage() {
 
           {affiliate.payment_method === "bank" && (
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+              <div className="rounded-2xl bg-[#071A33]/50 p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                   Bank
                 </p>
                 <p className="mt-2 text-lg font-black">
@@ -802,8 +802,8 @@ export default function AffiliatePage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+              <div className="rounded-2xl bg-[#071A33]/50 p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                   Account Name
                 </p>
                 <p className="mt-2 text-lg font-black">
@@ -811,8 +811,8 @@ export default function AffiliatePage() {
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-black/50 p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+              <div className="rounded-2xl bg-[#071A33]/50 p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                   Account Number
                 </p>
                 <p className="mt-2 text-lg font-black">
@@ -829,7 +829,7 @@ export default function AffiliatePage() {
           {editingPayment && (
             <form
               onSubmit={savePaymentDetails}
-              className="mt-6 grid gap-5 rounded-3xl border border-white/10 bg-black/40 p-5"
+              className="mt-6 grid gap-5 rounded-3xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5"
             >
               <p className="font-black text-white">
                 Update Payment Details
@@ -842,11 +842,11 @@ export default function AffiliatePage() {
                   className={`rounded-2xl border p-5 text-left ${
                     paymentMethod === "momo"
                       ? "border-green-500 bg-green-500/10"
-                      : "border-white/10 bg-black"
+                      : "border-[#38BDF8]/15 bg-[#071A33]"
                   }`}
                 >
                   <p className="font-black">📱 Mobile Money</p>
-                  <p className="mt-1 text-sm text-white/50">
+                  <p className="mt-1 text-sm text-[#8295B0]">
                     MTN, Telecel or AirtelTigo
                   </p>
                 </button>
@@ -857,11 +857,11 @@ export default function AffiliatePage() {
                   className={`rounded-2xl border p-5 text-left ${
                     paymentMethod === "bank"
                       ? "border-green-500 bg-green-500/10"
-                      : "border-white/10 bg-black"
+                      : "border-[#38BDF8]/15 bg-[#071A33]"
                   }`}
                 >
                   <p className="font-black">🏦 Bank Account</p>
-                  <p className="mt-1 text-sm text-white/50">
+                  <p className="mt-1 text-sm text-[#8295B0]">
                     Receive payment into your bank account
                   </p>
                 </button>
@@ -874,7 +874,7 @@ export default function AffiliatePage() {
                     onChange={(event) =>
                       setMomoNetwork(event.target.value)
                     }
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                    className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
                   >
                     <option value="MTN">MTN Mobile Money</option>
                     <option value="Telecel">Telecel Cash</option>
@@ -887,7 +887,7 @@ export default function AffiliatePage() {
                       setMomoNumber(event.target.value)
                     }
                     placeholder="Mobile Money Number"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                    className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
                   />
                 </div>
               )}
@@ -900,7 +900,7 @@ export default function AffiliatePage() {
                       setBankName(event.target.value)
                     }
                     placeholder="Bank Name"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                    className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
                   />
 
                   <input
@@ -909,7 +909,7 @@ export default function AffiliatePage() {
                       setBankAccountName(event.target.value)
                     }
                     placeholder="Account Name"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                    className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
                   />
 
                   <input
@@ -918,7 +918,7 @@ export default function AffiliatePage() {
                       setBankAccountNumber(event.target.value)
                     }
                     placeholder="Account Number"
-                    className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-green-500"
+                    className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-green-500"
                   />
                 </div>
               )}
@@ -935,18 +935,18 @@ export default function AffiliatePage() {
           )}
         </section>
 
-        <section className="mt-6 rounded-3xl border border-yellow-500/20 bg-white/5 p-6">
-          <h2 className="text-2xl font-black text-yellow-300">
+        <section className="mt-6 rounded-3xl border border-[#F5B700]/20 bg-[#0B2545]/70 p-6">
+          <h2 className="text-2xl font-black text-[#FFE08A]">
             Withdraw Earnings
           </h2>
 
-          <p className="mt-2 text-white/50">
+          <p className="mt-2 text-[#8295B0]">
             Available Balance: GH₵
             {Number(affiliate.available_balance).toFixed(2)}
           </p>
 
-          <div className="mt-5 rounded-2xl border border-yellow-500/20 bg-yellow-500/10 p-5">
-            <p className="text-xs font-black uppercase tracking-widest text-yellow-300">
+          <div className="mt-5 rounded-2xl border border-[#F5B700]/20 bg-[#F5B700]/10 p-5">
+            <p className="text-xs font-black uppercase tracking-widest text-[#FFE08A]">
               Withdraw To
             </p>
 
@@ -958,7 +958,7 @@ export default function AffiliatePage() {
                   : "No saved payment method"}
             </p>
 
-            <p className="mt-2 text-white/60">
+            <p className="mt-2 text-[#9AAAC1]">
               {affiliate.payment_method === "momo"
                 ? affiliate.momo_number || "Number not provided"
                 : affiliate.payment_method === "bank"
@@ -974,7 +974,7 @@ export default function AffiliatePage() {
           </div>
 
           {hasPendingWithdrawal && (
-            <p className="mt-4 rounded-xl bg-yellow-500/10 p-4 text-yellow-300">
+            <p className="mt-4 rounded-xl bg-[#F5B700]/10 p-4 text-[#FFE08A]">
               You already have a withdrawal being processed.
             </p>
           )}
@@ -994,7 +994,7 @@ export default function AffiliatePage() {
               }
               placeholder="Enter withdrawal amount"
               disabled={hasPendingWithdrawal}
-              className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-yellow-400 disabled:opacity-40"
+              className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-[#FFD54A] disabled:opacity-40"
             />
 
             <button
@@ -1003,7 +1003,7 @@ export default function AffiliatePage() {
                 hasPendingWithdrawal ||
                 Number(affiliate.available_balance) <= 0
               }
-              className="rounded-xl bg-yellow-400 px-8 py-4 font-black text-black disabled:opacity-40"
+              className="rounded-xl bg-[#FFD54A] px-8 py-4 font-black text-black disabled:opacity-40"
             >
               {withdrawing
                 ? "Requesting..."
@@ -1012,7 +1012,7 @@ export default function AffiliatePage() {
           </form>
         </section>
 
-<section className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+<section className="mt-6 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
           <h2 className="text-2xl font-black">
             Withdrawal History
           </h2>
@@ -1021,7 +1021,7 @@ export default function AffiliatePage() {
             {payouts.map((payout) => (
               <article
                 key={payout.id}
-                className="rounded-2xl border border-white/10 bg-black/50 p-5"
+                className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-5"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -1029,13 +1029,13 @@ export default function AffiliatePage() {
                       GH₵{Number(payout.amount).toFixed(2)}
                     </p>
 
-                    <p className="mt-1 text-sm text-white/50">
+                    <p className="mt-1 text-sm text-[#8295B0]">
                       {payout.payment_method === "momo"
                         ? "Mobile Money"
                         : "Bank Account"}
                     </p>
 
-                    <p className="mt-1 text-xs text-white/40">
+                    <p className="mt-1 text-xs text-[#7185A3]">
                       {new Date(
                         payout.requested_at
                       ).toLocaleString()}
@@ -1049,8 +1049,8 @@ export default function AffiliatePage() {
                         : payout.status === "failed"
                         ? "bg-red-500/15 text-red-300"
                         : payout.status === "processing"
-                        ? "bg-blue-500/15 text-blue-300"
-                        : "bg-yellow-500/15 text-yellow-300"
+                        ? "bg-[#3F82DD]/15 text-blue-300"
+                        : "bg-[#F5B700]/15 text-[#FFE08A]"
                     }`}
                   >
                     {payout.status}
@@ -1063,7 +1063,7 @@ export default function AffiliatePage() {
                       Payment Failed
                     </p>
 
-                    <p className="mt-1 text-sm text-white/60">
+                    <p className="mt-1 text-sm text-[#9AAAC1]">
                       {payout.failure_reason ||
                         payout.admin_note ||
                         "The payment could not be completed."}
@@ -1078,19 +1078,19 @@ export default function AffiliatePage() {
             ))}
 
             {payouts.length === 0 && (
-              <p className="rounded-xl bg-black/40 p-5 text-center text-white/40">
+              <p className="rounded-xl bg-[#071A33]/40 p-5 text-center text-[#7185A3]">
                 No withdrawal history yet.
               </p>
             )}
           </div>
         </section>
 
-        <section className="mt-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <section className="mt-6 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6">
           <h2 className="text-xl font-black">
             How You Earn
           </h2>
 
-          <p className="mt-3 leading-7 text-white/60">
+          <p className="mt-3 leading-7 text-[#9AAAC1]">
             You earn GH₵5 when a genuine new player joins through your link,
             completes successful deposits totalling at least GH₵20 and spends
             at least GH₵20 playing real-money games. Each referred player can
@@ -1110,7 +1110,7 @@ export default function AffiliatePage() {
                 Need help with your affiliate account?
               </h2>
 
-              <p className="mt-2 text-white/60">
+              <p className="mt-2 text-[#9AAAC1]">
                 Contact us about referrals, commissions, withdrawals, payment details or account issues.
               </p>
             </div>

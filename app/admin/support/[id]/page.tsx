@@ -128,7 +128,7 @@ export default function AdminTicketDetailPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading ticket...
       </main>
     );
@@ -136,7 +136,7 @@ export default function AdminTicketDetailPage() {
 
   if (!ticket) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
         <div className="rounded-3xl border border-red-500/20 bg-red-500/10 p-8">
           {message}
         </div>
@@ -145,24 +145,24 @@ export default function AdminTicketDetailPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-5xl">
         <AdminNav />
 
         <Link
           href="/admin/support"
-          className="font-bold text-pink-400"
+          className="font-bold text-[#66A7FF]"
         >
           ← Back to Support Tickets
         </Link>
 
-        <div className="mt-6 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
+        <div className="mt-6 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
           <div className="flex flex-wrap items-center gap-3">
             <span
               className={`rounded-full px-3 py-1 text-xs font-black uppercase tracking-widest ${
                 ticket.issue_type.startsWith("Affiliate —")
                   ? "bg-green-500/20 text-green-300"
-                  : "bg-pink-500/20 text-pink-300"
+                  : "bg-[#3F82DD]/20 text-blue-300"
               }`}
             >
               {ticket.issue_type.startsWith("Affiliate —")
@@ -170,25 +170,25 @@ export default function AdminTicketDetailPage() {
                 : "Player"}
             </span>
 
-            <p className="text-sm font-bold uppercase tracking-widest text-pink-400">
+            <p className="text-sm font-bold uppercase tracking-widest text-[#66A7FF]">
               {ticket.issue_type.replace("Affiliate — ", "")}
             </p>
           </div>
 
-          <h1 className="mt-3 text-4xl font-black text-pink-500">
+          <h1 className="mt-3 text-4xl font-black text-[#4D94F5]">
             @{ticket.username || (ticket.issue_type.startsWith("Affiliate —") ? "Affiliate" : "Player")}
           </h1>
 
-          <p className="mt-2 text-white/50">
+          <p className="mt-2 text-[#8295B0]">
             {new Date(ticket.created_at).toLocaleString()}
           </p>
 
-          <p className="mt-4 text-xl font-black capitalize text-pink-300">
+          <p className="mt-4 text-xl font-black capitalize text-blue-300">
             Status: {ticket.status.replaceAll("_", " ")}
           </p>
 
           {ticket.reference && (
-            <p className="mt-4 rounded-xl bg-black/60 p-4 font-bold text-pink-300">
+            <p className="mt-4 rounded-xl bg-[#071A33]/60 p-4 font-bold text-blue-300">
               Reference: {ticket.reference}
             </p>
           )}
@@ -216,8 +216,8 @@ export default function AdminTicketDetailPage() {
               {affiliate ? (
                 <>
                   <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div className="rounded-2xl bg-black/40 p-4">
-                      <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Phone Number
                       </p>
                       <p className="mt-2 font-black text-white">
@@ -225,8 +225,8 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-black/40 p-4">
-                      <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Email Address
                       </p>
                       <p className="mt-2 break-all font-black text-white">
@@ -234,8 +234,8 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-black/40 p-4">
-                      <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Payment Method
                       </p>
                       <p className="mt-2 font-black capitalize text-white">
@@ -243,8 +243,8 @@ export default function AdminTicketDetailPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-2xl bg-black/40 p-4">
-                      <p className="text-xs font-bold uppercase tracking-widest text-white/40">
+                    <div className="rounded-2xl bg-[#071A33]/40 p-4">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#7185A3]">
                         Payment Details
                       </p>
                       <p className="mt-2 font-black text-white">
@@ -263,8 +263,8 @@ export default function AdminTicketDetailPage() {
 
                   {affiliateStats && (
                     <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                      <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                        <p className="text-xs font-bold uppercase text-white/40">
+                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                        <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Total Referrals
                         </p>
                         <p className="mt-2 text-2xl font-black text-white">
@@ -272,8 +272,8 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                        <p className="text-xs font-bold uppercase text-white/40">
+                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                        <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Qualified
                         </p>
                         <p className="mt-2 text-2xl font-black text-green-400">
@@ -281,8 +281,8 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                        <p className="text-xs font-bold uppercase text-white/40">
+                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                        <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Total Earnings
                         </p>
                         <p className="mt-2 text-2xl font-black text-green-400">
@@ -290,8 +290,8 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                        <p className="text-xs font-bold uppercase text-white/40">
+                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                        <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Available
                         </p>
                         <p className="mt-2 text-2xl font-black text-green-400">
@@ -299,11 +299,11 @@ export default function AdminTicketDetailPage() {
                         </p>
                       </div>
 
-                      <div className="rounded-2xl border border-white/10 bg-black/50 p-4">
-                        <p className="text-xs font-bold uppercase text-white/40">
+                      <div className="rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/50 p-4">
+                        <p className="text-xs font-bold uppercase text-[#7185A3]">
                           Pending Withdrawal
                         </p>
-                        <p className="mt-2 text-2xl font-black text-yellow-300">
+                        <p className="mt-2 text-2xl font-black text-[#FFE08A]">
                           GH₵{affiliateStats.pendingWithdrawals.toFixed(2)}
                         </p>
                       </div>
@@ -311,14 +311,14 @@ export default function AdminTicketDetailPage() {
                   )}
                 </>
               ) : (
-                <p className="mt-4 rounded-2xl bg-black/40 p-4 text-white/60">
+                <p className="mt-4 rounded-2xl bg-[#071A33]/40 p-4 text-[#9AAAC1]">
                   The affiliate profile could not be loaded for this ticket.
                 </p>
               )}
             </div>
           )}
 
-          <div className="mt-6 rounded-2xl bg-black/50 p-5">
+          <div className="mt-6 rounded-2xl bg-[#071A33]/50 p-5">
             <h2 className="font-black">
               {ticket.issue_type.startsWith("Affiliate —")
                 ? "Affiliate Message"
@@ -334,7 +334,7 @@ export default function AdminTicketDetailPage() {
                 href={ticket.screenshot_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 inline-block rounded-xl bg-pink-500 px-5 py-3 font-black text-white"
+                className="mt-5 inline-block rounded-xl bg-[#3F82DD] px-5 py-3 font-black text-white"
               >
                 View User Screenshot
               </a>
@@ -351,7 +351,7 @@ export default function AdminTicketDetailPage() {
               onChange={(e) => setReply(e.target.value)}
               rows={7}
               placeholder="Write your reply or update..."
-              className="mt-3 w-full rounded-2xl border border-white/10 bg-black p-4 text-white outline-none focus:border-pink-500"
+              className="mt-3 w-full rounded-2xl border border-[#38BDF8]/15 bg-[#071A33] p-4 text-white outline-none focus:border-blue-500"
             />
           </div>
 
@@ -359,7 +359,7 @@ export default function AdminTicketDetailPage() {
             <button
               disabled={saving}
               onClick={() => void updateTicket("open")}
-              className="rounded-xl bg-white/10 px-5 py-3 font-bold disabled:opacity-50"
+              className="rounded-xl bg-[#0F2F57]/80 px-5 py-3 font-bold disabled:opacity-50"
             >
               Save as Open
             </button>
@@ -367,7 +367,7 @@ export default function AdminTicketDetailPage() {
             <button
               disabled={saving}
               onClick={() => void updateTicket("in_progress")}
-              className="rounded-xl bg-pink-500 px-5 py-3 font-bold text-white disabled:opacity-50"
+              className="rounded-xl bg-[#3F82DD] px-5 py-3 font-bold text-white disabled:opacity-50"
             >
               Save as In Progress
             </button>
@@ -382,7 +382,7 @@ export default function AdminTicketDetailPage() {
           </div>
 
           {message && (
-            <p className="mt-5 rounded-xl bg-white/10 p-4">
+            <p className="mt-5 rounded-xl bg-[#0F2F57]/80 p-4">
               {message}
             </p>
           )}

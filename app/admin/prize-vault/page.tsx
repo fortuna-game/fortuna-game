@@ -303,7 +303,7 @@ export default function AdminPrizeVaultPage() {
 
   if (loading) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] text-white">
         Loading Prize Vault...
       </main>
     );
@@ -311,13 +311,13 @@ export default function AdminPrizeVaultPage() {
 
   if (denied) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#071A33] px-6 text-white">
         <div className="rounded-3xl border border-red-400/20 bg-red-500/10 p-8 text-center">
           <h1 className="text-3xl font-black text-red-300">
             Access Denied
           </h1>
 
-          <p className="mt-3 text-white/60">
+          <p className="mt-3 text-[#9AAAC1]">
             Please login through /admin/login again.
           </p>
         </div>
@@ -340,16 +340,16 @@ export default function AdminPrizeVaultPage() {
     : [];
 
   return (
-    <main className="min-h-screen bg-black px-6 py-10 text-white">
+    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
 
         <div>
-          <h1 className="text-4xl font-black text-pink-500">
+          <h1 className="text-4xl font-black text-[#4D94F5]">
             Admin Prize Vault
           </h1>
 
-          <p className="mt-2 text-white/60">
+          <p className="mt-2 text-[#9AAAC1]">
             Monitor Prize Vault revenue, winners, claims and prize inventory.
           </p>
         </div>
@@ -370,9 +370,9 @@ export default function AdminPrizeVaultPage() {
           {cards.map(([label, value]) => (
             <div
               key={String(label)}
-              className="rounded-3xl border border-pink-500/20 bg-white/5 p-6"
+              className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6"
             >
-              <p className="text-sm text-white/50">{label}</p>
+              <p className="text-sm text-[#8295B0]">{label}</p>
 
               <h2 className="mt-2 text-3xl font-black">
                 {value}
@@ -384,25 +384,25 @@ export default function AdminPrizeVaultPage() {
         <section className="mt-10">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-2xl font-black text-pink-500">
+              <h2 className="text-2xl font-black text-[#4D94F5]">
                 Prize Management
               </h2>
 
-              <p className="mt-1 text-sm text-white/50">
+              <p className="mt-1 text-sm text-[#8295B0]">
                 Add new prizes and control existing Prize Vault rewards.
               </p>
             </div>
 
             <button
               onClick={startAddPrize}
-              className="rounded-xl bg-pink-500 px-6 py-3 font-black text-black"
+              className="rounded-xl bg-[#3F82DD] px-6 py-3 font-black text-black"
             >
               + Add New Prize
             </button>
           </div>
 
           {showPrizeForm && (
-            <div className="mt-5 rounded-3xl border border-pink-500/20 bg-white/5 p-6">
+            <div className="mt-5 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-6">
               <h3 className="text-xl font-black">
                 {editingPrizeId ? "Edit Prize" : "Add New Prize"}
               </h3>
@@ -414,7 +414,7 @@ export default function AdminPrizeVaultPage() {
                     setPrizeForm({ ...prizeForm, name: e.target.value })
                   }
                   placeholder="Prize name"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 />
 
                 <input
@@ -423,7 +423,7 @@ export default function AdminPrizeVaultPage() {
                     setPrizeForm({ ...prizeForm, emoji: e.target.value })
                   }
                   placeholder="Emoji"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 />
 
                 <input
@@ -437,7 +437,7 @@ export default function AdminPrizeVaultPage() {
                     })
                   }
                   placeholder="Prize value GH₵"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 />
 
                 <select
@@ -448,7 +448,7 @@ export default function AdminPrizeVaultPage() {
                       prizeType: e.target.value,
                     })
                   }
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 >
                   <option value="cash">Cash</option>
                   <option value="digital">Digital</option>
@@ -464,7 +464,7 @@ export default function AdminPrizeVaultPage() {
                       fulfillmentType: e.target.value,
                     })
                   }
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 >
                   <option value="wallet">Wallet</option>
                   <option value="airtime">Airtime</option>
@@ -486,7 +486,7 @@ export default function AdminPrizeVaultPage() {
                     })
                   }
                   placeholder="Stock"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 />
 
                 <input
@@ -501,7 +501,7 @@ export default function AdminPrizeVaultPage() {
                     })
                   }
                   placeholder="Win weight"
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                 />
 
                 <textarea
@@ -514,11 +514,11 @@ export default function AdminPrizeVaultPage() {
                   }
                   placeholder="Prize description"
                   rows={3}
-                  className="rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500 md:col-span-2"
+                  className="rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500 md:col-span-2"
                 />
 
                 {editingPrizeId && (
-                  <label className="flex items-center gap-3 rounded-xl border border-white/10 bg-black p-4">
+                  <label className="flex items-center gap-3 rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4">
                     <input
                       type="checkbox"
                       checked={prizeForm.isActive}
@@ -553,7 +553,7 @@ export default function AdminPrizeVaultPage() {
                 <button
                   onClick={resetPrizeForm}
                   disabled={prizeSaving}
-                  className="rounded-xl border border-white/20 px-6 py-3 font-black"
+                  className="rounded-xl border border-[#38BDF8]/20 px-6 py-3 font-black"
                 >
                   Cancel
                 </button>
@@ -563,13 +563,13 @@ export default function AdminPrizeVaultPage() {
         </section>
 
         <section className="mt-10">
-          <h2 className="text-2xl font-black text-pink-500">
+          <h2 className="text-2xl font-black text-[#4D94F5]">
             Prize Inventory
           </h2>
 
-          <div className="mt-5 overflow-x-auto rounded-3xl border border-pink-500/20">
+          <div className="mt-5 overflow-x-auto rounded-3xl border border-[#2A5688]">
             <table className="w-full min-w-[1050px] text-left">
-              <thead className="bg-pink-500 text-black">
+              <thead className="bg-[#3F82DD] text-black">
                 <tr>
                   <th className="p-4">Prize</th>
                   <th className="p-4">Type</th>
@@ -586,7 +586,7 @@ export default function AdminPrizeVaultPage() {
                 {prizes.map((prize) => (
                   <tr
                     key={prize.id}
-                    className="border-t border-white/10"
+                    className="border-t border-[#38BDF8]/15"
                   >
                     <td className="p-4 font-bold">
                       {prize.emoji} {prize.name}
@@ -630,7 +630,7 @@ export default function AdminPrizeVaultPage() {
                     <td className="p-4">
                       <button
                         onClick={() => startEditPrize(prize)}
-                        className="rounded-lg bg-pink-500 px-4 py-2 font-black text-black"
+                        className="rounded-lg bg-[#3F82DD] px-4 py-2 font-black text-black"
                       >
                         Edit
                       </button>
@@ -642,7 +642,7 @@ export default function AdminPrizeVaultPage() {
                   <tr>
                     <td
                       colSpan={8}
-                      className="p-8 text-center text-white/50"
+                      className="p-8 text-center text-[#8295B0]"
                     >
                       No prizes found.
                     </td>
@@ -654,7 +654,7 @@ export default function AdminPrizeVaultPage() {
         </section>
 
         <section className="mt-10">
-          <h2 className="text-2xl font-black text-pink-500">
+          <h2 className="text-2xl font-black text-[#4D94F5]">
             Prize Claims & Plays
           </h2>
 
@@ -678,11 +678,11 @@ export default function AdminPrizeVaultPage() {
               return (
                 <div
                   key={play.id}
-                  className="rounded-3xl border border-pink-500/20 bg-white/5 p-5"
+                  className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-5"
                 >
                   <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
                     <div>
-                      <p className="text-xs uppercase text-white/40">
+                      <p className="text-xs uppercase text-[#7185A3]">
                         Player
                       </p>
 
@@ -690,13 +690,13 @@ export default function AdminPrizeVaultPage() {
                         @{play.username}
                       </p>
 
-                      <p className="mt-1 text-sm text-white/60">
+                      <p className="mt-1 text-sm text-[#9AAAC1]">
                         Account Phone: {play.phone || "Not available"}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-xs uppercase text-white/40">
+                      <p className="text-xs uppercase text-[#7185A3]">
                         Result
                       </p>
 
@@ -704,13 +704,13 @@ export default function AdminPrizeVaultPage() {
                         {String(play.result).replaceAll("_", " ")}
                       </p>
 
-                      <p className="mt-1 text-sm text-white/60">
+                      <p className="mt-1 text-sm text-[#9AAAC1]">
                         Entry: GH₵{Number(play.entry_fee || 0).toFixed(2)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-xs uppercase text-white/40">
+                      <p className="text-xs uppercase text-[#7185A3]">
                         Prize
                       </p>
 
@@ -718,13 +718,13 @@ export default function AdminPrizeVaultPage() {
                         {play.prize_name || "No Prize"}
                       </p>
 
-                      <p className="mt-1 text-sm text-yellow-300">
+                      <p className="mt-1 text-sm text-[#FFE08A]">
                         Value: GH₵{Number(play.prize_value || 0).toFixed(2)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-xs uppercase text-white/40">
+                      <p className="text-xs uppercase text-[#7185A3]">
                         Claim Status
                       </p>
 
@@ -733,10 +733,10 @@ export default function AdminPrizeVaultPage() {
                           play.claim_status === "fulfilled"
                             ? "text-green-300"
                             : play.claim_status === "processing"
-                            ? "text-yellow-300"
+                            ? "text-[#FFE08A]"
                             : play.claim_status === "submitted"
                             ? "text-blue-300"
-                            : "text-white/60"
+                            : "text-[#9AAAC1]"
                         }`}
                       >
                         {String(play.claim_status || "none").replaceAll(
@@ -745,22 +745,22 @@ export default function AdminPrizeVaultPage() {
                         )}
                       </p>
 
-                      <p className="mt-1 text-sm text-white/50">
+                      <p className="mt-1 text-sm text-[#8295B0]">
                         {new Date(play.created_at).toLocaleString()}
                       </p>
                     </div>
                   </div>
 
                   {hasClaimDetails && (
-                    <div className="mt-5 rounded-2xl border border-white/10 bg-black/40 p-5">
-                      <h3 className="font-black text-pink-400">
+                    <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/40 p-5">
+                      <h3 className="font-black text-[#66A7FF]">
                         Player Claim Details
                       </h3>
 
                       <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                         {play.claim_full_name && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               Full Name
                             </p>
                             <p className="mt-1 font-bold">
@@ -771,7 +771,7 @@ export default function AdminPrizeVaultPage() {
 
                         {play.claim_phone && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               Claim Phone
                             </p>
                             <p className="mt-1 font-bold">
@@ -782,7 +782,7 @@ export default function AdminPrizeVaultPage() {
 
                         {play.claim_network && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               Network
                             </p>
                             <p className="mt-1 font-bold">
@@ -793,7 +793,7 @@ export default function AdminPrizeVaultPage() {
 
                         {play.claim_region && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               Region
                             </p>
                             <p className="mt-1 font-bold">
@@ -804,7 +804,7 @@ export default function AdminPrizeVaultPage() {
 
                         {play.claim_city && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               City / Town
                             </p>
                             <p className="mt-1 font-bold">
@@ -815,7 +815,7 @@ export default function AdminPrizeVaultPage() {
 
                         {play.claim_address && (
                           <div>
-                            <p className="text-xs text-white/40">
+                            <p className="text-xs text-[#7185A3]">
                               Delivery Address
                             </p>
                             <p className="mt-1 font-bold">
@@ -827,7 +827,7 @@ export default function AdminPrizeVaultPage() {
 
                       {play.claim_note && (
                         <div className="mt-4">
-                          <p className="text-xs text-white/40">
+                          <p className="text-xs text-[#7185A3]">
                             Player Note
                           </p>
 
@@ -840,8 +840,8 @@ export default function AdminPrizeVaultPage() {
                   )}
 
                   {(canProcess || canFulfill) && (
-                    <div className="mt-5 rounded-2xl border border-white/10 bg-black/30 p-5">
-                      <label className="text-sm font-black text-white/70">
+                    <div className="mt-5 rounded-2xl border border-[#38BDF8]/15 bg-[#071A33]/30 p-5">
+                      <label className="text-sm font-black text-[#B4C0D1]">
                         Admin Note
                       </label>
 
@@ -859,7 +859,7 @@ export default function AdminPrizeVaultPage() {
                         }
                         placeholder="Optional admin note"
                         rows={3}
-                        className="mt-2 w-full rounded-xl border border-white/10 bg-black p-4 outline-none focus:border-pink-500"
+                        className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] p-4 outline-none focus:border-blue-500"
                       />
 
                       <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -869,7 +869,7 @@ export default function AdminPrizeVaultPage() {
                               void updateClaim(play.id, "processing")
                             }
                             disabled={Boolean(actionLoading)}
-                            className="flex-1 rounded-xl bg-yellow-400 px-5 py-3 font-black text-black disabled:opacity-40"
+                            className="flex-1 rounded-xl bg-[#FFD54A] px-5 py-3 font-black text-black disabled:opacity-40"
                           >
                             {actionLoading === `${play.id}-processing`
                               ? "Updating..."
@@ -897,12 +897,12 @@ export default function AdminPrizeVaultPage() {
                   {play.admin_note &&
                     !canProcess &&
                     !canFulfill && (
-                      <div className="mt-4 rounded-xl bg-white/5 p-4">
-                        <p className="text-xs text-white/40">
+                      <div className="mt-4 rounded-xl bg-[#0B2545]/70 p-4">
+                        <p className="text-xs text-[#7185A3]">
                           Admin Note
                         </p>
 
-                        <p className="mt-1 text-white/70">
+                        <p className="mt-1 text-[#B4C0D1]">
                           {play.admin_note}
                         </p>
                       </div>
@@ -912,7 +912,7 @@ export default function AdminPrizeVaultPage() {
             })}
 
             {plays.length === 0 && (
-              <div className="rounded-3xl border border-pink-500/20 bg-white/5 p-8 text-center text-white/50">
+              <div className="rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center text-[#8295B0]">
                 No Prize Vault plays yet.
               </div>
             )}
