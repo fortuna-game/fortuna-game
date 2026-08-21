@@ -109,6 +109,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (
+      draw.status === "ended"
+    ) {
+      // Ended draws are eligible for winner selection.
+      // The RPC will move the draw into selecting state.
+    }
+
     const { data, error } = await supabaseAdmin.rpc(
       "select_next_lucky_draw_winner",
       {

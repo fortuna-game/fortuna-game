@@ -18,6 +18,31 @@ export async function GET(req: Request) {
 
     const drawList = draws || [];
 
+    const expiredDrawIds = drawList
+      .filter(
+        (draw) =>
+          draw.status === "open" &&
+          draw.ends_at &&
+          new Date(draw.ends_at).getTime() <= Date.now()
+      )
+      .map((draw) => draw.id);
+
+    if (expiredDrawIds.length > 0) {
+      await supabaseAdmin
+        .from("lucky_draws")
+        .update({
+          status: "ended",
+          entries_locked_at: new Date().toISOString(),
+        })
+        .in("id", expiredDrawIds);
+
+      for (const draw of drawList) {
+        if (expiredDrawIds.includes(draw.id)) {
+          draw.status = "ended";
+        }
+      }
+    }
+
     if (drawList.length === 0) {
       return NextResponse.json({
         draws: [],
