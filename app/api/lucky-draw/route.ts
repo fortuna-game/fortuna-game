@@ -6,7 +6,7 @@ export async function GET(req: Request) {
     const { data: draws, error } = await supabaseAdmin
       .from("lucky_draws")
       .select("*")
-      .in("status", ["open", "paused", "suspended"])
+      .in("status", ["open", "paused", "suspended"]) // Cancelled draws are intentionally excluded
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -55,6 +55,9 @@ export async function GET(req: Request) {
     const formattedDraws = drawList.map((draw) => ({
       ...draw,
       totalTickets: ticketCounts[draw.id] || 0,
+      isUpcoming:
+        Boolean(draw.starts_at) &&
+        new Date(draw.starts_at).getTime() > Date.now(),
     }));
 
     const myTicketCounts: Record<string, number> = {};
@@ -149,7 +152,7 @@ export async function POST(req: Request) {
     const { data: draw, error: drawError } =
       await supabaseAdmin
         .from("lucky_draws")
-        .select("id, status, title")
+        .select("id, status, title, starts_at")
         .eq("id", drawId)
         .maybeSingle();
 
@@ -185,6 +188,19 @@ export async function POST(req: Request) {
         {
           error:
             "This Lucky Draw is not currently accepting tickets.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      draw.starts_at &&
+      new Date(draw.starts_at).getTime() > Date.now()
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw is upcoming. Ticket purchases will open when the draw starts.",
         },
         { status: 400 }
       );

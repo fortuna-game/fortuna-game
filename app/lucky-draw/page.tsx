@@ -11,10 +11,18 @@ type Draw = {
   prize_type?: string | null;
   prize_description?: string | null;
   prize_image?: string | null;
+  prize_media?: Array<{
+    type: "image" | "video";
+    url: string;
+  }> | null;
   prize_value?: number | null;
   ticket_price: number;
+  max_entries?: number | null;
   status: string;
   totalTickets: number;
+  starts_at?: string | null;
+  selection_at?: string | null;
+  isUpcoming?: boolean;
   winner_user_id?: string | null;
 };
 
@@ -24,6 +32,63 @@ type Ticket = {
   amount: number;
   created_at: string;
 };
+
+function formatCountdown(ms: number) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) {
+    return `${days}d ${String(hours).padStart(2, "0")}:${String(
+      minutes
+    ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }
+
+  return `${String(hours).padStart(2, "0")}:${String(
+    minutes
+  ).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+function normalizePrizeMedia(
+  media: any
+): Array<{ type: "image" | "video"; url: string }> {
+  if (!Array.isArray(media)) return [];
+
+  return media
+    .map((item: any) => {
+      if (typeof item === "string") {
+        const lower = item.toLowerCase();
+
+        return {
+          type:
+            lower.includes(".mp4") ||
+            lower.includes(".webm") ||
+            lower.includes(".mov") ||
+            lower.includes(".m4v")
+              ? "video"
+              : "image",
+          url: item,
+        };
+      }
+
+      if (
+        item &&
+        typeof item.url === "string" &&
+        (item.type === "image" || item.type === "video")
+      ) {
+        return item;
+      }
+
+      return null;
+    })
+    .filter(Boolean) as Array<{
+    type: "image" | "video";
+    url: string;
+  }>;
+}
 
 export default function LuckyDrawPage() {
   const [draws, setDraws] = useState<Draw[]>([]);
@@ -36,6 +101,11 @@ export default function LuckyDrawPage() {
   const [message, setMessage] = useState("");
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [confirmDraw, setConfirmDraw] = useState<Draw | null>(null);
+  const [now, setNow] = useState(Date.now());
+  const [gallery, setGallery] = useState<
+    Array<{ type: "image" | "video"; url: string }>
+  >([]);
+  const [galleryIndex, setGalleryIndex] = useState(0);
 
   const loadDraws = useCallback(
     async (showLoading = false) => {
@@ -99,8 +169,23 @@ export default function LuckyDrawPage() {
     return () => clearInterval(interval);
   }, [loadDraws]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   function openPurchaseConfirmation(draw: Draw) {
     if (draw.status !== "open" || buyingId) return;
+
+    const remaining = getRemainingEntries(draw);
+
+    if (remaining !== null && remaining <= 0) {
+      setMessage("This Lucky Draw is full.");
+      return;
+    }
 
     setMessage("");
     setTicket(null);
@@ -214,6 +299,15 @@ export default function LuckyDrawPage() {
     return status;
   }
 
+  function getRemainingEntries(draw: Draw) {
+    if (!draw.max_entries) return null;
+
+    return Math.max(
+      0,
+      Number(draw.max_entries) - Number(draw.totalTickets || 0)
+    );
+  }
+
   function getButtonText(draw: Draw) {
     if (buyingId === draw.id) {
       return "Buying Ticket...";
@@ -232,6 +326,32 @@ export default function LuckyDrawPage() {
     return `Buy GH₵${Number(
       draw.ticket_price
     ).toFixed(2)} Ticket`;
+  }
+
+  function openMediaGallery(
+    media: Array<{ type: "image" | "video"; url: string }>
+  ) {
+    setGallery(media);
+    setGalleryIndex(0);
+  }
+
+  function closeMediaGallery() {
+    setGallery([]);
+    setGalleryIndex(0);
+  }
+
+  function nextGalleryItem() {
+    setGalleryIndex((current) =>
+      gallery.length ? (current + 1) % gallery.length : 0
+    );
+  }
+
+  function previousGalleryItem() {
+    setGalleryIndex((current) =>
+      gallery.length
+        ? (current - 1 + gallery.length) % gallery.length
+        : 0
+    );
   }
 
   return (
@@ -284,6 +404,18 @@ export default function LuckyDrawPage() {
               const isCompleted =
                 draw.status === "completed";
 
+              const startTime = draw.starts_at
+                ? new Date(draw.starts_at).getTime()
+                : 0;
+
+              const isUpcoming =
+                draw.status === "open" &&
+                startTime > now;
+
+              const countdown = isUpcoming
+                ? formatCountdown(startTime - now)
+                : "00:00:00";
+
               const participated = myTickets > 0;
 
               const isWinner =
@@ -296,15 +428,54 @@ export default function LuckyDrawPage() {
                   key={draw.id}
                   className="overflow-hidden rounded-2xl border border-[#FFD54A]/25 bg-white/[0.04]"
                 >
-                  {draw.prize_image && (
-                    <div className="px-5 pt-5 sm:px-6">
-                      <img
-                        src={draw.prize_image}
-                        alt={draw.title}
-                        className="h-48 w-full rounded-xl border border-[#38BDF8]/15 object-cover sm:h-64"
-                      />
-                    </div>
-                  )}
+                  {(() => {
+                    const mediaFromDatabase =
+                      normalizePrizeMedia(draw.prize_media);
+
+                    const media =
+                      mediaFromDatabase.length > 0
+                        ? mediaFromDatabase
+                        : draw.prize_image
+                        ? [{ type: "image" as const, url: draw.prize_image }]
+                        : [];
+
+                    if (!media.length) return null;
+
+                    const preview = media[0];
+
+                    return (
+                      <div className="px-5 pt-5 sm:px-6">
+                        <button
+                          type="button"
+                          onClick={() => openMediaGallery(media)}
+                          className="group relative mx-auto block overflow-hidden rounded-2xl border border-emerald-200 bg-white shadow-sm"
+                          aria-label={`View ${draw.title} media`}
+                        >
+                          {preview.type === "video" ? (
+                            <video
+                              src={preview.url}
+                              muted
+                              playsInline
+                              preload="metadata"
+                              className="h-72 w-56 object-cover transition duration-200 group-hover:scale-[1.02]"
+                            />
+                          ) : (
+                            <img
+                              src={preview.url}
+                              alt={draw.title}
+                              className="h-72 w-56 object-cover transition duration-200 group-hover:scale-[1.02]"
+                            />
+                          )}
+
+                          <span className="absolute inset-x-3 bottom-3 rounded-xl bg-black/65 px-3 py-2 text-sm font-black text-white">
+                            {media.length > 1
+                              ? `View all ${media.length} media`
+                              : "Tap to view"}
+                          </span>
+                        </button>
+                      </div>
+                    );
+                  })()}
 
                   <div className="px-5 py-6 sm:px-6">
                     <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
@@ -337,11 +508,31 @@ export default function LuckyDrawPage() {
                           draw.status
                         )}`}
                       >
-                        {getStatusText(draw.status)}
+                        {isUpcoming
+                          ? "UPCOMING"
+                          : getStatusText(draw.status)}
                       </div>
                     </div>
 
-                    {isCompleted ? (
+                    {isUpcoming ? (
+                      <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
+                        <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-700">
+                          Upcoming Lucky Draw
+                        </p>
+
+                        <p className="mt-2 text-sm text-slate-600">
+                          Ticket sales open when the countdown reaches zero.
+                        </p>
+
+                        <div className="mt-4 text-4xl font-black tracking-wider text-emerald-600">
+                          {countdown}
+                        </div>
+
+                        <p className="mt-2 text-xs font-semibold text-slate-500">
+                          Starts {new Date(draw.starts_at as string).toLocaleString()}
+                        </p>
+                      </div>
+                    ) : isCompleted ? (
                       <div className="mt-6 space-y-4">
                         {isWinner ? (
                           <div className="rounded-2xl border border-green-400/40 bg-green-500/10 p-5">
@@ -397,9 +588,51 @@ export default function LuckyDrawPage() {
                           </div>
                         )}
 
+                        {draw.max_entries != null && (
+                          <div className="mt-5 rounded-xl border border-emerald-400/25 bg-emerald-500/5 p-4">
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-xs font-black uppercase tracking-wide text-emerald-300">
+                                  Entry Limit
+                                </p>
+
+                                <p className="mt-1 text-lg font-black text-white">
+                                  {draw.totalTickets} / {draw.max_entries}
+                                </p>
+                              </div>
+
+                              <div className="text-right">
+                                <p className="text-xs font-bold text-white/50">
+                                  {(() => {
+                                    const remaining =
+                                      getRemainingEntries(draw);
+
+                                    return remaining !== null &&
+                                      remaining > 0
+                                      ? "Spots Remaining"
+                                      : "Status";
+                                  })()}
+                                </p>
+
+                                <p className="mt-1 text-sm font-black text-emerald-300">
+                                  {(() => {
+                                    const remaining =
+                                      getRemainingEntries(draw);
+
+                                    return remaining !== null &&
+                                      remaining > 0
+                                      ? remaining
+                                      : "FULL";
+                                  })()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         <div className="mt-5 rounded-xl border border-orange-400/20 bg-orange-500/5 p-4">
                           <p className="text-sm font-black text-orange-200">
-                            �� Limited Entry Draw
+                            Limited Entry Draw
                           </p>
 
                           <p className="mt-1 text-sm leading-6 text-white/65">
@@ -410,12 +643,21 @@ export default function LuckyDrawPage() {
                           </p>
                         </div>
 
-                        {draw.status === "open" && (
+                        {draw.status === "open" &&
+                          !isUpcoming && (
                           <button
                             onClick={() =>
                               openPurchaseConfirmation(draw)
                             }
-                            disabled={buyingId === draw.id}
+                            disabled={(() => {
+                              const remaining =
+                                getRemainingEntries(draw);
+
+                              return (
+                                buyingId === draw.id ||
+                                (remaining !== null && remaining <= 0)
+                              );
+                            })()}
                             className="mt-5 w-full rounded-xl bg-[#FFD54A] px-5 py-4 font-black text-black transition hover:bg-yellow-300 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {getButtonText(draw)}
@@ -467,6 +709,83 @@ export default function LuckyDrawPage() {
                 </div>
               </div>
             </section>
+          </div>
+        )}
+
+
+        {gallery.length > 0 && (
+          <div
+            className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90 p-4"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Lucky Draw media gallery"
+            onClick={closeMediaGallery}
+          >
+            <button
+              type="button"
+              onClick={closeMediaGallery}
+              aria-label="Close media gallery"
+              className="absolute right-4 top-4 z-[1001] rounded-full bg-white px-4 py-2 text-2xl font-black text-black shadow-lg"
+            >
+              ×
+            </button>
+
+            {gallery.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    previousGalleryItem();
+                  }}
+                  aria-label="Previous media"
+                  className="absolute left-3 top-1/2 z-[1001] -translate-y-1/2 rounded-full bg-white px-4 py-3 text-3xl font-black text-black shadow-lg"
+                >
+                  ‹
+                </button>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextGalleryItem();
+                  }}
+                  aria-label="Next media"
+                  className="absolute right-3 top-1/2 z-[1001] -translate-y-1/2 rounded-full bg-white px-4 py-3 text-3xl font-black text-black shadow-lg"
+                >
+                  ›
+                </button>
+              </>
+            )}
+
+            <div
+              className="relative flex max-h-[90vh] max-w-[92vw] items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {gallery[galleryIndex]?.type === "video" ? (
+                <video
+                  key={gallery[galleryIndex].url}
+                  src={gallery[galleryIndex].url}
+                  controls
+                  autoPlay
+                  playsInline
+                  className="max-h-[85vh] max-w-[88vw] rounded-2xl object-contain"
+                />
+              ) : (
+                <img
+                  key={gallery[galleryIndex]?.url}
+                  src={gallery[galleryIndex]?.url}
+                  alt="Lucky Draw prize"
+                  className="max-h-[85vh] max-w-[88vw] rounded-2xl object-contain"
+                />
+              )}
+
+              {gallery.length > 1 && (
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/75 px-4 py-2 text-sm font-black text-white">
+                  {galleryIndex + 1} / {gallery.length}
+                </div>
+              )}
+            </div>
           </div>
         )}
 

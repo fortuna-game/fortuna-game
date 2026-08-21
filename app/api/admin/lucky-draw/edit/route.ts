@@ -44,8 +44,10 @@ export async function POST(req: Request) {
       prizeValue,
       prizeDescription,
       prizeImage,
+      prizeMedia,
       rules,
       winnerCount,
+      maxEntries,
       startsAt,
       selectionAt,
     } = await req.json();
@@ -54,6 +56,21 @@ export async function POST(req: Request) {
     const cleanTitle = String(title || "").trim();
     const finalPrizeType = String(prizeType || "").trim();
     const finalWinnerCount = Number(winnerCount);
+    const finalMaxEntries =
+      maxEntries == null || String(maxEntries).trim() === ""
+        ? null
+        : Number(maxEntries);
+
+    if (
+      finalMaxEntries !== null &&
+      (!Number.isInteger(finalMaxEntries) ||
+        finalMaxEntries < 1)
+    ) {
+      return NextResponse.json(
+        { error: "Maximum Entries must be a whole number greater than 0." },
+        { status: 400 }
+      );
+    }
 
     if (!drawId) {
       return NextResponse.json(
@@ -195,8 +212,11 @@ export async function POST(req: Request) {
           String(prizeDescription || "").trim() || null,
         prize_image:
           String(prizeImage || "").trim() || null,
+        prize_media:
+          Array.isArray(prizeMedia) ? prizeMedia : [],
         rules: String(rules || "").trim() || null,
         winner_count: finalWinnerCount,
+        max_entries: finalMaxEntries,
         starts_at: finalStartsAt,
         selection_at: finalSelectionAt,
       })

@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const { drawId, status } = await req.json();
+    const { drawId, status, cancelReason } = await req.json();
 
     if (!drawId) {
       return NextResponse.json(
@@ -43,13 +43,55 @@ export async function POST(req: Request) {
       );
     }
 
-    const allowedStatuses = ["open", "paused", "suspended"];
+    const allowedStatuses = ["open", "paused", "suspended", "cancelled"];
 
     if (!allowedStatuses.includes(status)) {
       return NextResponse.json(
         { error: "Invalid Lucky Draw status." },
         { status: 400 }
       );
+    }
+
+    if (status === "cancelled") {
+      const { data, error } = await supabaseAdmin.rpc(
+        "cancel_lucky_draw_atomic",
+        {
+          p_draw_id: drawId,
+          p_cancel_reason:
+            typeof cancelReason === "string"
+              ? cancelReason.trim()
+              : "Admin cancellation",
+        }
+      );
+
+      if (error) {
+        console.error("CANCEL LUCKY DRAW ERROR:", error);
+
+        return NextResponse.json(
+          { error: error.message },
+          { status: 400 }
+        );
+      }
+
+      const { data: cancelledDraw, error: drawError } =
+        await supabaseAdmin
+          .from("lucky_draws")
+          .select("*")
+          .eq("id", drawId)
+          .single();
+
+      if (drawError) {
+        return NextResponse.json(
+          { error: drawError.message },
+          { status: 500 }
+        );
+      }
+
+      return NextResponse.json({
+        success: true,
+        draw: cancelledDraw,
+        refund: data,
+      });
     }
 
     const { data, error } = await supabaseAdmin

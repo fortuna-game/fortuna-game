@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabaseAdmin";
 import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
@@ -77,7 +78,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabase.rpc(
+    const { data: draw, error: drawError } =
+      await supabaseAdmin
+        .from("lucky_draws")
+        .select("id, status")
+        .eq("id", drawId)
+        .maybeSingle();
+
+    if (drawError) {
+      return NextResponse.json(
+        { error: drawError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!draw) {
+      return NextResponse.json(
+        { error: "Lucky Draw not found." },
+        { status: 404 }
+      );
+    }
+
+    if (draw.status === "cancelled") {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw was cancelled. Winner selection is not allowed.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabaseAdmin.rpc(
       "select_next_lucky_draw_winner",
       {
         p_draw_id: drawId,

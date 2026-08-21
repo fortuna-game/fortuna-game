@@ -42,21 +42,34 @@ export async function POST(req: Request) {
 
     if (!(file instanceof File)) {
       return NextResponse.json(
-        { error: "Please select an image file." },
+        { error: "Please select an image or video file." },
         { status: 400 }
       );
     }
 
-    if (!file.type.startsWith("image/")) {
+    const isImage = file.type.startsWith("image/");
+    const isVideo =
+      file.type.startsWith("video/") ||
+      ["video/mp4", "video/webm", "video/quicktime"].includes(file.type);
+
+    if (!isImage && !isVideo) {
       return NextResponse.json(
-        { error: "Only image files are allowed." },
+        { error: "Only image and video files are allowed." },
         { status: 400 }
       );
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    const maxSize = isVideo
+      ? 50 * 1024 * 1024
+      : 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "Image must be smaller than 5MB." },
+        {
+          error: `${isVideo ? "Video" : "Image"} must be smaller than ${
+            isVideo ? "50MB" : "10MB"
+          }.`,
+        },
         { status: 400 }
       );
     }
@@ -94,6 +107,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       url: publicUrl,
+      type: isVideo ? "video" : "image",
     });
   } catch (error) {
     console.error("LUCKY DRAW IMAGE UPLOAD ERROR:", error);

@@ -65,6 +65,16 @@ export async function POST(req: Request) {
 
     const status = String(draw.status || "").toLowerCase();
 
+    if (status === "cancelled") {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw was cancelled and cannot be completed.",
+        },
+        { status: 400 }
+      );
+    }
+
     if (
       status === "completed" ||
       status === "complete" ||

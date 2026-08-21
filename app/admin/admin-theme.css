@@ -390,3 +390,147 @@
   color: #059669 !important;
   font-weight: 700 !important;
 }
+
+/* Ensure admin form controls remain interactive */
+.admin-theme input,
+.admin-theme textarea,
+.admin-theme select,
+.admin-theme button {
+  pointer-events: auto !important;
+  user-select: auto !important;
+}
+
+/* Make focused controls clearly visible */
+.admin-theme input:focus,
+.admin-theme textarea:focus,
+.admin-theme select:focus {
+  outline: 2px solid #059669 !important;
+  outline-offset: 1px;
+}
+
+/* Keep disabled controls actually disabled */
+.admin-theme input:disabled,
+.admin-theme textarea:disabled,
+.admin-theme select:disabled,
+.admin-theme button:disabled {
+  pointer-events: auto !important;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Lucky Draw form controls: always show entered values clearly */
+.admin-theme input,
+.admin-theme textarea,
+.admin-theme select {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  opacity: 1 !important;
+  background-color: #ffffff !important;
+}
+
+/* Placeholder text */
+.admin-theme input::placeholder,
+.admin-theme textarea::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Select options */
+.admin-theme select option {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
+/* File input text */
+.admin-theme input[type="file"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+/* Number/date/time controls */
+.admin-theme input[type="number"],
+.admin-theme input[type="datetime-local"],
+.admin-theme input[type="text"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+/* Lucky Draw form: always-visible black text and caret */
+.admin-theme input,
+.admin-theme textarea,
+.admin-theme select {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+/* Keep placeholder text visible but muted */
+.admin-theme input::placeholder,
+.admin-theme textarea::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+/* Select options */
+.admin-theme select option {
+  color: #0f172a !important;
+  background: #ffffff !important;
+}
+
+/* Remove browser spellcheck decoration where supported */
+.admin-theme input,
+.admin-theme textarea {
+  text-decoration: none !important;
+}
+
+/* Lucky Draw date/time controls */
+.admin-theme input[type="datetime-local"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+  background: #ffffff !important;
+  color-scheme: light !important;
+}
+
+/* Keep the calendar/time picker icon visible */
+.admin-theme input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  opacity: 1 !important;
+  cursor: pointer !important;
+  filter: none !important;
+}
+
+/* Lucky Draw rules: clean black text and caret */
+.admin-theme textarea {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+}
+
+
+/* Make admin back/navigation controls visible on white theme */
+.admin-theme a[href="/admin"],
+.admin-theme a[href="/admin/"] {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+.admin-theme a[href="/admin"]:hover,
+.admin-theme a[href="/admin/"]:hover {
+  color: #059669 !important;
+  background: #f8fafc !important;
+}
+
+/* Ensure arrows/icons that inherit currentColor are visible */
+.admin-theme a[href="/admin"] svg,
+.admin-theme a[href="/admin/"] svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+  fill: none !important;
+}

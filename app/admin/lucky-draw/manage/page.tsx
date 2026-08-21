@@ -1,5 +1,7 @@
 "use client";
 
+
+
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
@@ -10,6 +12,43 @@ type PrizeType =
   | "physical"
   | "grocery"
   | "other";
+function normalizePrizeMedia(
+  media: any
+): Array<{ type: "image" | "video"; url: string }> {
+  if (!Array.isArray(media)) return [];
+
+  return media
+    .map((item: any) => {
+      if (typeof item === "string") {
+        const lower = item.toLowerCase();
+
+        return {
+          type:
+            lower.includes(".mp4") ||
+            lower.includes(".webm") ||
+            lower.includes(".mov") ||
+            lower.includes(".m4v")
+              ? "video"
+              : "image",
+          url: item,
+        };
+      }
+
+      if (
+        item &&
+        typeof item.url === "string" &&
+        (item.type === "image" || item.type === "video")
+      ) {
+        return item;
+      }
+
+      return null;
+    })
+    .filter(Boolean) as Array<{
+    type: "image" | "video";
+    url: string;
+  }>;
+}
 
 export default function AdminLuckyDrawPage() {
   const [tickets, setTickets] = useState<any[]>([]);
@@ -19,18 +58,23 @@ export default function AdminLuckyDrawPage() {
   const [message, setMessage] = useState("");
 
   const [title, setTitle] = useState("");
-  const [prizeType, setPrizeType] = useState<PrizeType>("cash");
+  const [prizeType, setPrizeType] = useState<PrizeType | "">("");
   const [prizeAmount, setPrizeAmount] = useState("");
   const [prizeValue, setPrizeValue] = useState("");
   const [prizeDescription, setPrizeDescription] = useState("");
   const [prizeImage, setPrizeImage] = useState("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedMedia, setSelectedMedia] = useState<File[]>([]);
+  const [prizeMedia, setPrizeMedia] = useState<
+    Array<{ type: "image" | "video"; url: string }>
+  >([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [ticketPrice, setTicketPrice] = useState("");
   const [rules, setRules] = useState("");
   const [winnerCount, setWinnerCount] = useState("1");
+  const [maxEntries, setMaxEntries] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [selectionAt, setSelectionAt] = useState("");
+  const [scheduleMode, setScheduleMode] = useState<"upcoming" | "now">("upcoming");
   const [creating, setCreating] = useState(false);
   const [completing, setCompleting] = useState(false);
   const [selectingWinner, setSelectingWinner] = useState<string | null>(null);
@@ -45,10 +89,13 @@ export default function AdminLuckyDrawPage() {
   const [editPrizeDescription, setEditPrizeDescription] =
     useState("");
   const [editPrizeImage, setEditPrizeImage] = useState("");
-  const [editSelectedImage, setEditSelectedImage] =
-    useState<File | null>(null);
+  const [editSelectedMedia, setEditSelectedMedia] = useState<File[]>([]);
+  const [editPrizeMedia, setEditPrizeMedia] = useState<
+    Array<{ type: "image" | "video"; url: string }>
+  >([]);
   const [editRules, setEditRules] = useState("");
   const [editWinnerCount, setEditWinnerCount] = useState("1");
+  const [editMaxEntries, setEditMaxEntries] = useState("");
   const [editStartsAt, setEditStartsAt] = useState("");
   const [editSelectionAt, setEditSelectionAt] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
@@ -118,7 +165,7 @@ export default function AdminLuckyDrawPage() {
   const isEditAutoPaidPrize =
     editPrizeType === "cash" || editPrizeType === "rent";
 
-  async function uploadPrizeImage(file: File) {
+  async function uploadPrizeMedia(file: File) {
     setUploadingImage(true);
     setMessage("");
 
@@ -179,6 +226,37 @@ export default function AdminLuckyDrawPage() {
     }
   }
 
+  function setStartNow() {
+    const now = new Date();
+    now.setSeconds(0, 0);
+
+    const localValue =
+      `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-` +
+      `${String(now.getDate()).padStart(2, "0")}T` +
+      `${String(now.getHours()).padStart(2, "0")}:` +
+      `${String(now.getMinutes()).padStart(2, "0")}`;
+
+    setStartsAt(localValue);
+  }
+
+  function cancelCreateDraw() {
+    setTitle("");
+    setPrizeType("");
+    setPrizeAmount("");
+    setPrizeValue("");
+    setPrizeDescription("");
+    setPrizeImage("");
+    setSelectedMedia([]);
+    setTicketPrice("");
+    setRules("");
+    setWinnerCount("1");
+    setMaxEntries("");
+    setStartsAt("");
+    setSelectionAt("");
+    setScheduleMode("upcoming");
+    setMessage("");
+  }
+
   async function createDraw() {
     setMessage("");
 
@@ -188,11 +266,37 @@ export default function AdminLuckyDrawPage() {
     const winners = Number(winnerCount);
 
     let uploadedImageUrl = prizeImage;
+    let uploadedMedia = [...prizeMedia];
 
-    if (selectedImage) {
-      uploadedImageUrl = await uploadPrizeImage(selectedImage);
+    if (selectedMedia.length > 0) {
+      setUploadingImage(true);
 
-      if (!uploadedImageUrl) return;
+      try {
+        const results: Array<{
+          type: "image" | "video";
+          url: string;
+        }> = [];
+
+        for (const file of selectedMedia) {
+          const uploaded = await uploadPrizeMedia(file);
+
+          if (!uploaded) return;
+
+          results.push(uploaded);
+        }
+
+        uploadedMedia = results;
+      } finally {
+        setUploadingImage(false);
+      }
+
+      setPrizeMedia(uploadedMedia);
+
+      const firstMedia =
+        uploadedMedia.find((item) => item.type === "image") ||
+        uploadedMedia[0];
+
+      uploadedImageUrl = firstMedia?.url || uploadedImageUrl;
     }
 
     if (!title.trim()) {
@@ -292,9 +396,14 @@ Selection: ${selectionDate.toLocaleString()}`
             prizeValue: isAutoPaidPrize ? amount : value,
             prizeDescription: prizeDescription.trim(),
             prizeImage: uploadedImageUrl.trim(),
+            prizeMedia: uploadedMedia,
             ticketPrice: ticket,
             rules: rules.trim(),
             winnerCount: winners,
+            maxEntries:
+              maxEntries.trim() === ""
+                ? null
+                : Number(maxEntries),
             startsAt: startDate.toISOString(),
             selectionAt: selectionDate.toISOString(),
           }),
@@ -311,17 +420,19 @@ Selection: ${selectionDate.toLocaleString()}`
       }
 
       setTitle("");
-      setPrizeType("cash");
+      setPrizeType("");
       setPrizeAmount("");
       setPrizeValue("");
       setPrizeDescription("");
       setPrizeImage("");
-      setSelectedImage(null);
+      setSelectedMedia([]);
+      setPrizeMedia([]);
       setTicketPrice("");
       setRules("");
       setWinnerCount("1");
       setStartsAt("");
       setSelectionAt("");
+      setScheduleMode("upcoming");
       setMessage("🎉 New Lucky Draw created successfully.");
 
       await loadData();
@@ -418,9 +529,31 @@ Selection: ${selectionDate.toLocaleString()}`
       draw.prize_description || ""
     );
     setEditPrizeImage(draw.prize_image || "");
-    setEditSelectedImage(null);
+    setEditSelectedMedia([]);
+
+    const existingPrizeMedia =
+      normalizePrizeMedia(draw.prize_media);
+
+    setEditPrizeMedia(
+      existingPrizeMedia.length > 0
+        ? existingPrizeMedia
+        : draw.prize_image
+        ? [
+            {
+              type: "image",
+              url: draw.prize_image,
+            },
+          ]
+        : []
+    );
+
     setEditRules(draw.rules || "");
     setEditWinnerCount(String(draw.winner_count || 1));
+    setEditMaxEntries(
+      draw.max_entries == null
+        ? ""
+        : String(draw.max_entries)
+    );
     setEditStartsAt(toDateTimeLocal(draw.starts_at));
     setEditSelectionAt(toDateTimeLocal(draw.selection_at));
     setMessage("");
@@ -434,9 +567,11 @@ Selection: ${selectionDate.toLocaleString()}`
     setEditPrizeValue("");
     setEditPrizeDescription("");
     setEditPrizeImage("");
-    setEditSelectedImage(null);
+    setEditSelectedMedia([]);
+    setEditPrizeMedia([]);
     setEditRules("");
     setEditWinnerCount("1");
+    setEditMaxEntries("");
     setEditStartsAt("");
     setEditSelectionAt("");
   }
@@ -514,13 +649,38 @@ Type: ${editPrizeType}`
 
     try {
       let uploadedImageUrl = editPrizeImage;
+      let uploadedMedia = [...editPrizeMedia];
 
-      if (editSelectedImage) {
-        uploadedImageUrl = await uploadPrizeImage(
-          editSelectedImage
-        );
+      if (editSelectedMedia.length > 0) {
+        setUploadingImage(true);
 
-        if (!uploadedImageUrl) return;
+        try {
+          const results: Array<{
+            type: "image" | "video";
+            url: string;
+          }> = [];
+
+          for (const file of editSelectedMedia) {
+            const uploaded = await uploadPrizeMedia(file);
+
+            if (!uploaded) return;
+
+            results.push(uploaded);
+          }
+
+          uploadedMedia = [
+            ...uploadedMedia,
+            ...results,
+          ];
+        } finally {
+          setUploadingImage(false);
+        }
+
+        const firstMedia =
+          uploadedMedia.find((item) => item.type === "image") ||
+          uploadedMedia[0];
+
+        uploadedImageUrl = firstMedia?.url || uploadedImageUrl;
       }
 
       const session = await getSession();
@@ -539,7 +699,7 @@ Type: ${editPrizeType}`
             Authorization: `Bearer ${session.access_token}`,
           },
           body: JSON.stringify({
-            drawId: editingDraw.id,
+            id: editingDraw.id,
             title: editTitle.trim(),
             prizeType: editPrizeType,
             prizeAmount: isEditAutoPaidPrize
@@ -551,8 +711,13 @@ Type: ${editPrizeType}`
             prizeDescription:
               editPrizeDescription.trim(),
             prizeImage: uploadedImageUrl.trim(),
+            prizeMedia: uploadedMedia,
             rules: editRules.trim(),
             winnerCount: winners,
+            maxEntries:
+              editMaxEntries.trim() === ""
+                ? null
+                : Number(editMaxEntries),
             startsAt: startDate.toISOString(),
             selectionAt: selectionDate.toISOString(),
           }),
@@ -578,18 +743,66 @@ Type: ${editPrizeType}`
     }
   }
 
+  function runAgain(draw: any) {
+    setEditingDraw(null);
+
+    setTitle(String(draw.title || ""));
+    setPrizeType((draw.prize_type || "") as PrizeType | "");
+    setPrizeAmount(
+      draw.prize_type === "cash"
+        ? String(draw.prize_amount ?? "")
+        : ""
+    );
+    setPrizeValue(String(draw.prize_value ?? ""));
+    setPrizeDescription(String(draw.prize_description || ""));
+    setPrizeImage(String(draw.prize_image || ""));
+    setSelectedMedia([]);
+    setPrizeMedia([]);
+    setTicketPrice(String(draw.ticket_price ?? ""));
+    setRules(String(draw.rules || ""));
+    setWinnerCount(String(draw.winner_count || 1));
+
+    // New draw = new schedule and zero old tickets.
+    setStartsAt("");
+    setSelectionAt("");
+    setScheduleMode("upcoming");
+
+    setMessage(
+      "✅ Draw copied. Choose new start and winner-selection times, then create the new draw."
+    );
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+
   async function updateDrawStatus(
     drawId: string,
-    newStatus: "open" | "paused" | "suspended"
+    newStatus: "open" | "paused" | "suspended" | "cancelled"
   ) {
     const labels = {
       open: "resume",
       paused: "pause",
       suspended: "suspend",
+      cancelled: "cancel",
     };
 
+    let cancelReason = "";
+
+    if (newStatus === "cancelled") {
+      cancelReason = window.prompt(
+        "Why are you cancelling this Lucky Draw?\n\nExample: Insufficient participation",
+        "Insufficient participation"
+      ) || "";
+
+      if (!cancelReason.trim()) return;
+    }
+
     const confirmed = window.confirm(
-      `Are you sure you want to ${labels[newStatus]} this Lucky Draw?`
+      newStatus === "cancelled"
+        ? `Cancel this Lucky Draw?\n\nReason: ${cancelReason}`
+        : `Are you sure you want to ${labels[newStatus]} this Lucky Draw?`
     );
 
     if (!confirmed) return;
@@ -615,6 +828,10 @@ Type: ${editPrizeType}`
           body: JSON.stringify({
             drawId,
             status: newStatus,
+            cancelReason:
+              newStatus === "cancelled"
+                ? cancelReason
+                : undefined,
           }),
         }
       );
@@ -863,6 +1080,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                   </label>
 
                   <input
+                    spellCheck={false}
                     value={title}
                     onChange={(e) =>
                       setTitle(e.target.value)
@@ -881,11 +1099,14 @@ No cash will automatically be credited. Delivery or collection details will be r
                     value={prizeType}
                     onChange={(e) =>
                       setPrizeType(
-                        e.target.value as PrizeType
+                        e.target.value as PrizeType | ""
                       )
                     }
                     className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
                   >
+                    <option value="" disabled>
+                      Select prize type
+                    </option>
                     <option value="cash">Cash</option>
                     <option value="rent">Rent Support</option>
                     <option value="physical">
@@ -903,6 +1124,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                     </label>
 
                     <input
+                      spellCheck={false}
                       type="number"
                       value={prizeAmount}
                       onChange={(e) =>
@@ -936,6 +1158,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                   </label>
 
                   <input
+                    spellCheck={false}
                     type="number"
                     value={ticketPrice}
                     onChange={(e) =>
@@ -952,6 +1175,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                   </label>
 
                   <textarea
+                    spellCheck={false}
                     value={prizeDescription}
                     onChange={(e) =>
                       setPrizeDescription(e.target.value)
@@ -963,19 +1187,75 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                 <div>
                   <label className="text-sm font-bold text-[#9AAAC1]">
-                    Prize Image
+                    Prize Media
                   </label>
 
                   <input
                     type="file"
-                    accept="image/*"
+                    multiple
+                    accept="image/*,video/mp4,video/webm,video/quicktime"
                     onChange={(e) =>
-                      setSelectedImage(
-                        e.target.files?.[0] || null
-                      )
+                      setSelectedMedia((current) => [
+                        ...current,
+                        ...Array.from(e.target.files || []),
+                      ])
                     }
                     className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                   />
+
+                  {selectedMedia.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {selectedMedia.map((file, index) => (
+                        <div
+                          key={`${file.name}-${index}`}
+                          className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2"
+                        >
+                          <p className="min-w-0 truncate text-sm font-semibold text-slate-700">
+                            ✓ {file.name}
+                          </p>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setSelectedMedia((current) =>
+                                current.filter((_, i) => i !== index)
+                              )
+                            }
+                            className="shrink-0 rounded-lg px-2 py-1 text-sm font-black text-red-600 hover:bg-red-50"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    Add more images and/or videos. Existing media stays unless you remove it.
+                  </p>
+                </div>
+                <div>
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Maximum Entries
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    value={maxEntries}
+                    onChange={(e) =>
+                      setMaxEntries(e.target.value)
+                    }
+                    placeholder="Example: 55"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                  />
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    Enter any whole number from 1 upward.
+                    Leave blank for unlimited entries.
+                  </p>
                 </div>
 
                 <div>
@@ -1001,6 +1281,47 @@ No cash will automatically be credited. Delivery or collection details will be r
                           Number(winnerCount) === 1 ? "" : "s"
                         } will be selected one by one.`
                       : "Enter the number of winners."}
+                  </p>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="text-sm font-bold text-[#9AAAC1]">
+                    Draw Schedule
+                  </label>
+
+                  <div className="mt-2 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setScheduleMode("upcoming");
+                      }}
+                      className={`rounded-xl px-5 py-3 font-black ${
+                        scheduleMode === "upcoming"
+                          ? "bg-[#059669] text-white"
+                          : "border border-slate-300 bg-white text-slate-900"
+                      }`}
+                    >
+                      Upcoming
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setScheduleMode("now");
+                        setStartNow();
+                      }}
+                      className={`rounded-xl px-5 py-3 font-black ${
+                        scheduleMode === "now"
+                          ? "bg-[#059669] text-white"
+                          : "border border-slate-300 bg-white text-slate-900"
+                      }`}
+                    >
+                      Start Now
+                    </button>
+                  </div>
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    Upcoming draws appear to users with a live countdown until the scheduled start.
                   </p>
                 </div>
 
@@ -1045,6 +1366,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                   </label>
 
                   <textarea
+                    spellCheck={false}
                     value={rules}
                     onChange={(e) =>
                       setRules(e.target.value)
@@ -1060,15 +1382,27 @@ No cash will automatically be credited. Delivery or collection details will be r
 
               </div>
 
-              <button
-                onClick={createDraw}
-                disabled={creating || uploadingImage}
-                className="mt-6 rounded-xl bg-[#FFD54A] px-6 py-3 font-black text-black disabled:opacity-50"
-              >
-                {creating || uploadingImage
-                  ? "Please wait..."
-                  : "Create Lucky Draw"}
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={createDraw}
+                  disabled={creating || uploadingImage}
+                  className="rounded-xl bg-[#059669] px-6 py-3 font-black text-white disabled:opacity-50"
+                >
+                  {creating || uploadingImage
+                    ? "Please wait..."
+                    : "Create Lucky Draw"}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={cancelCreateDraw}
+                  disabled={creating || uploadingImage}
+                  className="rounded-xl border border-slate-300 bg-white px-6 py-3 font-black text-slate-900 hover:bg-slate-50 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+              </div>
             </section>
 
             {editingDraw && (
@@ -1189,19 +1523,126 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                   <div>
                     <label className="text-sm font-bold text-[#9AAAC1]">
-                      Replace Prize Image
+                      Manage Prize Media
                     </label>
 
                     <input
                       type="file"
-                      accept="image/*"
+                      multiple
+                      accept="image/*,video/mp4,video/webm,video/quicktime"
                       onChange={(e) =>
-                        setEditSelectedImage(
-                          e.target.files?.[0] || null
-                        )
+                        setEditSelectedMedia((current) => [
+                          ...current,
+                          ...Array.from(e.target.files || []),
+                        ])
                       }
                       className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3"
                     />
+
+                    {editPrizeMedia.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-black text-[#9AAAC1]">
+                          Current Prize Media — remove anything you do not want
+                        </p>
+
+                        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                          {editPrizeMedia.map((media, index) => (
+                            <div
+                              key={`${media.url}-${index}`}
+                              className="relative overflow-hidden rounded-xl border border-slate-200 bg-white"
+                            >
+                              {media.type === "video" ? (
+                                <video
+                                  src={media.url}
+                                  muted
+                                  playsInline
+                                  preload="metadata"
+                                  className="h-28 w-full object-cover"
+                                />
+                              ) : (
+                                <img
+                                  src={media.url}
+                                  alt={`Prize media ${index + 1}`}
+                                  className="h-28 w-full object-cover"
+                                />
+                              )}
+
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setEditPrizeMedia((current) =>
+                                    current.filter(
+                                      (_, i) => i !== index
+                                    )
+                                  )
+                                }
+                                className="absolute right-2 top-2 rounded-full bg-red-600 px-2 py-1 text-xs font-black text-white shadow"
+                              >
+                                ✕
+                              </button>
+
+                              <div className="px-2 py-1 text-center text-[11px] font-bold text-slate-600">
+                                {media.type === "video"
+                                  ? "Video"
+                                  : "Image"}{" "}
+                                {index + 1}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {editSelectedMedia.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {editSelectedMedia.map((file, index) => (
+                          <div
+                            key={`${file.name}-${index}`}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2"
+                          >
+                            <p className="min-w-0 truncate text-sm font-semibold text-slate-700">
+                              ✓ {file.name}
+                            </p>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setEditSelectedMedia((current) =>
+                                  current.filter((_, i) => i !== index)
+                                )
+                              }
+                              className="shrink-0 rounded-lg px-2 py-1 text-sm font-black text-red-600 hover:bg-red-50"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Maximum Entries
+                    </label>
+
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      inputMode="numeric"
+                      value={editMaxEntries}
+                      onChange={(e) =>
+                        setEditMaxEntries(e.target.value)
+                      }
+                      placeholder="Example: 55"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                    />
+
+                    <p className="mt-2 text-xs text-[#8295B0]">
+                      Enter any whole number from 1 upward.
+                      Leave blank for unlimited entries.
+                    </p>
                   </div>
 
                   <div>
@@ -1272,6 +1713,7 @@ No cash will automatically be credited. Delivery or collection details will be r
                     </label>
 
                     <textarea
+                      spellCheck={false}
                       value={editRules}
                       onChange={(e) =>
                         setEditRules(e.target.value)
@@ -1322,6 +1764,16 @@ No cash will automatically be credited. Delivery or collection details will be r
                     drawTickets.length *
                     Number(draw.ticket_price || 0);
 
+                  const refundedTickets = drawTickets.filter(
+                    (ticket: any) => Boolean(ticket.refunded_at)
+                  );
+
+                  const refundedAmount = refundedTickets.reduce(
+                    (total: number, ticket: any) =>
+                      total + Number(ticket.amount || 0),
+                    0
+                  );
+
                   const prizeText =
                     draw.prize_type === "cash" ||
                     draw.prize_type === "rent"
@@ -1334,14 +1786,69 @@ No cash will automatically be credited. Delivery or collection details will be r
                     <div
                       key={draw.id}
                       className="min-w-0 rounded-xl border border-slate-200 bg-white p-3"
-                    >
-                      {draw.prize_image && (
-                        <img
-                          src={draw.prize_image}
-                          alt={draw.title}
-                          className="mx-auto h-32 w-32 rounded-xl object-cover"
-                        />
-                      )}
+>
+                      {(() => {
+                        const media =
+                          normalizePrizeMedia(draw.prize_media);
+
+                        const fallback = draw.prize_image
+                          ? [
+                              {
+                                type: "image" as const,
+                                url: draw.prize_image,
+                              },
+                            ]
+                          : [];
+
+                        const items =
+                          media.length > 0 ? media : fallback;
+
+                        if (items.length === 0) return null;
+
+                        // Prefer an image for the compact admin thumbnail.
+                        // If there is no image, fall back to the first video.
+                        const preview =
+                          items.find(
+                            (item) => item.type === "image"
+                          ) || items[0];
+
+                        return (
+                          <div className="mb-5 flex justify-center">
+                            <div className="relative h-40 w-32 overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm">
+                              {preview.type === "image" ? (
+                                <img
+                                  src={preview.url}
+                                  alt={draw.title}
+                                  className="h-full w-full object-cover"
+                                  onError={(e) => {
+                                    e.currentTarget.style.display =
+                                      "none";
+                                  }}
+                                />
+                              ) : (
+                                <video
+                                  src={preview.url}
+                                  muted
+                                  playsInline
+                                  autoPlay
+                                  loop
+                                  preload="auto"
+                                  className="h-full w-full object-cover"
+                                />
+                              )}
+
+                              {items.length > 1 && (
+                                <span className="absolute bottom-2 left-2 right-2 rounded-lg bg-black/75 px-2 py-1 text-center text-xs font-black text-white">
+                                  View {items.length} media
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+
+
 
                       <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
                         <div>
@@ -1359,11 +1866,40 @@ No cash will automatically be credited. Delivery or collection details will be r
                               {draw.status}
                             </span>
                           </p>
+
+                          {draw.status === "cancelled" &&
+                            draw.cancel_reason && (
+                              <p className="mt-2 text-sm text-orange-600">
+                                Reason: {draw.cancel_reason}
+                              </p>
+                            )}
+
+                          {draw.status === "cancelled" && (
+                            <div className="mt-3 grid grid-cols-2 gap-3">
+                              <div className="rounded-xl border border-green-200 bg-green-50 p-3">
+                                <p className="text-xs font-bold text-slate-500">
+                                  Refunded Tickets
+                                </p>
+                                <p className="mt-1 text-lg font-black text-green-700">
+                                  {refundedTickets.length}
+                                </p>
+                              </div>
+
+                              <div className="rounded-xl border border-green-200 bg-green-50 p-3">
+                                <p className="text-xs font-bold text-slate-500">
+                                  Refunded Amount
+                                </p>
+                                <p className="mt-1 text-lg font-black text-green-700">
+                                  GH₵{refundedAmount.toFixed(2)}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         <button
                           onClick={() => startEdit(draw)}
-                          disabled={draw.status === "completed"}
+                          disabled={draw.status === "completed" || draw.status === "cancelled"}
                           className="rounded-xl border border-blue-400/40 px-4 py-2 font-black text-blue-300 disabled:opacity-40"
                         >
                           ✏ Edit
@@ -1377,6 +1913,16 @@ No cash will automatically be credited. Delivery or collection details will be r
                       )}
 
                       <div className="mt-6 flex flex-wrap gap-3">
+                        {draw.status === "cancelled" && (
+                          <button
+                            type="button"
+                            onClick={() => runAgain(draw)}
+                            className="rounded-xl bg-green-600 px-4 py-2 font-black text-white"
+                          >
+                            ↻ Run Again
+                          </button>
+                        )}
+
                         {draw.status === "open" && (
                           <>
                             <button
@@ -1398,9 +1944,21 @@ No cash will automatically be credited. Delivery or collection details will be r
                                   "suspended"
                                 )
                               }
-                              className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-300"
+                              className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-600"
                             >
                               ⚠ Suspend
+                            </button>
+
+                            <button
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "cancelled"
+                                )
+                              }
+                              className="rounded-xl border border-orange-400/40 px-4 py-2 font-bold text-orange-600"
+                            >
+                              ✕ Cancel Draw
                             </button>
                           </>
                         )}
@@ -1426,9 +1984,21 @@ No cash will automatically be credited. Delivery or collection details will be r
                                   "suspended"
                                 )
                               }
-                              className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-300"
+                              className="rounded-xl border border-red-400/40 px-4 py-2 font-bold text-red-600"
                             >
                               ⚠ Suspend
+                            </button>
+
+                            <button
+                              onClick={() =>
+                                updateDrawStatus(
+                                  draw.id,
+                                  "cancelled"
+                                )
+                              }
+                              className="rounded-xl border border-orange-400/40 px-4 py-2 font-bold text-orange-600"
+                            >
+                              ✕ Cancel Draw
                             </button>
                           </>
                         )}
@@ -1479,6 +2049,29 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </h3>
                         </div>
 
+                        <div className="min-w-0 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4">
+                          <p className="text-sm text-[#9AAAC1]">
+                            Maximum Entries
+                          </p>
+
+                          <h3 className="mt-2 text-xl font-black text-emerald-300">
+                            {draw.max_entries == null
+                              ? "Unlimited"
+                              : Number(draw.max_entries).toLocaleString()}
+                          </h3>
+
+                          {draw.max_entries != null && (
+                            <p className="mt-1 text-xs font-bold text-emerald-200/70">
+                              {Math.max(
+                                0,
+                                Number(draw.max_entries) -
+                                  drawTickets.length
+                              ).toLocaleString()}{" "}
+                              remaining
+                            </p>
+                          )}
+                        </div>
+
                         <div className="min-w-0 rounded-2xl border border-green-400/20 bg-green-500/10 p-4">
                           <p className="text-sm text-[#9AAAC1]">
                             Revenue
@@ -1515,12 +2108,19 @@ No cash will automatically be credited. Delivery or collection details will be r
                         disabled={
                           selectingWinner === draw.id ||
                           drawTickets.length === 0 ||
-                          draw.status === "completed"
+                          draw.status === "completed" ||
+                          draw.status === "cancelled"
                         }
-                        className="mt-6 w-full rounded-xl bg-yellow-400 px-5 py-3 font-black text-black disabled:cursor-not-allowed disabled:opacity-40"
+                        className={`mt-6 w-full rounded-xl px-5 py-3 font-black disabled:cursor-not-allowed disabled:opacity-40 ${
+                          draw.status === "cancelled"
+                            ? "bg-slate-200 text-slate-500"
+                            : "bg-green-600 text-white"
+                        }`}
                       >
                         {draw.status === "completed"
                           ? "🎉 Draw Completed"
+                          : draw.status === "cancelled"
+                          ? "✕ Draw Cancelled — No Winner Selection"
                           : selectingWinner === draw.id
                           ? "Selecting Winner..."
                           : drawTickets.length === 0
