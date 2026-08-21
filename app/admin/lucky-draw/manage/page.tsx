@@ -2063,6 +2063,19 @@ No cash will automatically be credited. Delivery or collection details will be r
                         </p>
                       )}
 
+                      {draw.rules &&
+                        draw.rules.trim() && (
+                        <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                          <h3 className="text-sm font-black text-slate-900">
+                            Lucky Draw Rules
+                          </h3>
+
+                          <div className="mt-3 whitespace-pre-line text-sm leading-6 text-slate-600">
+                            {draw.rules}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="mt-6 flex flex-wrap gap-3">
                         {draw.status === "cancelled" && (
                           <button

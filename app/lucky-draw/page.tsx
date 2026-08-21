@@ -16,6 +16,7 @@ type Draw = {
     url: string;
   }> | null;
   prize_value?: number | null;
+  rules?: string | null;
   ticket_price: number;
   max_entries?: number | null;
   duration_days?: number | null;
@@ -565,6 +566,19 @@ export default function LuckyDrawPage() {
                             <p className="mt-2 text-sm text-[#9AAAC1]">
                               {draw.prize_description}
                             </p>
+                          )}
+
+                        {draw.rules &&
+                          draw.rules.trim() && (
+                            <div className="mt-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+                              <h3 className="text-sm font-black text-white">
+                                Lucky Draw Rules
+                              </h3>
+
+                              <div className="mt-3 whitespace-pre-line text-sm leading-6 text-white/70">
+                                {draw.rules}
+                              </div>
+                            </div>
                           )}
                       </div>
 
