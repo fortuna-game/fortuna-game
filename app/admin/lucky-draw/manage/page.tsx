@@ -87,6 +87,7 @@ export default function AdminLuckyDrawPage() {
     useState<PrizeType>("cash");
   const [editPrizeAmount, setEditPrizeAmount] = useState("");
   const [editPrizeValue, setEditPrizeValue] = useState("");
+  const [editTicketPrice, setEditTicketPrice] = useState("");
   const [editPrizeDescription, setEditPrizeDescription] =
     useState("");
   const [editPrizeImage, setEditPrizeImage] = useState("");
@@ -549,6 +550,9 @@ Selection: ${selectionDate.toLocaleString()}`
     setEditPrizeValue(
       String(draw.prize_value ?? draw.prize_amount ?? "")
     );
+    setEditTicketPrice(
+      String(draw.ticket_price ?? "")
+    );
     setEditPrizeDescription(
       draw.prize_description || ""
     );
@@ -605,6 +609,7 @@ Selection: ${selectionDate.toLocaleString()}`
     setEditPrizeType("cash");
     setEditPrizeAmount("");
     setEditPrizeValue("");
+    setEditTicketPrice("");
     setEditPrizeDescription("");
     setEditPrizeImage("");
     setEditSelectedMedia([]);
@@ -624,10 +629,16 @@ Selection: ${selectionDate.toLocaleString()}`
 
     const amount = Number(editPrizeAmount || 0);
     const value = Number(editPrizeValue || 0);
+    const ticket = Number(editTicketPrice);
     const winners = Number(editWinnerCount);
 
     if (!editTitle.trim()) {
       setMessage("Enter a prize title.");
+      return;
+    }
+
+    if (!Number.isFinite(ticket) || ticket <= 0) {
+      setMessage("Enter a valid ticket price.");
       return;
     }
 
@@ -773,6 +784,7 @@ Type: ${editPrizeType}`
               editPrizeDescription.trim(),
             prizeImage: uploadedImageUrl.trim(),
             prizeMedia: uploadedMedia,
+            ticketPrice: ticket,
             rules: editRules.trim(),
             winnerCount: winners,
             maxEntries:
@@ -1704,6 +1716,36 @@ No cash will automatically be credited. Delivery or collection details will be r
                           </div>
                         ))}
                       </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Ticket Price
+                    </label>
+
+                    <input
+                      type="number"
+                      min="0.01"
+                      step="0.01"
+                      value={editTicketPrice}
+                      onChange={(e) =>
+                        setEditTicketPrice(e.target.value)
+                      }
+                      disabled={
+                        Number(editingDraw?.totalTickets || 0) > 0
+                      }
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A] disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+
+                    {Number(editingDraw?.totalTickets || 0) > 0 ? (
+                      <p className="mt-2 text-xs font-bold text-orange-300">
+                        Ticket price is locked because tickets have already been sold.
+                      </p>
+                    ) : (
+                      <p className="mt-2 text-xs text-[#8295B0]">
+                        You can change the ticket price while no tickets have been sold.
+                      </p>
                     )}
                   </div>
 

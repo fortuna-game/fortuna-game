@@ -48,6 +48,7 @@ export async function POST(req: Request) {
       rules,
       winnerCount,
       maxEntries,
+      ticketPrice,
       durationDays,
       endsAt,
       startsAt,
@@ -58,6 +59,7 @@ export async function POST(req: Request) {
     const cleanTitle = String(title || "").trim();
     const finalPrizeType = String(prizeType || "").trim();
     const finalWinnerCount = Number(winnerCount);
+    const finalTicketPrice = Number(ticketPrice);
 
     const finalDurationDays =
       durationDays == null ||
@@ -92,6 +94,13 @@ export async function POST(req: Request) {
     ) {
       return NextResponse.json(
         { error: "Maximum Entries must be a whole number greater than 0." },
+        { status: 400 }
+      );
+    }
+
+    if (!Number.isFinite(finalTicketPrice) || finalTicketPrice <= 0) {
+      return NextResponse.json(
+        { error: "Enter a valid ticket price." },
         { status: 400 }
       );
     }
@@ -209,6 +218,44 @@ export async function POST(req: Request) {
       );
     }
 
+    const { count: ticketCount, error: ticketCountError } =
+      await supabaseAdmin
+        .from("lucky_draw_tickets")
+        .select("id", {
+          count: "exact",
+          head: true,
+        })
+        .eq("draw_id", drawId);
+
+    if (ticketCountError) {
+      return NextResponse.json(
+        { error: ticketCountError.message },
+        { status: 500 }
+      );
+    }
+
+    if ((ticketCount || 0) > 0) {
+      const { data: currentDrawPrice } =
+        await supabaseAdmin
+          .from("lucky_draws")
+          .select("ticket_price")
+          .eq("id", drawId)
+          .single();
+
+      if (
+        currentDrawPrice &&
+        Number(currentDrawPrice.ticket_price) !== finalTicketPrice
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              "Ticket price cannot be changed after tickets have been sold.",
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     if (
       existingDraw.selection_started_at ||
       existingDraw.status === "completed"
@@ -232,6 +279,7 @@ export async function POST(req: Request) {
             ? finalPrizeAmount
             : finalPrizeValue,
         prize_value: finalPrizeValue,
+        ticket_price: finalTicketPrice,
         prize_description:
           String(prizeDescription || "").trim() || null,
         prize_image:
