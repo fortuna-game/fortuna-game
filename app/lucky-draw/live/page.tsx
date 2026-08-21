@@ -8,6 +8,7 @@ type LiveState = {
   ready: boolean;
   hasDraw: boolean;
   replayId: string | null;
+  openDrawCount: number;
 };
 
 export default function LiveLuckyDrawPage() {
@@ -15,6 +16,7 @@ export default function LiveLuckyDrawPage() {
     ready: false,
     hasDraw: false,
     replayId: null,
+    openDrawCount: 0,
   });
 
   useEffect(() => {
@@ -37,6 +39,7 @@ export default function LiveLuckyDrawPage() {
             ready: true,
             hasDraw: false,
             replayId,
+            openDrawCount: 0,
           });
           return;
         }
@@ -47,12 +50,14 @@ export default function LiveLuckyDrawPage() {
           ready: true,
           hasDraw: Boolean(data?.draw),
           replayId,
+          openDrawCount: Number(data?.open_draw_count || 0),
         });
       } catch {
         setState({
           ready: true,
           hasDraw: false,
           replayId,
+          openDrawCount: 0,
         });
       }
     }
@@ -123,17 +128,21 @@ export default function LiveLuckyDrawPage() {
             </div>
 
             <p className="mt-5 text-xs font-black uppercase tracking-[0.3em] text-[#FFD54A]">
-              NO LIVE DRAW
+              NO LIVE WINNER SELECTION
             </p>
 
             <h2 className="mt-3 text-3xl font-black sm:text-4xl">
-              There is no active draw right now
+              There is no live winner selection right now
             </h2>
 
             <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[#9AAAC1] sm:text-base">
-              The next Lucky Draw will appear here when it goes live.
-              You can watch a previous recorded draw or view the public
-              winners while you wait.
+              {state.openDrawCount > 0
+                ? `${state.openDrawCount} Lucky Draw${
+                    state.openDrawCount === 1 ? "" : "s"
+                  } ${
+                    state.openDrawCount === 1 ? "is" : "are"
+                  } currently open for entries. The live winner selection will appear here after a draw closes and selection begins.`
+                : "There are no Lucky Draws currently open for entries. The live winner selection will appear here when a draw closes and selection begins."}
             </p>
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">

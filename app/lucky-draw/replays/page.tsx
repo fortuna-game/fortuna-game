@@ -56,11 +56,11 @@ export default function DrawReplaysPage() {
           </p>
 
           <h1 className="mt-3 text-4xl font-black sm:text-5xl">
-            Previous Draws
+            Previous Winner Selections
           </h1>
 
           <p className="mx-auto mt-4 max-w-2xl text-[#9AAAC1]">
-            Rewatch completed Lucky Draws and see the recorded winning result.
+            Watch real completed Lucky Draw winner selections and their recorded results.
           </p>
         </div>
 
@@ -78,10 +78,21 @@ export default function DrawReplaysPage() {
 
         {!loading && !error && draws.length === 0 && (
           <div className="mt-10 rounded-3xl border border-[#2A5688] bg-[#0B2545]/70 p-8 text-center">
-            <div className="text-5xl">🎟️</div>
+            <div className="text-5xl">🏆</div>
             <h2 className="mt-4 text-2xl font-black">
-              No completed draws yet
+              No previous winner selections yet
             </h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-[#9AAAC1]">
+              Real winner selections will appear here after a Lucky Draw
+              closes and a winner is selected.
+            </p>
+
+            <Link
+              href="/lucky-draw/demo"
+              className="mt-6 inline-block rounded-xl bg-[#FFD54A] px-6 py-3 font-black text-black"
+            >
+              🎬 Watch Demo
+            </Link>
           </div>
         )}
 
@@ -111,7 +122,7 @@ export default function DrawReplaysPage() {
                       </span>
 
                       <span className="text-xs font-bold text-[#8295B0]">
-                        Draw #{draws.length - index}
+                        Winner Selection
                       </span>
                     </div>
 

@@ -31,8 +31,41 @@ export async function GET() {
       );
     }
 
+    const completedDraws = draws || [];
+    const drawIds = completedDraws.map((draw) => draw.id);
+
+    let winnerDrawIds = new Set<string>();
+
+    if (drawIds.length > 0) {
+      const { data: winners, error: winnersError } =
+        await supabaseAdmin
+          .from("lucky_draw_winners")
+          .select("draw_id")
+          .in("draw_id", drawIds);
+
+      if (winnersError) {
+        console.error(
+          "PUBLIC DRAW WINNER HISTORY ERROR:",
+          winnersError
+        );
+
+        return NextResponse.json(
+          { error: "Could not load previous draw winners." },
+          { status: 500 }
+        );
+      }
+
+      winnerDrawIds = new Set(
+        (winners || []).map((winner) => winner.draw_id)
+      );
+    }
+
+    const realCompletedDraws = completedDraws.filter((draw) =>
+      winnerDrawIds.has(draw.id)
+    );
+
     return NextResponse.json({
-      draws: draws || [],
+      draws: realCompletedDraws,
       server_time: new Date().toISOString(),
     });
   } catch (error) {

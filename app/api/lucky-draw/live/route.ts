@@ -6,6 +6,7 @@ export async function GET(request: Request) {
   const requestedDrawId = searchParams.get("draw");
   const isReplay = searchParams.get("replay") === "1";
   try {
+    let openDrawCount = 0;
     let drawsQuery = supabaseAdmin
       .from("lucky_draws")
       .select(`
@@ -30,8 +31,26 @@ export async function GET(request: Request) {
         .eq("id", requestedDrawId)
         .eq("status", "completed");
     } else {
-      // Normal Live Draw mode: ONLY an actual winner-selection
-      // session is live.
+      // Count draws currently open for ticket sales.
+      const { count, error: openCountError } =
+        await supabaseAdmin
+          .from("lucky_draws")
+          .select("id", {
+            count: "exact",
+            head: true,
+          })
+          .eq("status", "open");
+
+      if (openCountError) {
+        return NextResponse.json(
+          { error: openCountError.message },
+          { status: 500 }
+        );
+      }
+
+      openDrawCount = count || 0;
+
+      // Only a draw in winner-selection is considered LIVE.
       drawsQuery = drawsQuery.eq("status", "selecting");
     }
 
@@ -50,6 +69,7 @@ export async function GET(request: Request) {
     if (!draw) {
       return NextResponse.json({
         draw: null,
+        open_draw_count: openDrawCount,
         tickets: [],
         winners: [],
         server_time: new Date().toISOString(),
@@ -132,6 +152,7 @@ export async function GET(request: Request) {
         ticket_number: ticket.ticket_number,
       })),
       winners: publicWinners,
+      open_draw_count: openDrawCount,
       server_time: new Date().toISOString(),
     });
   } catch (error) {
