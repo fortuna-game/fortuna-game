@@ -1,0 +1,392 @@
+/* =========================================================
+   Fortuna Admin — Clean White Professional Theme
+   Visual styling only. No business logic changes.
+   ========================================================= */
+
+.admin-theme {
+  min-height: 100vh;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+/* Main admin pages */
+.admin-theme main {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Remove dark page backgrounds */
+.admin-theme [class*="bg-[#071A33]"],
+.admin-theme [class*="bg-[#0B2545]"] {
+  background: transparent !important;
+}
+
+/* Remove the large card treatment */
+.admin-theme [class*="rounded-3xl"] {
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.admin-theme [class*="rounded-2xl"] {
+  box-shadow: none !important;
+}
+
+/* Dark admin borders → subtle professional dividers */
+.admin-theme [class*="border-[#2A5688]"],
+.admin-theme [class*="border-[#38BDF8]"] {
+  border-color: #e2e8f0 !important;
+}
+
+/* Main headings */
+.admin-theme [class*="text-[#4D94F5]"] {
+  color: #059669 !important;
+}
+
+/* Money / positive amounts */
+.admin-theme [class*="text-green-300"],
+.admin-theme [class*="text-green-400"],
+.admin-theme [class*="text-green-500"],
+.admin-theme [class*="text-blue-300"] {
+  color: #059669 !important;
+}
+
+/* Yellow headings/statuses → green */
+.admin-theme [class*="text-[#FFE08A]"],
+.admin-theme [class*="text-[#FFD54A]"] {
+  color: #059669 !important;
+}
+
+/* Dark text utilities → professional dark text */
+.admin-theme [class*="text-white"] {
+  color: #0f172a !important;
+}
+
+.admin-theme [class*="text-[#9AAAC1]"],
+.admin-theme [class*="text-[#8295B0]"],
+.admin-theme [class*="text-[#7185A3]"] {
+  color: #64748b !important;
+}
+
+/* Admin navigation */
+.admin-theme nav,
+.admin-theme header {
+  color: #0f172a;
+}
+
+/* Admin nav dark buttons */
+.admin-theme [class*="bg-[#0F2F57]"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Primary blue admin buttons → green */
+.admin-theme [class*="bg-[#3F82DD]"],
+.admin-theme [class*="bg-[#2C63B3]"] {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* Yellow admin buttons → green */
+.admin-theme [class*="bg-[#FFD54A]"] {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* Existing affiliate green buttons */
+.admin-theme [class*="bg-green-500/20"] {
+  background: #ecfdf5 !important;
+  color: #047857 !important;
+}
+
+/* Tables */
+.admin-theme table {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+.admin-theme thead {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+.admin-theme tbody tr {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+}
+
+.admin-theme tbody tr:hover {
+  background: #f8fafc !important;
+}
+
+/* Remove dark inner rows */
+.admin-theme [class*="bg-[#071A33]/50"] {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Keep negative money/status colors meaningful */
+.admin-theme [class*="text-red-300"],
+.admin-theme [class*="text-red-400"],
+.admin-theme [class*="text-red-500"] {
+  color: #dc2626 !important;
+}
+
+/* Cancelled/orange */
+.admin-theme [class*="text-orange-400"],
+.admin-theme [class*="text-orange-500"] {
+  color: #ea580c !important;
+}
+
+/* Inputs */
+.admin-theme input,
+.admin-theme textarea,
+.admin-theme select {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* Links */
+.admin-theme a {
+  color: inherit;
+}
+
+/* Login/error messages should remain readable */
+.admin-theme [class*="border-red"] {
+  background: #fef2f2 !important;
+}
+
+.admin-theme [class*="border-green"] {
+  background: #ecfdf5 !important;
+}
+
+/* Final admin cleanup: keep content areas white, not solid green */
+.admin-theme [class*="rounded-3xl"][class*="bg-"],
+.admin-theme [class*="rounded-2xl"][class*="bg-"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Lucky Draw / dark content panels */
+.admin-theme [class*="bg-black"],
+.admin-theme [class*="bg-[#050505]"],
+.admin-theme [class*="bg-[#060606]"],
+.admin-theme [class*="bg-[#071A33]"],
+.admin-theme [class*="bg-[#0B2545]"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Keep actual buttons green */
+.admin-theme button[class*="bg-"],
+.admin-theme a[class*="rounded-xl"][class*="bg-"] {
+  color: #ffffff !important;
+}
+
+/* Green primary buttons */
+.admin-theme a[class*="bg-[#3F82DD]"],
+.admin-theme a[class*="bg-[#2C63B3]"],
+.admin-theme button[class*="bg-[#3F82DD]"],
+.admin-theme button[class*="bg-[#2C63B3]"] {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* Keep summary labels readable */
+.admin-theme [class*="rounded-3xl"] p,
+.admin-theme [class*="rounded-2xl"] p {
+  color: #475569;
+}
+
+/* Green money inside summary sections */
+.admin-theme [class*="rounded-3xl"] h2,
+.admin-theme [class*="rounded-2xl"] h2 {
+  color: #059669;
+}
+
+/* Negative money stays red */
+.admin-theme [class*="rounded-3xl"] [class*="text-red"],
+.admin-theme [class*="rounded-2xl"] [class*="text-red"] {
+  color: #dc2626 !important;
+}
+
+/* Status text */
+.admin-theme [class*="text-green"] {
+  color: #059669 !important;
+}
+
+.admin-theme [class*="text-blue"] {
+  color: #2563eb !important;
+}
+
+.admin-theme [class*="text-orange"] {
+  color: #ea580c !important;
+}
+
+.admin-theme [class*="text-red"] {
+  color: #dc2626 !important;
+}
+
+/* =========================================================
+   FINAL ADMIN GREEN/WHITE POLISH
+   ========================================================= */
+
+/* All yellow Lucky Draw controls become green */
+.admin-theme [class*="bg-[#FFD54A]"],
+.admin-theme [class*="bg-[#FFE08A]"],
+.admin-theme [class*="bg-yellow-"],
+.admin-theme [class*="border-[#FFD54A]"] {
+  background: #059669 !important;
+  border-color: #059669 !important;
+  color: #ffffff !important;
+}
+
+/* Yellow text becomes green where it is not a button */
+.admin-theme [class*="text-[#FFE08A]"],
+.admin-theme [class*="text-[#FFD54A]"],
+.admin-theme [class*="text-yellow-"] {
+  color: #059669 !important;
+}
+
+/* All ordinary content panels stay white */
+.admin-theme [class*="bg-[#0B2545]"],
+.admin-theme [class*="bg-[#071A33]"],
+.admin-theme [class*="bg-[#050505]"],
+.admin-theme [class*="bg-[#060606]"],
+.admin-theme [class*="bg-[#0F2F57]"] {
+  background: #ffffff !important;
+}
+
+/* Keep ordinary navigation links dark on white */
+.admin-theme .admin-nav-link {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Primary admin navigation buttons */
+.admin-theme .admin-nav-primary {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+/* Admin brand */
+.admin-theme .admin-brand {
+  color: #059669 !important;
+}
+
+/* All page headings */
+.admin-theme h1,
+.admin-theme h2,
+.admin-theme h3 {
+  color: #059669 !important;
+}
+
+/* Subtitles/body copy */
+.admin-theme p {
+  color: #475569;
+}
+
+/* Do not override meaningful status colors */
+.admin-theme .text-red-300,
+.admin-theme .text-red-400,
+.admin-theme .text-red-500,
+.admin-theme .text-red-600 {
+  color: #dc2626 !important;
+}
+
+.admin-theme .text-orange-400,
+.admin-theme .text-orange-500,
+.admin-theme .text-orange-600 {
+  color: #ea580c !important;
+}
+
+.admin-theme .text-blue-300,
+.admin-theme .text-blue-400,
+.admin-theme .text-blue-500,
+.admin-theme .text-blue-600 {
+  color: #2563eb !important;
+}
+
+/* Positive money/status */
+.admin-theme .text-green-300,
+.admin-theme .text-green-400,
+.admin-theme .text-green-500,
+.admin-theme .text-green-600 {
+  color: #059669 !important;
+}
+
+/* Admin filter buttons: always visible */
+.admin-theme button {
+  color: #0f172a;
+}
+
+/* Unselected filter/status buttons */
+.admin-theme button:not([class*="bg-green-500"]):not([class*="bg-[#3F82DD]"]):not([class*="bg-[#2C63B3]"]):not([class*="bg-[#FFD54A]"]) {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #dbe3ec !important;
+}
+
+/* Selected filters */
+.admin-theme button[class*="bg-green-500"],
+.admin-theme button[class*="bg-[#3F82DD]"],
+.admin-theme button[class*="bg-[#2C63B3]"],
+.admin-theme button[class*="bg-[#FFD54A]"] {
+  background: #059669 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+}
+
+/* Hover state for inactive filters */
+.admin-theme button:not([class*="bg-green-500"]):not([class*="bg-[#3F82DD]"]):not([class*="bg-[#2C63B3]"]):not([class*="bg-[#FFD54A]"]):hover {
+  background: #f0fdf4 !important;
+  border-color: #059669 !important;
+  color: #047857 !important;
+}
+
+/* Withdrawal page: make money movement unmistakable */
+.admin-withdrawals-page tbody td:nth-child(2) {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}
+
+.admin-withdrawals-page tbody td:nth-child(3) {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+/* Transaction references */
+.admin-transactions-page tbody td:nth-child(6) {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}
+
+/* Deposit references */
+.admin-theme table tbody td:nth-child(3) {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}
+
+/* Deposits = positive money */
+.admin-theme .admin-deposits-page tbody td.amount-positive,
+.admin-theme .admin-transactions-page tbody td.amount-positive {
+  color: #059669 !important;
+  font-weight: 800 !important;
+}
+
+/* Withdrawals = outgoing money */
+.admin-theme .admin-withdrawals-page tbody td.amount-negative,
+.admin-theme .admin-transactions-page tbody td.amount-negative {
+  color: #dc2626 !important;
+  font-weight: 800 !important;
+}
+
+/* All references */
+.admin-theme .transaction-reference {
+  color: #059669 !important;
+  font-weight: 700 !important;
+}

@@ -1333,17 +1333,17 @@ No cash will automatically be credited. Delivery or collection details will be r
                   return (
                     <div
                       key={draw.id}
-                      className="min-w-0 rounded-3xl border border-[#38BDF8]/15 bg-[#0B2545]/70 p-6"
+                      className="min-w-0 rounded-xl border border-slate-200 bg-white p-3"
                     >
                       {draw.prize_image && (
                         <img
                           src={draw.prize_image}
                           alt={draw.title}
-                          className="mx-auto aspect-[3/4] w-full max-w-sm min-w-0 rounded-2xl object-cover"
+                          className="mx-auto h-32 w-32 rounded-xl object-cover"
                         />
                       )}
 
-                      <div className="mt-5 flex flex-wrap items-start justify-between gap-4">
+                      <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <p className="text-sm font-bold text-[#8295B0]">
                             {getPrizeLabel(draw)}

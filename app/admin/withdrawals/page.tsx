@@ -151,7 +151,7 @@ export default function AdminWithdrawalsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#071A33] px-6 py-12 text-white">
+    <main className="admin-withdrawals-page min-h-screen bg-[#071A33] px-6 py-12 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <h1 className="text-4xl font-black text-[#4D94F5]">Admin Withdrawals</h1>
@@ -182,8 +182,8 @@ export default function AdminWithdrawalsPage() {
                 return (
                   <tr key={w.id} className="border-t border-[#38BDF8]/15">
                     <td className="p-4 font-bold">@{profiles[w.user_id] || "Player"}</td>
-                    <td className="p-4 font-bold text-[#66A7FF]">{w.reference}</td>
-                    <td className="p-4">GH₵{Number(w.amount).toFixed(2)}</td>
+                    <td className="p-4 font-bold text-emerald-600">{w.reference}</td>
+                    <td className="p-4 font-bold text-red-600">-GH₵{Number(w.amount).toFixed(2)}</td>
                     <td className="p-4">{w.network}</td>
                     <td className="p-4">{w.momo_number}</td>
                     <td className="p-4">{statusLabel(w.status)}</td>

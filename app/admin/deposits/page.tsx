@@ -101,7 +101,7 @@ export default function AdminDepositsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
+    <main className="admin-deposits-page min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -178,8 +178,8 @@ export default function AdminDepositsPage() {
                       <p className="text-sm text-[#8295B0]">{d.first_name}</p>
                     </td>
                     <td className="p-4">{d.phone || "-"}</td>
-                    <td className="p-4 font-bold text-[#66A7FF]">{d.reference}</td>
-                    <td className="p-4 font-bold">GH₵{Number(d.amount).toFixed(2)}</td>
+                    <td className="transaction-reference p-4">{d.reference}</td>
+                    <td className="amount-positive p-4 font-bold">GH₵{Number(d.amount).toFixed(2)}</td>
                     <td className="p-4">
                       <span
                         className={

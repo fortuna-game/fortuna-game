@@ -110,35 +110,35 @@ export default function WalletPage() {
   }, [paymentSuccess, paymentFailed, paymentReference]);
 
   return (
-    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
+    <main className="min-h-screen bg-white px-6 py-10 text-slate-900">
       <div className="mx-auto max-w-5xl">
-        <h1 className="text-3xl sm:text-4xl font-black text-[#4D94F5]">Wallet</h1>
-        <p className="mt-2 text-[#9AAAC1]">@{username}</p>
+        <h1 className="text-3xl sm:text-4xl font-black text-emerald-600">Wallet</h1>
+        <p className="mt-2 text-slate-500">@{username}</p>
 
         {verifying && (
-          <div className="mt-5 rounded-xl border border-blue-400/30 bg-[#3F82DD]/10 p-4 text-green-300">
+          <div className="mt-5 border-l-4 border-emerald-500 bg-emerald-50 p-4 text-emerald-700">
             Deposit successful. Verifying payment... your wallet will update shortly.
           </div>
         )}
 
         {paymentFailed && (
-          <div className="mt-5 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-red-300">
+          <div className="mt-5 border-l-4 border-red-500 bg-red-50 p-4 text-red-700">
             Transaction failed or was cancelled. Your wallet was not credited.
           </div>
         )}
 
-        <section className="mt-6 rounded-3xl border border-[#2A5688] bg-[#2C63B3]/10 p-6">
-          <p className="text-[#9AAAC1]">Available Balance</p>
-          <h2 className="mt-2 text-3xl sm:text-3xl sm:text-4xl lg:text-5xl font-black text-[#4D94F5]">₵{balance}</h2>
+        <section className="mt-8 border-t border-slate-200 pt-8">
+          <p className="text-sm font-semibold text-emerald-600">Available Balance</p>
+          <h2 className="mt-2 text-4xl sm:text-5xl font-black text-emerald-600">₵{balance}</h2>
 
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <Link href="/wallet/deposit" className="rounded-xl bg-[#3F82DD] py-3 text-center font-black text-black">
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/wallet/deposit" className="rounded-lg bg-emerald-600 px-7 py-3 text-center font-bold text-white transition hover:bg-emerald-700">
               Deposit
             </Link>
-            <Link href="/wallet/withdraw" className="rounded-xl bg-[#3F82DD] py-3 text-center font-black text-black">
+            <Link href="/wallet/withdraw" className="rounded-lg bg-emerald-600 px-7 py-3 text-center font-bold text-white transition hover:bg-emerald-700">
               Withdraw
             </Link>
-            <Link href="/wallet/history" className="rounded-xl border border-[#38BDF8]/15 bg-[#0B2545]/70 py-3 text-center font-bold">
+            <Link href="/wallet/history" className="rounded-lg bg-emerald-600 px-7 py-3 text-center font-bold text-white transition hover:bg-emerald-700">
               Account History
             </Link>
           </div>

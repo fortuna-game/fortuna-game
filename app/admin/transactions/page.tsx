@@ -52,7 +52,7 @@ export default function AdminTransactionsPage() {
   }, [transactions, filter]);
 
   return (
-    <main className="min-h-screen bg-[#071A33] px-6 py-10 text-white">
+    <main className="admin-transactions-page min-h-screen bg-[#071A33] px-6 py-10 text-white">
       <div className="mx-auto max-w-7xl">
         <AdminNav />
         <div className="flex flex-wrap items-center justify-between gap-4">
