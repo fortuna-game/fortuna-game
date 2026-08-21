@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabaseAdmin";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const requestedDrawId = searchParams.get("draw");
+  const isReplay = searchParams.get("replay") === "1";
   try {
     let drawsQuery = supabaseAdmin
       .from("lucky_draws")
@@ -23,12 +24,15 @@ export async function GET(request: Request) {
       `)
       .order("created_at", { ascending: false });
 
-    if (requestedDrawId) {
-      // A specific draw ID is a replay request, so completed draws are allowed.
-      drawsQuery = drawsQuery.eq("id", requestedDrawId);
+    if (isReplay && requestedDrawId) {
+      // Explicit replay mode: only completed draws can be replayed.
+      drawsQuery = drawsQuery
+        .eq("id", requestedDrawId)
+        .eq("status", "completed");
     } else {
-      // The normal Live Draw page must NEVER fall back to a completed draw.
-      drawsQuery = drawsQuery.in("status", ["open", "selecting"]);
+      // Normal Live Draw mode: ONLY an actual winner-selection
+      // session is live.
+      drawsQuery = drawsQuery.eq("status", "selecting");
     }
 
     const { data: draws, error: drawsError } =

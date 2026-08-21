@@ -132,7 +132,7 @@ export default function DrawReplaysPage() {
                     )}
 
                     <Link
-                      href={`/lucky-draw/live?draw=${draw.id}`}
+                      href={`/lucky-draw/live?replay=1&draw=${draw.id}`}
                       className="mt-5 block rounded-xl bg-[#FFD54A] px-5 py-3 text-center font-black text-black transition hover:bg-yellow-300"
                     >
                       ▶ Watch Replay

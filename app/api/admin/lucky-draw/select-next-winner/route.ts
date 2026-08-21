@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const { data: draw, error: drawError } =
       await supabaseAdmin
         .from("lucky_draws")
-        .select("id, status")
+        .select("id, status, ends_at, winner_count")
         .eq("id", drawId)
         .maybeSingle();
 
@@ -104,6 +104,58 @@ export async function POST(request: NextRequest) {
         {
           error:
             "This Lucky Draw was cancelled. Winner selection is not allowed.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      draw.ends_at &&
+      new Date(draw.ends_at).getTime() > Date.now()
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "Winner selection cannot begin until the Lucky Draw has ended.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const { count: ticketCount, error: ticketCountError } =
+      await supabaseAdmin
+        .from("lucky_draw_tickets")
+        .select("id", {
+          count: "exact",
+          head: true,
+        })
+        .eq("draw_id", drawId);
+
+    if (ticketCountError) {
+      return NextResponse.json(
+        { error: ticketCountError.message },
+        { status: 500 }
+      );
+    }
+
+    if (!ticketCount || ticketCount < 1) {
+      return NextResponse.json(
+        {
+          error:
+            "Winner selection cannot begin because no eligible participants entered this Lucky Draw.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      draw.status !== "ended" &&
+      draw.status !== "selecting"
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw is not ready for winner selection.",
         },
         { status: 400 }
       );

@@ -19,7 +19,8 @@ export default function LiveLuckyDrawPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const replayId = params.get("draw");
+    const isReplay = params.get("replay") === "1";
+    const replayId = isReplay ? params.get("draw") : null;
 
     async function checkDraw() {
       try {
