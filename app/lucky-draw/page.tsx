@@ -18,6 +18,8 @@ type Draw = {
   prize_value?: number | null;
   ticket_price: number;
   max_entries?: number | null;
+  duration_days?: number | null;
+  ends_at?: string | null;
   status: string;
   totalTickets: number;
   starts_at?: string | null;
@@ -297,6 +299,69 @@ export default function LuckyDrawPage() {
     if (status === "suspended") return "Suspended";
     if (status === "completed") return "Completed";
     return status;
+  }
+
+  function getDrawCountdown(draw: Draw) {
+    const startMs = draw.starts_at
+      ? new Date(draw.starts_at).getTime()
+      : null;
+
+    const endMs = draw.ends_at
+      ? new Date(draw.ends_at).getTime()
+      : null;
+
+    if (startMs !== null && now < startMs) {
+      return {
+        phase: "starts",
+        ms: startMs - now,
+      };
+    }
+
+    if (endMs !== null && now < endMs) {
+      return {
+        phase: "ends",
+        ms: endMs - now,
+      };
+    }
+
+    return {
+      phase: "closed",
+      ms: 0,
+    };
+  }
+
+  function formatDrawCountdown(ms: number) {
+    const totalSeconds = Math.max(
+      0,
+      Math.floor(ms / 1000)
+    );
+
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor(
+      (totalSeconds % 86400) / 3600
+    );
+    const minutes = Math.floor(
+      (totalSeconds % 3600) / 60
+    );
+    const seconds = totalSeconds % 60;
+
+    if (days > 0) {
+      return `${days}d ${String(hours).padStart(
+        2,
+        "0"
+      )}h ${String(minutes).padStart(
+        2,
+        "0"
+      )}m ${String(seconds).padStart(2, "0")}s`;
+    }
+
+    return `${String(hours).padStart(
+      2,
+      "0"
+    )}h ${String(minutes).padStart(
+      2,
+      "0"
+    )}m ${String(seconds).padStart(2, "0")}s`;
   }
 
   function getRemainingEntries(draw: Draw) {
@@ -585,6 +650,112 @@ export default function LuckyDrawPage() {
                               You currently have {myTickets} ticket
                               {myTickets === 1 ? "" : "s"} in this draw.
                             </p>
+                          </div>
+                        )}
+
+                        {(() => {
+                          const countdown =
+                            getDrawCountdown(draw);
+
+                          return (
+                            <div className="mt-5 rounded-2xl border border-yellow-400/30 bg-yellow-400/10 p-5 text-center">
+                              <p className="text-xs font-black uppercase tracking-[0.18em] text-yellow-300">
+                                {countdown.phase === "starts"
+                                  ? "Draw Starts In"
+                                  : countdown.phase === "ends"
+                                  ? "Draw Ends In"
+                                  : "Entries Closed"}
+                              </p>
+
+                              {countdown.phase !== "closed" ? (
+                                <p className="mt-2 text-2xl font-black tracking-wide text-white sm:text-3xl">
+                                  {formatDrawCountdown(
+                                    countdown.ms
+                                  )}
+                                </p>
+                              ) : (
+                                <p className="mt-2 text-xl font-black text-red-300">
+                                  Entries Closed
+                                </p>
+                              )}
+                            </div>
+                          );
+                        })()}
+
+                        {(draw.duration_days != null ||
+                          draw.starts_at ||
+                          draw.ends_at ||
+                          draw.selection_at) && (
+                          <div className="mt-5 rounded-2xl border border-purple-400/25 bg-purple-500/5 p-4">
+                            <div className="flex items-center justify-between gap-4">
+                              <div>
+                                <p className="text-xs font-black uppercase tracking-wide text-purple-300">
+                                  Draw Schedule
+                                </p>
+
+                                {draw.duration_days != null && (
+                                  <p className="mt-1 text-lg font-black text-white">
+                                    {draw.duration_days} day
+                                    {draw.duration_days === 1 ? "" : "s"}
+                                  </p>
+                                )}
+                              </div>
+
+                              {draw.ends_at && (
+                                <div className="text-right">
+                                  <p className="text-xs font-bold text-white/50">
+                                    Ends
+                                  </p>
+
+                                  <p className="mt-1 text-sm font-black text-purple-200">
+                                    {new Date(
+                                      draw.ends_at
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                              {draw.starts_at && (
+                                <div className="rounded-xl border border-white/10 bg-black/10 p-3">
+                                  <p className="text-[11px] font-black uppercase tracking-wide text-white/45">
+                                    Starts
+                                  </p>
+                                  <p className="mt-1 text-sm font-bold text-white">
+                                    {new Date(
+                                      draw.starts_at
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+
+                              {draw.ends_at && (
+                                <div className="rounded-xl border border-white/10 bg-black/10 p-3">
+                                  <p className="text-[11px] font-black uppercase tracking-wide text-white/45">
+                                    Entries Close
+                                  </p>
+                                  <p className="mt-1 text-sm font-bold text-white">
+                                    {new Date(
+                                      draw.ends_at
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+
+                              {draw.selection_at && (
+                                <div className="rounded-xl border border-white/10 bg-black/10 p-3">
+                                  <p className="text-[11px] font-black uppercase tracking-wide text-white/45">
+                                    Winner Selection
+                                  </p>
+                                  <p className="mt-1 text-sm font-bold text-white">
+                                    {new Date(
+                                      draw.selection_at
+                                    ).toLocaleString()}
+                                  </p>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
 

@@ -47,6 +47,8 @@ export async function POST(req: Request) {
       rules,
       winnerCount,
       maxEntries,
+      durationDays,
+      endsAt,
       startsAt,
       selectionAt,
     } = await req.json();
@@ -55,6 +57,28 @@ export async function POST(req: Request) {
     const finalPrizeType = String(prizeType || "").trim();
     const finalTicketPrice = Number(ticketPrice);
     const finalWinnerCount = Number(winnerCount || 1);
+
+    const finalDurationDays =
+      durationDays == null ||
+      String(durationDays).trim() === ""
+        ? null
+        : Number(durationDays);
+
+    const finalEndsAt =
+      endsAt && !Number.isNaN(new Date(endsAt).getTime())
+        ? new Date(endsAt).toISOString()
+        : null;
+
+    if (
+      finalDurationDays !== null &&
+      (!Number.isInteger(finalDurationDays) ||
+        finalDurationDays < 1)
+    ) {
+      return NextResponse.json(
+        { error: "Duration must be a whole number of days greater than 0." },
+        { status: 400 }
+      );
+    }
 
     if (!cleanTitle) {
       return NextResponse.json(
@@ -199,6 +223,8 @@ export async function POST(req: Request) {
         rules: String(rules || "").trim() || null,
         winner_count: finalWinnerCount,
         max_entries: finalMaxEntries,
+        duration_days: finalDurationDays,
+        ends_at: finalEndsAt,
         starts_at: finalStartsAt,
         selection_at: finalSelectionAt,
       })

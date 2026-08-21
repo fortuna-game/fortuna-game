@@ -152,7 +152,7 @@ export async function POST(req: Request) {
     const { data: draw, error: drawError } =
       await supabaseAdmin
         .from("lucky_draws")
-        .select("id, status, title, starts_at")
+        .select("id, status, title, starts_at, ends_at")
         .eq("id", drawId)
         .maybeSingle();
 
@@ -201,6 +201,19 @@ export async function POST(req: Request) {
         {
           error:
             "This Lucky Draw is upcoming. Ticket purchases will open when the draw starts.",
+        },
+        { status: 400 }
+      );
+    }
+
+    if (
+      draw.ends_at &&
+      new Date(draw.ends_at).getTime() <= Date.now()
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This Lucky Draw has ended. Ticket purchases are closed.",
         },
         { status: 400 }
       );

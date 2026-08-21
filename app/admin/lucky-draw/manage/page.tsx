@@ -72,6 +72,7 @@ export default function AdminLuckyDrawPage() {
   const [rules, setRules] = useState("");
   const [winnerCount, setWinnerCount] = useState("1");
   const [maxEntries, setMaxEntries] = useState("");
+  const [durationDays, setDurationDays] = useState("1");
   const [startsAt, setStartsAt] = useState("");
   const [selectionAt, setSelectionAt] = useState("");
   const [scheduleMode, setScheduleMode] = useState<"upcoming" | "now">("upcoming");
@@ -96,6 +97,7 @@ export default function AdminLuckyDrawPage() {
   const [editRules, setEditRules] = useState("");
   const [editWinnerCount, setEditWinnerCount] = useState("1");
   const [editMaxEntries, setEditMaxEntries] = useState("");
+  const [editDurationDays, setEditDurationDays] = useState("1");
   const [editStartsAt, setEditStartsAt] = useState("");
   const [editSelectionAt, setEditSelectionAt] = useState("");
   const [savingEdit, setSavingEdit] = useState(false);
@@ -327,6 +329,21 @@ export default function AdminLuckyDrawPage() {
     const startDate = new Date(startsAt);
     const selectionDate = new Date(selectionAt);
 
+    const finalDurationDays = Number(durationDays);
+
+    if (
+      !Number.isInteger(finalDurationDays) ||
+      finalDurationDays < 1
+    ) {
+      setMessage("Duration must be a whole number of days greater than 0.");
+      return;
+    }
+
+    const calculatedEndDate = new Date(startDate);
+    calculatedEndDate.setDate(
+      calculatedEndDate.getDate() + finalDurationDays
+    );
+
     if (
       Number.isNaN(startDate.getTime()) ||
       Number.isNaN(selectionDate.getTime())
@@ -335,9 +352,14 @@ export default function AdminLuckyDrawPage() {
       return;
     }
 
-    if (selectionDate <= startDate) {
+    if (calculatedEndDate <= startDate) {
+      setMessage("Draw end time must be after the draw start time.");
+      return;
+    }
+
+    if (selectionDate < calculatedEndDate) {
       setMessage(
-        "Winner selection time must be after the draw start time."
+        "Winner selection time must be at or after the draw end time."
       );
       return;
     }
@@ -405,6 +427,8 @@ Selection: ${selectionDate.toLocaleString()}`
                 ? null
                 : Number(maxEntries),
             startsAt: startDate.toISOString(),
+            endsAt: calculatedEndDate.toISOString(),
+            durationDays: finalDurationDays,
             selectionAt: selectionDate.toISOString(),
           }),
         }
@@ -554,6 +578,22 @@ Selection: ${selectionDate.toLocaleString()}`
         ? ""
         : String(draw.max_entries)
     );
+
+    const existingDuration =
+      draw.duration_days != null
+        ? Number(draw.duration_days)
+        : draw.starts_at && draw.ends_at
+        ? Math.max(
+            1,
+            Math.ceil(
+              (new Date(draw.ends_at).getTime() -
+                new Date(draw.starts_at).getTime()) /
+                86400000
+            )
+          )
+        : 1;
+
+    setEditDurationDays(String(existingDuration));
     setEditStartsAt(toDateTimeLocal(draw.starts_at));
     setEditSelectionAt(toDateTimeLocal(draw.selection_at));
     setMessage("");
@@ -572,6 +612,7 @@ Selection: ${selectionDate.toLocaleString()}`
     setEditRules("");
     setEditWinnerCount("1");
     setEditMaxEntries("");
+    setEditDurationDays("1");
     setEditStartsAt("");
     setEditSelectionAt("");
   }
@@ -605,6 +646,21 @@ Selection: ${selectionDate.toLocaleString()}`
     const startDate = new Date(editStartsAt);
     const selectionDate = new Date(editSelectionAt);
 
+    const finalDurationDays = Number(editDurationDays);
+
+    if (
+      !Number.isInteger(finalDurationDays) ||
+      finalDurationDays < 1
+    ) {
+      setMessage("Duration must be a whole number of days greater than 0.");
+      return;
+    }
+
+    const calculatedEndDate = new Date(startDate);
+    calculatedEndDate.setDate(
+      calculatedEndDate.getDate() + finalDurationDays
+    );
+
     if (
       Number.isNaN(startDate.getTime()) ||
       Number.isNaN(selectionDate.getTime())
@@ -613,9 +669,14 @@ Selection: ${selectionDate.toLocaleString()}`
       return;
     }
 
-    if (selectionDate <= startDate) {
+    if (calculatedEndDate <= startDate) {
+      setMessage("Draw end time must be after the draw start time.");
+      return;
+    }
+
+    if (selectionDate < calculatedEndDate) {
       setMessage(
-        "Winner selection time must be after the draw start time."
+        "Winner selection time must be at or after the draw end time."
       );
       return;
     }
@@ -719,6 +780,8 @@ Type: ${editPrizeType}`
                 ? null
                 : Number(editMaxEntries),
             startsAt: startDate.toISOString(),
+            endsAt: calculatedEndDate.toISOString(),
+            durationDays: finalDurationDays,
             selectionAt: selectionDate.toISOString(),
           }),
         }
@@ -1327,6 +1390,29 @@ No cash will automatically be credited. Delivery or collection details will be r
 
                 <div>
                   <label className="text-sm font-bold text-[#9AAAC1]">
+                    Draw Duration (Days)
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputMode="numeric"
+                    value={durationDays}
+                    onChange={(e) =>
+                      setDurationDays(e.target.value)
+                    }
+                    placeholder="Example: 7"
+                    className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                  />
+
+                  <p className="mt-2 text-xs text-[#8295B0]">
+                    The draw will run for this many days from the start time.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-sm font-bold text-[#9AAAC1]">
                     Draw Start Date & Time
                   </label>
 
@@ -1672,7 +1758,30 @@ No cash will automatically be credited. Delivery or collection details will be r
                     </p>
                   </div>
 
-                  <div>
+                                    <div>
+                    <label className="text-sm font-bold text-[#9AAAC1]">
+                      Draw Duration (Days)
+                    </label>
+
+                    <input
+                      type="number"
+                      min="1"
+                      step="1"
+                      inputMode="numeric"
+                      value={editDurationDays}
+                      onChange={(e) =>
+                        setEditDurationDays(e.target.value)
+                      }
+                      placeholder="Example: 7"
+                      className="mt-2 w-full rounded-xl border border-[#38BDF8]/15 bg-[#071A33] px-4 py-3 outline-none focus:border-[#FFD54A]"
+                    />
+
+                    <p className="mt-2 text-xs text-[#8295B0]">
+                      The draw will run for this many days from the start time.
+                    </p>
+                  </div>
+
+<div>
                     <label className="text-sm font-bold text-[#9AAAC1]">
                       Draw Start Date & Time
                     </label>
@@ -2047,6 +2156,36 @@ No cash will automatically be credited. Delivery or collection details will be r
                           <h3 className="mt-2 text-xl font-black text-blue-300">
                             {drawTickets.length}
                           </h3>
+                        </div>
+
+                        <div className="min-w-0 rounded-2xl border border-purple-400/20 bg-purple-400/10 p-4">
+                          <p className="text-sm text-[#9AAAC1]">
+                            Draw Schedule
+                          </p>
+
+                          <h3 className="mt-2 text-lg font-black text-purple-300">
+                            {draw.duration_days
+                              ? `${draw.duration_days} day${draw.duration_days === 1 ? "" : "s"}`
+                              : "Not set"}
+                          </h3>
+
+                          <p className="mt-1 text-xs text-white/60">
+                            {draw.starts_at
+                              ? `Starts: ${new Date(draw.starts_at).toLocaleString()}`
+                              : "Start not set"}
+                          </p>
+
+                          <p className="mt-1 text-xs text-white/60">
+                            {draw.ends_at
+                              ? `Ends: ${new Date(draw.ends_at).toLocaleString()}`
+                              : "End not set"}
+                          </p>
+
+                          {draw.selection_at && (
+                            <p className="mt-1 text-xs text-white/60">
+                              {`Selection: ${new Date(draw.selection_at).toLocaleString()}`}
+                            </p>
+                          )}
                         </div>
 
                         <div className="min-w-0 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 p-4">
