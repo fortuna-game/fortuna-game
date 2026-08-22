@@ -29,6 +29,10 @@ export default function LegalFooter() {
           <Link href="/support" className="hover:text-[#FFD54A]">
             Support
           </Link>
+
+          <Link href="/careers" className="hover:text-[#FFD54A]">
+            Careers
+          </Link>
         </div>
 
         <p className="mt-5 text-[11px] text-white/30">
