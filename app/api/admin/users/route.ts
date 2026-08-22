@@ -56,11 +56,20 @@ export async function GET(req: Request) {
       const userTransactions = (transactions.data || []).filter((t: any) => t.user_id === p.user_id);
       const userSessions = (sessions.data || []).filter((s: any) => s.user_id === p.user_id);
 
+      const profileComplete = Boolean(
+        p.first_name?.trim() &&
+        p.last_name?.trim() &&
+        p.username?.trim() &&
+        p.phone?.trim()
+      );
+
       return {
         user_id: p.user_id,
-        username: p.username || "Player",
+        username: p.username || null,
         first_name: p.first_name || "",
+        last_name: p.last_name || "",
         phone: p.phone || "",
+        profile_complete: profileComplete,
         created_at: p.created_at,
         balance: Number(userWallet?.balance || 0),
         deposits: userDeposits.reduce((sum: number, d: any) => sum + Number(d.amount || 0), 0),

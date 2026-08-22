@@ -57,7 +57,7 @@ export default function AdminUsersPage() {
                 <tr>
                   <th className="p-4">User</th>
                   <th className="p-4">Phone</th>
-                  <th className="p-4">Balance</th>
+                  <th className="p-4">Wallet Balance</th>
                   <th className="p-4">Deposits</th>
                   <th className="p-4">Withdrawals</th>
                   <th className="p-4">Games</th>
@@ -71,11 +71,40 @@ export default function AdminUsersPage() {
                 {users.map((u) => (
                   <tr key={u.user_id} className="border-t border-[#38BDF8]/15">
                     <td className="p-4">
-                      <Link href={`/admin/users/${u.user_id}`} className="font-black text-[#66A7FF] hover:underline">@{u.username}</Link>
-                      <p className="text-sm text-[#8295B0]">{u.first_name}</p>
+                      <Link
+                        href={`/admin/users/${u.user_id}`}
+                        className="font-black text-[#66A7FF] hover:underline"
+                      >
+                        @{u.username || "Incomplete"}
+                      </Link>
+
+                      <p className="text-sm text-[#8295B0]">
+                        {u.first_name || u.last_name
+                          ? [u.first_name, u.last_name].filter(Boolean).join(" ")
+                          : "Name missing"}
+                      </p>
+
+                      {!u.profile_complete && (
+                        <span className="mt-1 inline-block rounded-full bg-yellow-400/10 px-2 py-1 text-[10px] font-black text-yellow-300">
+                          ⚠ Incomplete Profile
+                        </span>
+                      )}
                     </td>
-                    <td className="p-4">{u.phone || "-"}</td>
-                    <td className="p-4 font-bold">GH₵{Number(u.balance).toFixed(2)}</td>
+                    <td className="p-4">
+                      {u.phone || (
+                        <span className="text-yellow-300">
+                          Missing
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+  <div className="font-black text-[#FFD54A]">
+    GH₵{Number(u.balance).toFixed(2)}
+  </div>
+  <div className="text-xs text-[#8295B0]">
+    Available wallet balance
+  </div>
+</td>
                     <td className="p-4">GH₵{Number(u.deposits).toFixed(2)}</td>
                     <td className="p-4">GH₵{Number(u.withdrawals).toFixed(2)}</td>
                     <td className="p-4">{u.games}</td>
