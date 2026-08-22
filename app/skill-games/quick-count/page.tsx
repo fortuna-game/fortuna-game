@@ -1,17 +1,5 @@
-"use client";
+import LockedGame from "@/components/skill-games/LockedGame";
 
-import QuestionGame from "@/components/skill-games/QuestionGame";
-
-export default function QuickCountPage() {
-  return (
-    <QuestionGame
-      slug="quick-count"
-      name="Quick Count"
-      icon="👁️"
-      description="Count the objects quickly and reach the target score before time runs out."
-      minScore={17}
-      total={20}
-      seconds={30}
-    />
-  );
+export default function Page() {
+  return <LockedGame title="Quick Count" icon="👁️" />;
 }

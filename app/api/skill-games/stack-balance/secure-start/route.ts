@@ -1,31 +1,5 @@
-import { NextResponse } from "next/server";
-import { supabaseAdmin } from "@/lib/supabaseAdmin";
+import { skillGamesLockedResponse } from "@/lib/skillGamesLock";
 
-export async function POST(req: Request) {
-  const token = req.headers.get("authorization")?.replace("Bearer ", "");
-  if (!token) return NextResponse.json({ error: "Please log in." }, { status: 401 });
-
-  const { data: { user } } = await supabaseAdmin.auth.getUser(token);
-  if (!user) return NextResponse.json({ error: "Invalid session." }, { status: 401 });
-
-  const { stake } = await req.json();
-  const stakeAmount = Number(stake);
-
-  const challenge = {
-    targetBlocks: 10,
-    tolerance: 11,
-    timeLimit: 60,
-  };
-
-  const { data: sessionId, error } = await supabaseAdmin.rpc("start_skill_game_atomic", {
-    p_user_id: user.id,
-    p_game_slug: "stack-balance",
-    p_stake: stakeAmount,
-    p_payout: stakeAmount * 2,
-    p_answers: challenge,
-  });
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
-
-  return NextResponse.json({ sessionId, challenge });
+export async function POST() {
+  return skillGamesLockedResponse();
 }

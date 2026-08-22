@@ -157,42 +157,47 @@ export default function SkillGamesPage() {
             </p>
 
             <h2 className="mt-2 text-2xl font-black sm:text-3xl">
-              Test your skills
+              More Games — Coming Soon
             </h2>
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {games.map(([slug, icon, name, tag], index) => (
-              <Link
+              <div
                 key={slug}
-                href={`/skill-games/${slug}`}
-                className="group relative overflow-hidden rounded-3xl border border-[#38BDF8]/15 bg-gradient-to-br from-white/10 via-white/5 to-[#071A33] p-5 shadow-xl transition duration-300 hover:-translate-y-1 hover:border-[#4D94F5]/60"
+                className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] via-white/[0.03] to-[#071A33] p-5 shadow-xl"
               >
-                <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-[#3F82DD]/10 blur-2xl transition group-hover:bg-[#3F82DD]/25" />
+                <div className="absolute right-[-30px] top-[-30px] h-28 w-28 rounded-full bg-white/[0.03] blur-2xl" />
 
                 <div className="relative flex items-start justify-between gap-3">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-[#2A5688] bg-[#071A33]/60 text-4xl shadow-lg transition group-hover:scale-110">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-[#071A33]/70 text-4xl opacity-70">
                     {icon}
                   </div>
 
-                  <span className="rounded-full border border-[#38BDF8]/15 bg-[#0B2545]/70 px-3 py-1 text-xs text-[#8295B0]">
-                    #{index + 1}
+                  <span className="rounded-full border border-yellow-400/20 bg-yellow-400/10 px-3 py-1 text-xs font-black text-yellow-300">
+                    🔒 LOCKED
                   </span>
                 </div>
 
-                <h3 className="relative mt-5 text-2xl font-black text-white">
+                <h3 className="relative mt-5 text-2xl font-black text-white/80">
                   {name}
                 </h3>
 
-                <p className="relative mt-2 text-sm text-[#66A7FF]">
+                <p className="relative mt-2 text-sm text-[#8295B0]">
                   {tag}
                 </p>
 
-                <div className="relative mt-5 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[#3F82DD] px-4 py-3 font-black text-black">
-                  <span>Open Game</span>
-                  <span className="transition group-hover:translate-x-1">→</span>
+                <div className="relative mt-5 rounded-2xl border border-yellow-400/15 bg-yellow-400/5 px-4 py-4">
+                  <p className="font-black text-yellow-300">
+                    🔒 Game Under Development
+                  </p>
+
+                  <p className="mt-1 text-xs leading-5 text-white/45">
+                    We are improving this game to give you a better
+                    experience. Please check back soon.
+                  </p>
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </section>

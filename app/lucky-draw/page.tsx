@@ -34,6 +34,7 @@ type Ticket = {
   ticket_number: string;
   amount: number;
   created_at: string;
+  draw_title?: string;
 };
 
 function formatCountdown(ms: number) {
@@ -1023,12 +1024,20 @@ export default function LuckyDrawPage() {
                 Ticket Purchased!
               </h2>
 
-              <p className="mt-3 text-sm text-white/65">
+              <p className="mt-3 text-sm font-bold text-[#FFD54A]">
+                {ticket.draw_title || "Lucky Draw"}
+              </p>
+
+              <p className="mt-4 text-sm text-white/65">
                 Your ticket number is
               </p>
 
               <p className="mt-2 text-2xl font-black text-white">
                 {ticket.ticket_number}
+              </p>
+
+              <p className="mt-2 text-xs text-white/45">
+                Entry: GH₵{Number(ticket.amount || 0).toFixed(2)}
               </p>
 
               <button

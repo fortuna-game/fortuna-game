@@ -282,7 +282,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      ticket,
+      ticket: {
+        ...ticket,
+        draw_title: draw.title,
+      },
       drawId,
       message:
         "Your Lucky Draw ticket was purchased successfully.",

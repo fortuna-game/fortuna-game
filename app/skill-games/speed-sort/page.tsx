@@ -1,17 +1,5 @@
-"use client";
+import LockedGame from "@/components/skill-games/LockedGame";
 
-import QuestionGame from "@/components/skill-games/QuestionGame";
-
-export default function SpeedSortPage() {
-  return (
-    <QuestionGame
-      slug="speed-sort"
-      name="Speed Sort"
-      icon="⚡"
-      description="Sort each item into the correct category before time runs out."
-      minScore={17}
-      total={20}
-      seconds={30}
-    />
-  );
+export default function Page() {
+  return <LockedGame title="Speed Sort" icon="⚡" />;
 }

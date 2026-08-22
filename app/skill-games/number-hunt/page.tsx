@@ -1,17 +1,5 @@
-"use client";
+import LockedGame from "@/components/skill-games/LockedGame";
 
-import QuestionGame from "@/components/skill-games/QuestionGame";
-
-export default function GamePage() {
-  return (
-    <QuestionGame
-      slug="number-hunt"
-      name="Number Hunt"
-      icon="🔎"
-      description="Find the correct numbers quickly and reach the winning target."
-      minScore={17}
-      total={20}
-      seconds={45}
-    />
-  );
+export default function Page() {
+  return <LockedGame title="Number Hunt" icon="🔢" />;
 }
