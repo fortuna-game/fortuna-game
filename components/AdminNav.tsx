@@ -30,6 +30,7 @@ export default function AdminNav() {
           <Link href="/admin/prize-vault" className="admin-nav-primary rounded-xl px-4 py-2">🎁 Prize Vault</Link>
           <Link href="/admin/transactions" className="admin-nav-link rounded-xl px-4 py-2">Transactions</Link>
           <Link href="/admin/support" className="admin-nav-link rounded-xl px-4 py-2">Support</Link>
+          <Link href="/admin/careers" className="admin-nav-link rounded-xl px-4 py-2">Careers</Link>
           <Link href="/admin/withdrawals" className="admin-nav-primary rounded-xl px-4 py-2">Withdrawals</Link>
           <button onClick={logout} className="admin-nav-primary rounded-xl px-4 py-2">
             Logout
