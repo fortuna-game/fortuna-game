@@ -1040,6 +1040,34 @@ export default function LuckyDrawPage() {
                 Entry: GH₵{Number(ticket.amount || 0).toFixed(2)}
               </p>
 
+              <div className="mt-5 rounded-xl border border-yellow-400/20 bg-yellow-400/5 p-3 text-left">
+                <p className="text-xs font-black text-yellow-300">
+                  🔞 18+ ONLY • PLAY RESPONSIBLY
+                </p>
+
+                <p className="mt-1 text-[11px] leading-5 text-white/55">
+                  Only participate with money you can afford to spend.
+                  By continuing, you agree to our Terms & Conditions
+                  and Responsible Gaming Policy.
+                </p>
+
+                <div className="mt-2 flex flex-wrap gap-3 text-[11px] font-bold">
+                  <Link
+                    href="/terms"
+                    className="text-[#FFD54A] hover:underline"
+                  >
+                    Terms & Conditions
+                  </Link>
+
+                  <Link
+                    href="/responsible-gaming"
+                    className="text-[#FFD54A] hover:underline"
+                  >
+                    Responsible Gaming
+                  </Link>
+                </div>
+              </div>
+
               <button
                 onClick={() => setTicket(null)}
                 className="mt-6 w-full rounded-xl bg-[#FFD54A] px-5 py-3 font-black text-black"

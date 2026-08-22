@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import VisitorTracker from "@/components/VisitorTracker";
 import SessionTimeout from "@/components/auth/SessionTimeout";
+import PublicFooter from "@/components/layout/PublicFooter";
 
 export const metadata: Metadata = {
   title: "Fortuna Play",
@@ -50,6 +51,7 @@ export default function RootLayout({
         <SessionTimeout />
         <Navbar />
         {children}
+        <PublicFooter />
       </body>
     </html>
   );
